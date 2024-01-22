@@ -9,6 +9,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Auth\Events\Verified;
 use App\Models\User;
 use App\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -30,14 +31,14 @@ class AuthController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        // Generate verification code
         $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
 
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
-            'verification_code' => $verificationCode, // Store verification code in the database
+            'verification_code' => $verificationCode, // Do not hash the verification code here
         ]);
 
         $user->notify(new VerifyEmail($verificationCode));
@@ -49,26 +50,33 @@ class AuthController extends Controller
         ]);
     }
 
-
-    /**
-     * Log the user in and return a JWT token.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $token = JWTAuth::fromUser(Auth::user());
+            $user = Auth::user();
 
-            return response()->json(['token' => $token]);
+            // Check if the user's email is verified
+            if ($user->email_verified_at) {
+                $token = JWTAuth::fromUser($user);
+
+                return response()->json(['token' => $token]);
+            } else {
+                // If the email is not verified, log the user out
+                Auth::logout();
+
+                return response()->json(['error' => 'Account not verified'], 401);
+            }
         }
 
         return response()->json(['error' => 'Invalid credentials'], 401);
     }
-
     /**
      * Log the user out and revoke the access token.
      *
@@ -91,30 +99,30 @@ class AuthController extends Controller
     public function verify(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email|exists:users',
-            'code' => 'required|digits:6',
+            'email' => 'required|email',
+            'verification_code' => 'required',
         ]);
 
-        $user = User::where('email', $request->input('email'))->first();
+        $user = User::where('email', $request->email)->first();
 
-        if (!$user || $user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Invalid user or email already verified.'], 422);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Verify the code here
-        $code = $request->input('code');
-
-        if ($code != $user->verification_code) {
-            return response()->json(['message' => 'Invalid verification code.'], 422);
+        if (!$user->email_verified_at == '') {
+            return response()->json(['message' => 'User already verified!'], 404);
         }
 
-        if ($user->markEmailAsVerified()) {
-            event(new Verified($user));
+        if ($user->verification_code !== $request->verification_code) {
+            return response()->json(['message' => 'Invalid verification code'], 422);
         }
 
-        // Log the user in after email verification
-        $token = JWTAuth::fromUser($user);
+        $user->email_verified_at = now();
+        $user->verification_code = null;
+        $user->save();
 
-        return response()->json(['message' => 'Email successfully verified', 'token' => $token]);
+        $token = auth()->login($user);
+
+        return response()->json(['token' => $token, 'message' => 'User verified successfully']);
     }
 }

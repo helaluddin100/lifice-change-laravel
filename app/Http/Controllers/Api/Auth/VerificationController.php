@@ -41,7 +41,7 @@ class VerificationController extends Controller
         // Retrieve the user by email
         $user = User::where('email', $request->user()->email)->first();
 
-        if (!$user || !Hash::check($code, $user->verification_code)) {
+        if (!$user || $code != $user->verification_code) {
             return response()->json(['message' => 'Invalid verification code.'], 422);
         }
 

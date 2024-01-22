@@ -30,12 +30,4 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 // Email Verification Route
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
 
-Route::post('/auth/verify', [VerificationController::class, 'verify']);
-
-
-Route::prefix('email')->group(function () {
-    Route::get('/verify/{id}/{hash}', [VerificationController::class, 'verify'])
-        ->name('verification.verify');
-    Route::get('/resend', [VerificationController::class, 'resend'])
-        ->name('verification.resend');
-});
+Route::post('/auth/verify', [AuthController::class, 'verify']);
