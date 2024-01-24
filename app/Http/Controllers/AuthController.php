@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Verified;
 use App\Models\User;
 use App\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -50,33 +51,65 @@ class AuthController extends Controller
         ]);
     }
 
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     $credentials = $request->only('email', 'password');
+
+    //     if (Auth::attempt($credentials)) {
+    //         $user = Auth::user();
+
+    //         // Check if the user's email is verified
+    //         if ($user->email_verified_at) {
+    //             $token = JWTAuth::fromUser($user);
+
+    //             return response()->json(['token' => $token]);
+    //         } else {
+    //             // If the email is not verified, log the user out
+    //             Auth::logout();
+
+    //             return response()->json(['error' => 'Account not verified'], 401);
+    //         }
+    //     }
+
+    //     return response()->json(['error' => 'Invalid credentials'], 401);
+    // }
+
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            if (!Auth::attempt($request->only('email', 'password'))) {
+                return response([
+                    'message' => 'Invalid credentials!'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
 
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
             // Check if the user's email is verified
-            if ($user->email_verified_at) {
-                $token = JWTAuth::fromUser($user);
-
-                return response()->json(['token' => $token]);
-            } else {
+            if (!$user->email_verified_at) {
                 // If the email is not verified, log the user out
                 Auth::logout();
 
                 return response()->json(['error' => 'Account not verified'], 401);
             }
-        }
 
-        return response()->json(['error' => 'Invalid credentials'], 401);
+            // If the user's email is verified, generate and return a token
+            $token = $user->createToken('token')->plainTextToken;
+
+            return response([
+                'user' => $user,
+                'token' => $token,
+            ]);
+        } catch (\Exception $e) {
+            return response(['error' => 'Something went wrong. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
     /**
      * Log the user out and revoke the access token.
      *
@@ -124,5 +157,11 @@ class AuthController extends Controller
         $token = auth()->login($user);
 
         return response()->json(['token' => $token, 'message' => 'User verified successfully']);
+    }
+
+
+    public function user(Request $request)
+    {
+        return response()->json($request->user());
     }
 }

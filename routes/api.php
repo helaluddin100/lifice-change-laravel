@@ -16,9 +16,6 @@ use App\Http\Controllers\Api\Auth\VerificationController;
 */
 
 // This route requires authentication with Sanctum middleware
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 // Registration, Login, and Logout Routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -31,3 +28,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
 
 Route::post('/auth/verify', [AuthController::class, 'verify']);
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
