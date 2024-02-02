@@ -142,7 +142,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -154,7 +155,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -166,7 +168,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -178,7 +181,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -190,7 +194,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -202,7 +207,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -214,7 +220,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -226,7 +233,8 @@
                                                                     <span>
                                                                         SEO writing
                                                                     </span> totaling <span class="color-green">
-                                                                        $199.00</span></p>
+                                                                        $199.00</span>
+                                                                </p>
 
 
                                                                 <h6>23 mins ago</h6>
@@ -318,7 +326,7 @@
                                                         <div class="massage-item">
                                                             <div class="massage-inner">
                                                                 <div class="massage-img">
-                                                                    <img src="assets/images/massage-1.png"
+                                                                    <img src="{{ asset('/assets/images/massage-1.png') }}"
                                                                         alt="img">
                                                                     <div class="round"></div>
                                                                 </div>
@@ -331,7 +339,7 @@
                                                             </div>
                                                             <div class="massage-inner">
                                                                 <div class="massage-img">
-                                                                    <img src="assets/images/massage-2.png"
+                                                                    <img src="{{ asset('/assets/images/massage-2.png') }}"
                                                                         alt="img">
                                                                     <div class="round round-two "></div>
                                                                 </div>
@@ -344,7 +352,7 @@
                                                             </div>
                                                             <div class="massage-inner">
                                                                 <div class="massage-img">
-                                                                    <img src="assets/images/massage-3.png"
+                                                                    <img src="{{ asset('/assets/images/massage-3.png') }}"
                                                                         alt="img">
                                                                     <div class="round "></div>
                                                                 </div>
@@ -357,7 +365,7 @@
                                                             </div>
                                                             <div class="massage-inner">
                                                                 <div class="massage-img">
-                                                                    <img src="assets/images/massage-1.png"
+                                                                    <img src="{{ asset('/assets/images/massage-1.png') }}"
                                                                         alt="img">
                                                                     <div class="round"></div>
                                                                 </div>
@@ -370,7 +378,7 @@
                                                             </div>
                                                             <div class="massage-inner">
                                                                 <div class="massage-img">
-                                                                    <img src="assets/images/massage-2.png"
+                                                                    <img src="{{ asset('/assets/images/massage-2.png') }}"
                                                                         alt="img">
                                                                     <div class="round round-two "></div>
                                                                 </div>
@@ -383,7 +391,7 @@
                                                             </div>
                                                             <div class="massage-inner">
                                                                 <div class="massage-img">
-                                                                    <img src="assets/images/massage-3.png"
+                                                                    <img src="{{ asset('/assets/images/massage-3.png') }}"
                                                                         alt="img">
                                                                     <div class="round "></div>
                                                                 </div>
@@ -487,7 +495,8 @@
                                                         </div>
 
                                                         <div class="gift-item-taitel-img">
-                                                            <img src="assets/images/Group.png" alt="img">
+                                                            <img src="{{ asset('/assets/images/Group.png') }}"
+                                                                alt="img">
                                                         </div>
                                                     </div>
 
@@ -586,7 +595,8 @@
 
 
                             <div class="profile-img" data-name="profile-drop">
-                                <img src="assets/images/profile.png" alt="img" data-name="profile-drop">
+                                <img src="{{ asset('/assets/images/profile.png') }}" alt="img"
+                                    data-name="profile-drop">
                             </div>
                             <div class="profile-taitel" data-name="profile-taitel ">
                                 <h3 data-name="profile-drop">

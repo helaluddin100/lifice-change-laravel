@@ -2,12 +2,12 @@
 <div class="nftmax-smenu">
     <div class="logo">
         <a href="index-2.html">
-            <img class="nftmax-logo__main" src="assets/images/logo/Logo.svg" alt="logo">
+            <img class="nftmax-logo__main" src="{{ asset('/assets/images/logo/Logo.svg') }}" alt="logo">
 
         </a>
 
         <div class="logo-two">
-            <img src="assets/images/logo/logo-sort.png" alt="img">
+            <img src="{{ asset('/assets/images/logo/logo-sort.png') }}" alt="img">
         </div>
         <div class="nftmax__sicon close-icon">
             <span>
@@ -23,12 +23,12 @@
     </div>
     <div class="logo logo-dark ">
         <a href="index-2.html">
-            <img class="nftmax-logo__main" src="assets/images/logo/Logo-dark.png" alt="logo">
+            <img class="nftmax-logo__main" src="{{ asset('/assets/images/logo/Logo-dark.png') }}" alt="logo">
 
         </a>
 
         <div class="logo-two">
-            <img src="assets/images/logo/logo-shape-dark.png" alt="img">
+            <img src="{{ asset('/assets/images/logo/logo-shape-dark.png') }}" alt="img">
         </div>
         <div class="nftmax__sicon close-icon">
             <span>
@@ -249,7 +249,7 @@
                                         </svg>
                                     </span>
                                     <span class="has-child-profile-2">
-                                        <img src="assets/images/profile-2.png" alt="profile">
+                                        <img src="{{ asset('/assets/images/profile-2.png') }}" alt="profile">
                                     </span>
                                     <span class="has-child-profile-3"> 5 </span>
                                 </div>
@@ -586,7 +586,7 @@
 
         <div class="cashback">
             <div class="cashback-icon">
-                <img src="assets/images/icon/cashback-icon.png" alt="img">
+                <img src="{{ asset('/assets/images/icon/cashback-icon.png') }}" alt="img">
             </div>
 
             <div class="cashback-icon-text">
