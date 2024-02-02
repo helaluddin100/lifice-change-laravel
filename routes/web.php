@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Admin\DashboardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,15 +18,13 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-require __DIR__ . '/auth.php';
+Auth::routes();
 
-
-Route::namespace('App\Http\Controllers')->group(function () {
-    Auth::routes();
-    // ================================ADMIN ROUTE=============
-    Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']], function () {
-        Route::get('/dashboard', 'HomeController@index')->name('dashboard');
-        // ============PORTFOLIO URL===========
-
-    });
-});
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::namespace('App\Http\Controllers')->group(
+    function () {
+        Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']], function () {
+            Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
+        });
+    }
+);

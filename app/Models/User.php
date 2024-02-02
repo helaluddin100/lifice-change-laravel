@@ -41,6 +41,11 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+
+    public function role()
+    {
+        return $this->belongsTo('App\Models\Role');
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
