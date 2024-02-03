@@ -57,11 +57,6 @@
 
 
                     <div class="header-right">
-
-
-
-
-
                         <div class="icon-item">
                             <div class="dark-lite-icon">
                                 <div class="icon" id="theme-controll">
@@ -79,16 +74,6 @@
                                             </path>
                                             <path d="M18.9282 16L20.6603 17" stroke-width="1.5" stroke-linecap="round">
                                             </path>
-                                        </svg>
-                                    </span>
-
-
-                                    <span id="light-icon">
-                                        <svg class="stroke-bgray-900" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M18.3284 14.8687C13.249 14.8687 9.13135 10.751 9.13135 5.67163C9.13135 4.74246 9.26914 3.84548 9.5254 3C5.74897 4.14461 3 7.65276 3 11.803C3 16.8824 7.11765 21 12.197 21C16.3472 21 19.8554 18.251 21 14.4746C20.1545 14.7309 19.2575 14.8687 18.3284 14.8687Z"
-                                                stroke-width="1.5" stroke-linejoin="round"></path>
                                         </svg>
                                     </span>
                                 </div>
@@ -504,12 +489,6 @@
 
 
                                                 </div>
-
-
-
-
-
-
                                             </li>
                                         </ul>
                                     </li>
@@ -561,7 +540,8 @@
                                     </a>
                                 </li>
                                 <li class="text-color">
-                                    <a href="#">
+                                    <a href="{{ route('logout') }}"onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
                                         <span>
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -573,6 +553,10 @@
                                         </span>
                                         Log Out
                                     </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        class="d-none">
+                                        @csrf
+                                    </form>
                                 </li>
 
 
@@ -600,7 +584,7 @@
                             </div>
                             <div class="profile-taitel" data-name="profile-taitel ">
                                 <h3 data-name="profile-drop">
-                                    AJOY Sarker
+                                    {{ Auth::user()->name }}
                                     <span data-name="profile-drop"><svg data-name="profile-drop" width="24"
                                             height="24" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -610,7 +594,7 @@
                                     </span>
                                 </h3>
 
-                                <h6 data-name="profile-drop">Super Admin</h6>
+                                <h6 data-name="profile-drop">{{ Auth::user()->role->name }}</h6>
                             </div>
                         </div>
                     </div>

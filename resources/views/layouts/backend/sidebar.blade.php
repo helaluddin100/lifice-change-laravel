@@ -1,26 +1,6 @@
 <!-- NFTMax Admin Menu -->
 <div class="nftmax-smenu">
-    <div class="logo">
-        <a href="index-2.html">
-            <img class="nftmax-logo__main" src="{{ asset('/assets/images/logo/Logo.svg') }}" alt="logo">
 
-        </a>
-
-        <div class="logo-two">
-            <img src="{{ asset('/assets/images/logo/logo-sort.png') }}" alt="img">
-        </div>
-        <div class="nftmax__sicon close-icon">
-            <span>
-                <svg width="16" height="40" viewBox="0 0 16 40" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z" fill="#22C55E">
-                    </path>
-                    <path d="M10 15L6 20.0049L10 25.0098" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                        stroke-linejoin="round"></path>
-                </svg>
-            </span>
-        </div>
-    </div>
     <div class="logo logo-dark ">
         <a href="index-2.html">
             <img class="nftmax-logo__main" src="{{ asset('/assets/images/logo/Logo-dark.png') }}" alt="logo">
@@ -112,7 +92,7 @@
                     </li>
 
                     <li class=" menu-main ">
-                        <a href="transaction.html">
+                        <a href="{{ route('admin.business.index') }}">
                             <div class="has-child-main">
                                 <div class="has-child-main-inner">
                                     <div class="has-child-icon">
@@ -135,7 +115,7 @@
                                     </div>
 
                                     <div class="has-child-text">
-                                        <span> Transaction </span>
+                                        <span> Business Category </span>
                                     </div>
                                 </div>
                             </div>
@@ -582,44 +562,7 @@
             <!-- End Nav Menu -->
         </div>
 
-        <!-- Unlimited Cashback -->
 
-        <div class="cashback">
-            <div class="cashback-icon">
-                <img src="{{ asset('/assets/images/icon/cashback-icon.png') }}" alt="img">
-            </div>
-
-            <div class="cashback-icon-text">
-                <h2>Unlimited Cashback</h2>
-                <p>Instant 2% back on all your spend to your account.</p>
-            </div>
-
-            <div class="cashback-icon-btn">
-                <div class="btn-one">
-                    <a href="#">Upgrade Now
-                        <span>
-                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.33301 4H10.6663" stroke="white" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path d="M8 6.66667L10.6667 4" stroke="white" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M8 1.33325L10.6667 3.99992" stroke="white" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- rights-part  -->
-        <div class="reserved">
-            <p>© 2023 All Rights Reserved</p>
-            <h6>
-                Made with <span>♥ </span> by<a href="#" target="_blank">QuomodoTheme</a>
-            </h6>
-        </div>
     </div>
     <!-- End Admin Menu -->
 </div>
