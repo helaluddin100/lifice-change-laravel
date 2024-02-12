@@ -46,6 +46,12 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     {
         return $this->belongsTo('App\Models\Role');
     }
+
+
+    public function businesses()
+    {
+        return $this->hasMany(BusinessType::class);
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Models\BusinessType;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class BusinessTypeController extends Controller
 {
@@ -15,7 +17,9 @@ class BusinessTypeController extends Controller
      */
     public function index()
     {
-        return view('admin.business.index');
+
+        $business_types = BusinessType::with('user')->get();
+        return view('admin.business.index', compact('business_types'));
     }
 
     /**
@@ -36,7 +40,31 @@ class BusinessTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate incoming request
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+        $slug = Str::slug($validatedData['name']);
+
+        $count = BusinessType::where('slug', $slug)->count();
+        if ($count > 0) {
+            $slug = $slug . '-' . ($count + 1);
+        }
+
+        $status = $request->has('status') ? 1 : 0;
+
+        // Create a new Business instance
+        $business = new BusinessType();
+        $business->name = $validatedData['name'];
+        $business->description = $validatedData['description'];
+        $business->status = $status;
+        $business->creator = Auth::user()->id;
+        $business->slug = $slug;
+        $business->save();
+
+        // Redirect back with success message
+        return redirect()->route('admin.business.index')->with('success', 'Business type created successfully!');
     }
 
     /**
