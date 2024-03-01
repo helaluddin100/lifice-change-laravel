@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Shop;
+use App\Models\BusinessType;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
@@ -12,6 +14,15 @@ class ShopController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function businessTypes()
+    {
+        $businessTypes = BusinessType::all();
+        return response()->json($businessTypes);
+    }
+
+
+
     public function index()
     {
         //
