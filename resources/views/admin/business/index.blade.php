@@ -18,7 +18,7 @@
                             <h6 class="card-title">Business Type</h6>
                             <div class="create-button">
                                 <a href="{{ route('admin.business.create') }}" class="btn btn-primary btn-icon">
-                                    <i data-feather="check-square"></i>
+                                    <i data-feather="plus-circle"></i>
                                 </a>
                             </div>
                         </div>
@@ -51,12 +51,26 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-primary btn-icon">
-                                                    <i data-feather="check-square"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-danger btn-icon">
-                                                    <i data-feather="box"></i>
-                                                </button>
+                                                <a href="{{ route('admin.business.edit', $business_type->id) }}"
+                                                    class="btn btn-primary btn-icon">
+                                                    <i data-feather="edit"></i>
+                                                </a>
+
+
+
+                                                @if (Auth::user()->role_id == 1)
+                                                    <form id="delete_form_{{ $business_type->id }}"
+                                                        action="{{ route('admin.business.destroy', $business_type->id) }}"
+                                                        method="post" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" class="btn btn-danger btn-icon delete-button"
+                                                            onclick="deleteId({{ $business_type->id }})">
+                                                            <i data-feather="trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
                                             </td>
                                         </tr>
                                     @endforeach
