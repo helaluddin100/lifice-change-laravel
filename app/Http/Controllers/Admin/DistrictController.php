@@ -19,9 +19,10 @@ class DistrictController extends Controller
      */
     public function index()
     {
-        $districts = District::all();
+        $districts = District::with('country')->get();
         return view('admin.district.index', compact('districts'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -54,7 +55,7 @@ class DistrictController extends Controller
         // Create a new country instance
         $district = new District();
         $district->name = $validatedData['name'];
-        $district->country = $validatedData['country'];
+        $district->country_id = $validatedData['country'];
         $district->status = $status;
         $district->save();
 
@@ -108,7 +109,7 @@ class DistrictController extends Controller
 
         $district->name = $validatedData['name'];
         $district->status = $status;
-        $district->country = $validatedData['country'];
+        $district->country_id = $validatedData['country'];
 
         $district->save();
 

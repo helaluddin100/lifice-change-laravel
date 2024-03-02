@@ -27,7 +27,8 @@
                                     data-width="100%">
                                     @foreach ($countryes as $country)
                                         <option value="{{ $country->id }}"
-                                            {{ $district->country == $country->id ? 'selected' : '' }}>{{ $country->name }}
+                                            {{ $district->country_id == $country->id ? 'selected' : '' }}>
+                                            {{ $country->name }}
                                         </option>
                                     @endforeach
                                 </select>

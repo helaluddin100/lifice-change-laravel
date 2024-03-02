@@ -39,12 +39,18 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $district->name }}</td>
-                                            <td>{{ $district->country }}</td>
+                                            <td>
+                                                @if ($district->country)
+                                                    {{ $district->country->name }}
+                                                @else
+                                                    No Country Assigned
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if ($district->status === 1)
                                                     <span class="badge bg-success">Active</span>
                                                 @else
-                                                    <span class="badge bg-primary">De Active</span>
+                                                    <span class="badge bg-primary">Deactive</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -52,9 +58,6 @@
                                                     class="btn btn-primary btn-icon">
                                                     <i data-feather="edit"></i>
                                                 </a>
-
-
-
                                                 @if (Auth::user()->role_id == 1)
                                                     <form id="delete_form_{{ $district->id }}"
                                                         action="{{ route('admin.district.destroy', $district->id) }}"
@@ -67,10 +70,10 @@
                                                         </button>
                                                     </form>
                                                 @endif
-
                                             </td>
                                         </tr>
                                     @endforeach
+
 
 
                                 </tbody>
