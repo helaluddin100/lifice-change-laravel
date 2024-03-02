@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('delivery_charges', function (Blueprint $table) {
+        Schema::create('divisions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id')->constrained()->onDelete('cascade');
-            $table->decimal('default_charge', 8, 2)->nullable();
-            $table->json('delivery_charges')->nullable();
-            $table->text('shop_details')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('delivery_charges');
+        Schema::dropIfExists('divisions');
     }
 };

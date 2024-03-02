@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CountryController;
 
 use App\Http\Controllers\Api\ShopController;
 
@@ -32,6 +33,7 @@ Route::namespace('App\Http\Controllers')->group(
             Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
             Route::resource('/business', 'BusinessTypeController');
+            Route::resource('/country', 'CountryController');
         });
     }
 );
