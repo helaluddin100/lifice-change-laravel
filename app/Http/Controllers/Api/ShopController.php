@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use File;
+use Image;
+use Storage;
 
 class ShopController extends Controller
 {
@@ -25,6 +28,12 @@ class ShopController extends Controller
         return response()->json($businessTypes);
     }
 
+
+    public function getUserShops($userId)
+    {
+        $shops = Shop::where('user_id', $userId)->get();
+        return response()->json($shops);
+    }
 
     public function index()
     {
@@ -113,9 +122,17 @@ class ShopController extends Controller
      * @param  \App\Models\Shop  $shop
      * @return \Illuminate\Http\Response
      */
-    public function edit(Shop $shop)
+
+
+    public function edit($id)
     {
-        //
+        $shop = Shop::find($id);
+
+        if (!$shop) {
+            return response()->json(['error' => 'Shop not found'], 404);
+        }
+
+        return response()->json(['shop' => $shop]);
     }
 
     /**
@@ -125,9 +142,62 @@ class ShopController extends Controller
      * @param  \App\Models\Shop  $shop
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Shop $shop)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+                'shop_type' => 'required|string',
+                'email' => 'required|email',
+                'address' => 'required|string',
+                'country' => 'required|string',
+                'number' => 'required|numeric',
+                'details' => 'required|string',
+                'user_id' => 'required',
+                // Example: nullable status field
+                'vat_tax' => 'nullable',
+                'payment_message' => 'nullable|string',
+                'facebook' => 'nullable|string',
+                'instagram' => 'nullable|string',
+                'linkedin' => 'nullable|string',
+                'youtube' => 'nullable|string',
+                'tiktok' => 'nullable|string',
+                'telegram' => 'nullable|string',
+                'whatsapp' => 'nullable|string',
+                'discord' => 'nullable|string',
+                'color' => 'nullable|string',
+                'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+
+
+            ]);
+            $shop = Shop::findOrFail($id);
+            $shop->update($validatedData);
+            if ($request->hasFile('image')) {
+                if (File::exists($shop->logo)) {
+                    File::delete($shop->logo);
+                }
+                $image = $request->file('image');
+                $imageName = uniqid() . '-' . $image->getClientOriginalName();
+                $image->move(public_path('image/shop/'), $imageName);
+                $shop->logo = 'image/shop/' . $imageName;
+            }
+
+            $shop->save();
+            Log::info('Shop updated successfully', ['id' => $shop->id]);
+            return response()->json([
+                'status' => 200,
+                'message' => 'Shop updated successfully',
+            ]);
+        } catch (ValidationException $e) {
+            // Return validation errors
+            return response()->json(['status' => 422, 'errors' => $e->errors()]);
+        } catch (\Throwable $e) {
+            Log::error(
+                'Error updating shop',
+                ['error' => $e->getMessage()]
+            );
+            return response()->json(['status' => 500, 'error' => $e->getMessage()]);
+        }
     }
 
     /**

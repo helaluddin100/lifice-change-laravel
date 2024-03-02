@@ -18,6 +18,20 @@ class Shop extends Model
         'address',
         'details',
         'shop_url',
+        'vat_tax',
+        'payment_message',
+        'facebook',
+        'instagram',
+        'linkedin',
+        'youtube',
+        'tiktok',
+        'telegram',
+        'whatsapp',
+        'discord',
+        'color',
+        'logo',
+
+
     ];
 
 

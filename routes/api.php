@@ -26,3 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
 // Business types route
 Route::get('business-type', [ShopController::class, 'businessTypes']);
 Route::post('create-shop', [ShopController::class, 'store']);
+Route::get('/user/{userId}/shops', [ShopController::class, 'getUserShops']);
+Route::post('/update-shop/{shop}', [ShopController::class, 'update']);
+Route::get('/shop/{id}', [ShopController::class, 'edit']);
