@@ -23,6 +23,12 @@
 
   <script src="{{ asset('assets/js/easymde.js') }}"></script>
   <script src="{{ asset('assets/js/sweetalert2@11.js') }}"></script>
+  <script src="{{ asset('assets/vendors/select2/select2.min.js') }}"></script>
+
+  <script src="{{ asset('assets/js/select2.js') }}"></script>
+
+
+
   <script>
       function deleteId(id) {
           const swalWithBootstrapButtons = Swal.mixin({

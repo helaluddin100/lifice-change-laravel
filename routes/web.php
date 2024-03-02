@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\DistrictController;
 
 use App\Http\Controllers\Api\ShopController;
 
@@ -34,6 +35,7 @@ Route::namespace('App\Http\Controllers')->group(
 
             Route::resource('/business', 'BusinessTypeController');
             Route::resource('/country', 'CountryController');
+            Route::resource('/district', 'DistrictController');
         });
     }
 );
