@@ -177,18 +177,20 @@ class ShopController extends Controller
 
             // Handle logo upload
             if ($request->hasFile('image')) {
+
+
                 $image = $request->file('image');
                 if ($image->isValid()) {
+                    if (File::exists($shop->logo)) {
+                        File::delete($shop->logo);
+                    }
                     $imageName = uniqid() . '-' . $image->getClientOriginalName();
                     $image->move(public_path('image/shop/'), $imageName);
                     $shop->logo = 'image/shop/' . $imageName;
                 } else {
                     return response()->json(['status' => 400, 'error' => 'Invalid image file']);
                 }
-            } else {
-                return response()->json(['status' => 400, 'error' => 'No image file uploaded']);
             }
-
 
             // Save delivery charges
             $shop->default_delivery_charge = $validatedData['default_delivery_charge'] ?? null;
