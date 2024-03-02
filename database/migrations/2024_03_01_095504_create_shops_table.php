@@ -21,13 +21,16 @@ return new class extends Migration
             $table->string('email');
             $table->string('number');
             $table->string('country')->nullable();
+            $table->decimal('balance', 8, 2)->nullable();
             $table->string('address')->nullable();
             $table->text('details')->nullable();
             $table->string('shop_url')->unique();
             $table->string('stock_management')->nullable();
             $table->string('vat_tax')->nullable();
-            $table->string('default_delivery_charge')->nullable();
+            $table->decimal('default_delivery_charge', 8, 2)->nullable();
+            $table->json('specific_delivery_charges')->nullable();
             $table->text('payment_message')->nullable();
+            $table->text('delivery_charge_note')->nullable();
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
             $table->string('linkedin')->nullable();

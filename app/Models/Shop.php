@@ -30,6 +30,9 @@ class Shop extends Model
         'discord',
         'color',
         'logo',
+        'default_delivery_charge',
+        'specific_delivery_charges',
+        'delivery_charge_note',
 
 
     ];
