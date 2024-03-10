@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Shop;
 use App\Models\BusinessType;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -21,6 +22,13 @@ class ShopController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function countries()
+    {
+        $countries = Country::where('status', 1)->get();
+        return response()->json($countries);
+    }
+
 
     public function businessTypes()
     {

@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Business types route
+Route::get('country', [ShopController::class, 'countries']);
 Route::get('business-type', [ShopController::class, 'businessTypes']);
 Route::post('create-shop', [ShopController::class, 'store']);
 Route::get('/user/{userId}/shops', [ShopController::class, 'getUserShops']);
