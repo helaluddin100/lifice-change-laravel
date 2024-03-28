@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-
+use Illuminate\Validation\ValidationException;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -93,9 +93,15 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit($id)
     {
-        //
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json(['error' => 'category not found'], 404);
+        }
+
+        return response()->json(['category' => $category]);
     }
 
     /**
@@ -105,10 +111,40 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            // Validate incoming request
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+            ]);
+
+            // Find the category by ID
+            $category = Category::findOrFail($id);
+
+            // Update category attributes
+            $category->update($validatedData);
+
+            // Log success message
+            Log::info('Category updated successfully', ['id' => $category->id]);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Category updated successfully',
+                'category' => $category,
+            ]);
+        } catch (ValidationException $e) {
+            // Return validation errors
+            return response()->json(['status' => 422, 'errors' => $e->errors()]);
+        } catch (\Throwable $e) {
+            // Log and handle other errors
+            Log::error('Error updating category', ['error' => $e->getMessage()]);
+            return response()->json(['status' => 500, 'error' => 'An error occurred. Please try again later.'], 500);
+        }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -116,8 +152,27 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        //
+        Log::info('Category ID to delete: ' . $id);
+
+        try {
+            // Find the category by ID and delete it
+            $category = Category::findOrFail($id);
+            $category->delete();
+
+            // Log success message
+            Log::info('Category deleted successfully', ['id' => $category->id]);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Category deleted successfully',
+            ]);
+        } catch (\Throwable $e) {
+            // Log and handle errors
+            Log::error('Error deleting category', ['error' => $e->getMessage()]);
+            return response()->json(['status' => 500, 'error' => 'An error occurred. Please try again later.'], 500);
+        }
     }
 }
