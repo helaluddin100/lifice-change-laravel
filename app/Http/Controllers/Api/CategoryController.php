@@ -154,15 +154,13 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        Log::info('Category ID to delete: ' . $id);
+        
 
         try {
             // Find the category by ID and delete it
             $category = Category::findOrFail($id);
             $category->delete();
 
-            // Log success message
-            Log::info('Category deleted successfully', ['id' => $category->id]);
 
             // Return success response
             return response()->json([
