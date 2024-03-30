@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\Auth\VerificationController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ShopController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DistrictController;;
+use App\Models\District;
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -40,3 +42,11 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'edit']);
 Route::put('/categories/{id}', [CategoryController::class, 'update']);
 Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy']);
+
+
+//country
+
+
+
+//district
+Route::get('district', [DistrictController::class, 'index']);

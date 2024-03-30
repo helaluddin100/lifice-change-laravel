@@ -174,7 +174,7 @@ class ShopController extends Controller
                 'whatsapp' => 'nullable|string',
                 'discord' => 'nullable|string',
                 'color' => 'nullable|string',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+                'image' => 'nullable|max:5120',
                 'default_delivery_charge' => 'nullable|numeric',
                 'specific_delivery_charges' => 'nullable',
                 'delivery_charge_note' => 'nullable',
