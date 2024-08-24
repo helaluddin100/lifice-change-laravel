@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ShopController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DistrictController;;
+
 use App\Models\District;
 
 // Public routes (no authentication required)
@@ -28,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Business types route
 Route::get('country', [ShopController::class, 'countries']);
+Route::get('/countries/{id}/districts', [ShopController::class, 'districts']);
+
 Route::get('business-type', [ShopController::class, 'businessTypes']);
 Route::post('create-shop', [ShopController::class, 'store']);
 Route::get('/user/{userId}/shops', [ShopController::class, 'getUserShops']);
@@ -36,7 +39,7 @@ Route::get('/shop/{id}', [ShopController::class, 'edit']);
 
 
 
-//category api 
+//category api
 Route::post('category/store', [CategoryController::class, 'store']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'edit']);

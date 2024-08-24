@@ -29,6 +29,11 @@ class ShopController extends Controller
         return response()->json($countries);
     }
 
+    public function districts($id)
+    {
+        $country = Country::with('districts')->findOrFail($id);
+        return response()->json($country->districts);
+    }
 
     public function businessTypes()
     {
