@@ -160,14 +160,14 @@ class ShopController extends Controller
         try {
             // Validate incoming request
             $validatedData = $request->validate([
-                'name' => 'required|string',
-                'shop_type' => 'required|string',
-                'email' => 'required|email',
-                'address' => 'required|string',
-                'country' => 'required|string',
-                'number' => 'required|numeric',
-                'details' => 'required|string',
-                'user_id' => 'required',
+                'name' => 'nullable|string',
+                'shop_type' => 'nullable|string',
+                'email' => 'nullable|email',
+                'address' => 'nullable|string',
+                'country' => 'nullable|string',
+                'number' => 'nullable|numeric',
+                'details' => 'nullable|string',
+                'user_id' => 'nullable',
                 'vat_tax' => 'nullable|string',
                 'payment_message' => 'nullable|string',
                 'facebook' => 'nullable|string',
