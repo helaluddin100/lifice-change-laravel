@@ -41,26 +41,29 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $business_type->name }}</td>
-                                            <td>{!! $business_type->description !!}</td>
+                                            <td>{!! strlen($business_type->description) > 50
+                                                ? substr($business_type->description, 0, 50) . '...'
+                                                : $business_type->description !!}</td>
+
                                             <td>{{ $business_type->user->name }}</td>
                                             <td>
-                                                @if ($business_type->status === '1')
+                                                @if ($business_type->status === 1)
                                                     <span class="badge bg-success">Active</span>
                                                 @else
                                                     <span class="badge bg-primary">De Active</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-primary btn-icon">
-                                                    <i data-feather="check-square"></i>
-                                                </button>
+                                                <a href="{{ route('admin.business.edit', $business_type->id) }}"
+                                                    class="btn btn-primary btn-icon">
+                                                    <i data-feather="edit-3"></i>
+                                                </a>
                                                 <button type="button" class="btn btn-danger btn-icon">
-                                                    <i data-feather="box"></i>
+                                                    <i data-feather="archive"></i>
                                                 </button>
                                             </td>
                                         </tr>
                                     @endforeach
-
 
                                 </tbody>
                             </table>

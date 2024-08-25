@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('slug');
             $table->foreignId('creator')->constrained()->onDelete('cascade');
             $table->boolean('status')->default(1);
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
