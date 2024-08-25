@@ -15,9 +15,9 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h6 class="card-title">Business Type</h6>
+                            <h6 class="card-title">Country</h6>
                             <div class="create-button">
-                                <a href="{{ route('admin.business.create') }}" class="btn btn-primary btn-icon">
+                                <a href="{{ route('admin.country.create') }}" class="btn btn-primary btn-icon">
                                     <i data-feather="plus-circle"></i>
                                 </a>
                             </div>
@@ -28,8 +28,6 @@
                                     <tr>
                                         <th>#ID</th>
                                         <th>Name</th>
-                                        <th>description</th>
-                                        <th>Creator </th>
                                         <th>status</th>
                                         <th>Action</th>
 
@@ -37,36 +35,33 @@
                                 </thead>
                                 <tbody>
 
-                                    @foreach ($business_types as $key => $business_type)
+                                    @foreach ($counters as $key => $country)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $business_type->name }}</td>
-                                            <td>{!! strlen($business_type->description) > 50
-                                                ? substr($business_type->description, 0, 50) . '...'
-                                                : $business_type->description !!}</td>
-
-                                            <td>{{ $business_type->user->name }}</td>
+                                            <td>{{ $country->name }}</td>
                                             <td>
-                                                @if ($business_type->status === 1)
+                                                @if ($country->status === 1)
                                                     <span class="badge bg-success">Active</span>
                                                 @else
                                                     <span class="badge bg-primary">De Active</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('admin.business.edit', $business_type->id) }}"
+                                                <a href="{{ route('admin.country.edit', $country->id) }}"
                                                     class="btn btn-primary btn-icon">
                                                     <i data-feather="edit"></i>
                                                 </a>
 
+
+
                                                 @if (Auth::user()->role_id == 1)
-                                                    <form id="delete_form_{{ $business_type->id }}"
-                                                        action="{{ route('admin.business.destroy', $business_type->id) }}"
+                                                    <form id="delete_form_{{ $country->id }}"
+                                                        action="{{ route('admin.country.destroy', $country->id) }}"
                                                         method="post" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button" class="btn btn-danger btn-icon delete-button"
-                                                            onclick="deleteId({{ $business_type->id }})">
+                                                            onclick="deleteId({{ $country->id }})">
                                                             <i data-feather="trash"></i>
                                                         </button>
                                                     </form>
@@ -75,6 +70,7 @@
                                             </td>
                                         </tr>
                                     @endforeach
+
 
                                 </tbody>
                             </table>

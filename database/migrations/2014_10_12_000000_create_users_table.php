@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('address')->nullable();
             $table->string('country')->nullable();
-            $table->string('Region')->nullable();
+            $table->string('region')->nullable();
             $table->string('city')->nullable();
             $table->string('nid')->nullable();
-            $table->string('status')->default(1);
+            $table->boolean('status')->default(1);
             $table->string('ip')->nullable();
             $table->text('about')->nullable();
             $table->timestamp('email_verified_at')->nullable();

@@ -13,17 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('business_types', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('slug');
-            $table->foreignId('creator')->constrained('users')->onDelete('cascade');
-            $table->boolean('status')->default(1);
-            $table->text('description')->nullable();
+            $table->string('name');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('business_types');
+        Schema::dropIfExists('countries');
     }
 };

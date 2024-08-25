@@ -47,9 +47,15 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="pages/apps/calendar.html" class="nav-link">
-                    <i class="link-icon" data-feather="calendar"></i>
-                    <span class="link-title">Calendar</span>
+                <a href="{{ route('admin.country.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="flag"></i>
+                    <span class="link-title">Country</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.district.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Districts</span>
                 </a>
             </li>
 

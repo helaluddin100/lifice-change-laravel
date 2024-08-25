@@ -86,8 +86,8 @@ class BusinessTypeController extends Controller
      */
     public function edit($id)
     {
-        $business_type = BusinessType::find($id);
-        return view('admin.business.edit', compact('business_type'));
+        $business = BusinessType::find($id);
+        return view('admin.business.edit', compact('business'));
     }
 
     /**
@@ -97,24 +97,24 @@ class BusinessTypeController extends Controller
      * @param  \App\Models\BusinessType  $businessType
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, BusinessType $business)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'status' => 'nullable',
         ]);
 
-        $business = BusinessType::findOrFail($id);
+        $status = $request->has('status') ? 1 : 0;
 
-
-        $business->status = $validatedData['status'] ? 1 : 0;
         $business->name = $validatedData['name'];
         $business->description = $validatedData['description'];
+        $business->status = $status;
         $business->save();
 
         return redirect()->route('admin.business.index')->with('success', 'Business type updated successfully!');
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -122,8 +122,10 @@ class BusinessTypeController extends Controller
      * @param  \App\Models\BusinessType  $businessType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BusinessType $businessType)
+    public function destroy(BusinessType $business)
     {
-        //
+        $business->delete();
+
+        return redirect()->route('admin.business.index')->with('success', 'Business type deleted successfully!');
     }
 }
