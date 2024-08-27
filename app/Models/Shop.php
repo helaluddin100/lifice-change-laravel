@@ -37,6 +37,7 @@ class Shop extends Model
         'show_product_sold_count',
         'shop_domain',
         'subdomain_id',
+        'shop_domain_name',
         'shop_subdomain_name',
         'gtm_id',
         'facebook_pixel_id',

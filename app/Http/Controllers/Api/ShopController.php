@@ -189,6 +189,7 @@ class ShopController extends Controller
                 'shop_domain' => 'nullable',
                 'subdomain_id' => 'nullable',
                 'shop_subdomain_name' => 'nullable',
+                'shop_domain_name' => 'nullable',
 
 
                 'gtm_id' => 'nullable',
