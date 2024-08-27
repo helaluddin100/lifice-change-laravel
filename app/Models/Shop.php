@@ -42,7 +42,9 @@ class Shop extends Model
         'gtm_id',
         'facebook_pixel_id',
         'facebook_pixel_event',
-        'facebook_pixel_access_token'
+        'facebook_pixel_access_token',
+        'whatsapp_chat',
+        'live_chat_whatsapp'
     ];
 
 

@@ -172,14 +172,7 @@ class ShopController extends Controller
                 'payment_message' => 'nullable|string',
                 'stock_management' => 'nullable|boolean',
                 'show_product_sold_count' => 'nullable|boolean',
-                'facebook' => 'nullable|string',
-                'instagram' => 'nullable|string',
-                'linkedin' => 'nullable|string',
-                'youtube' => 'nullable|string',
-                'tiktok' => 'nullable|string',
-                'telegram' => 'nullable|string',
-                'whatsapp' => 'nullable|string',
-                'discord' => 'nullable|string',
+
                 'color' => 'nullable|string',
                 'image' => 'nullable|max:5120',
                 'default_delivery_charge' => 'nullable|numeric',
@@ -192,11 +185,24 @@ class ShopController extends Controller
                 'shop_domain_name' => 'nullable',
 
 
+                'live_chat_whatsapp' => 'nullable',
+                'whatsapp_chat' => 'nullable',
+
+
                 'gtm_id' => 'nullable',
                 'facebook_pixel_id' => 'nullable',
                 'facebook_pixel_access_token' => 'nullable',
                 'facebook_pixel_event' => 'nullable',
 
+                // social link
+                'facebook' => 'nullable',
+                'instagram' => 'nullable',
+                'linkedin' => 'nullable',
+                'youtube' => 'nullable',
+                'tiktok' => 'nullable',
+                'telegram' => 'nullable',
+                'whatsapp' => 'nullable',
+                'discord' => 'nullable'
 
             ]);
 
