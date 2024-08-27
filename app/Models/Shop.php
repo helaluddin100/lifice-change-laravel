@@ -33,9 +33,13 @@ class Shop extends Model
         'default_delivery_charge',
         'specific_delivery_charges',
         'delivery_charge_note',
-
-
+        'stock_management',
+        'show_product_sold_count',
+        'shop_domain',
+        'subdomain_id',
+        'shop_subdomain_name',
     ];
+
 
 
 
@@ -45,8 +49,8 @@ class Shop extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function deliveryCharges()
-    {
-        return $this->hasMany(DeliveryCharge::class);
-    }
+    // public function deliveryCharges()
+    // {
+    //     return $this->hasMany(DeliveryCharge::class);
+    // }
 }

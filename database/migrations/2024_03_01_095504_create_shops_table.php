@@ -28,7 +28,10 @@ return new class extends Migration
             $table->string('color')->nullable();
 
             $table->boolean('stock_management')->default(false);
+            $table->boolean('show_product_sold_count')->default(false);
             $table->string('vat_tax')->nullable();
+            $table->text('payment_message')->nullable();
+
 
             $table->string('top_announcement')->nullable();
             $table->string('visitors')->default(0)->nullable();
@@ -43,7 +46,6 @@ return new class extends Migration
             //delivery charge policy
             $table->decimal('default_delivery_charge', 8, 2)->nullable();
             $table->json('specific_delivery_charges')->nullable();
-            $table->text('payment_message')->nullable();
             $table->text('delivery_charge_note')->nullable();
 
             // GTM and Facebook Pixel

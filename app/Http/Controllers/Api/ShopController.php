@@ -170,6 +170,8 @@ class ShopController extends Controller
                 'user_id' => 'nullable',
                 'vat_tax' => 'nullable|string',
                 'payment_message' => 'nullable|string',
+                'stock_management' => 'nullable|boolean',
+                'show_product_sold_count' => 'nullable|boolean',
                 'facebook' => 'nullable|string',
                 'instagram' => 'nullable|string',
                 'linkedin' => 'nullable|string',
@@ -183,15 +185,21 @@ class ShopController extends Controller
                 'default_delivery_charge' => 'nullable|numeric',
                 'specific_delivery_charges' => 'nullable',
                 'delivery_charge_note' => 'nullable',
+
+                'shop_domain' => 'nullable',
+                'subdomain_id' => 'nullable',
+                'shop_subdomain_name' => 'nullable',
+
             ]);
+
+            // Log the validated data to see what's being passed
+            Log::info('Validated data', $validatedData);
 
             $shop = Shop::findOrFail($id);
             $shop->update($validatedData);
 
             // Handle logo upload
             if ($request->hasFile('image')) {
-
-
                 $image = $request->file('image');
                 if ($image->isValid()) {
                     if (File::exists($shop->logo)) {
@@ -204,10 +212,6 @@ class ShopController extends Controller
                     return response()->json(['status' => 400, 'error' => 'Invalid image file']);
                 }
             }
-
-            // Save delivery charges
-            $shop->default_delivery_charge = $validatedData['default_delivery_charge'] ?? null;
-            $shop->specific_delivery_charges = $validatedData['specific_delivery_charges'] ?? null;
 
             $shop->save();
 
@@ -224,6 +228,8 @@ class ShopController extends Controller
             return response()->json(['status' => 500, 'error' => $e->getMessage()]);
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
