@@ -190,6 +190,13 @@ class ShopController extends Controller
                 'subdomain_id' => 'nullable',
                 'shop_subdomain_name' => 'nullable',
 
+
+                'gtm_id' => 'nullable',
+                'facebook_pixel_id' => 'nullable',
+                'facebook_pixel_access_token' => 'nullable',
+                'facebook_pixel_event' => 'nullable',
+
+
             ]);
 
             // Log the validated data to see what's being passed

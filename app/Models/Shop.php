@@ -38,6 +38,10 @@ class Shop extends Model
         'shop_domain',
         'subdomain_id',
         'shop_subdomain_name',
+        'gtm_id',
+        'facebook_pixel_id',
+        'facebook_pixel_event',
+        'facebook_pixel_access_token'
     ];
 
 
