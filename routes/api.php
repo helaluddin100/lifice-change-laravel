@@ -23,6 +23,11 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::get('/user-shop', function (Request $request) {
+        $shop = \App\Models\Shop::where('user_id', $request->user()->id)->first();
+        return response()->json($shop);
+    });
+
     Route::post('/update/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
