@@ -46,42 +46,4 @@ class DeliveryChargeController extends Controller
      * @param  \App\Models\DeliveryCharge  $deliveryCharge
      * @return \Illuminate\Http\Response
      */
-    public function show(DeliveryCharge $deliveryCharge)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\DeliveryCharge  $deliveryCharge
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DeliveryCharge $deliveryCharge)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\DeliveryCharge  $deliveryCharge
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, DeliveryCharge $deliveryCharge)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DeliveryCharge  $deliveryCharge
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DeliveryCharge $deliveryCharge)
-    {
-        //
-    }
 }

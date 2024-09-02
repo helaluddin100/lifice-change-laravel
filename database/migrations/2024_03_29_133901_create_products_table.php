@@ -21,13 +21,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('category')->nullable();
             $table->string('current_price');
-            $table->string('old_price');
+            $table->string('old_price')->nullable(); // Changed to nullable
             $table->string('buy_price')->nullable();
             $table->string('product_code');
             $table->string('quantity');
             $table->string('warranty')->nullable();
-            $table->string('sold_count')->default(0);
-            $table->json('product_details');
+            $table->integer('sold_count')->default(0); // Changed to integer
+            $table->json('product_details')->nullable(); // Made nullable
 
             //product list details
             $table->json('product_info_list')->nullable();
@@ -41,20 +41,21 @@ return new class extends Migration
             $table->string('delivery_charge')->nullable();
 
             //product images
-            $table->json('images');
+            $table->json('images')->nullable(); // Made nullable
 
             //product video
             $table->string('video')->nullable();
+
             //seo data
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->string('meta_keywords')->nullable();
 
-
-            $table->boolean('status')->default(true);
+            $table->boolean('status')->default(true); // Default true
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

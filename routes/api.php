@@ -7,7 +7,8 @@ use App\Http\Controllers\Api\Auth\VerificationController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ShopController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\DistrictController;;
+use App\Http\Controllers\Api\DistrictController;
+use App\Http\Controllers\Api\ProductController;
 
 use App\Models\District;
 
@@ -55,7 +56,9 @@ Route::put('/categories/{id}', [CategoryController::class, 'update']);
 Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy']);
 
 
-//country
+//Product
+Route::post('/product-create', [ProductController::class, 'store']);
+
 
 
 
