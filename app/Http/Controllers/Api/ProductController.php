@@ -46,11 +46,13 @@ class ProductController extends Controller
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
             'status' => 'nullable',
+            'has_variant' => 'nullable',
         ]);
 
 
         // Ensure 'status' is treated as a boolean
         $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         // Handle file uploads
         $imagesPaths = [];
@@ -82,6 +84,7 @@ class ProductController extends Controller
             'meta_description' => $validated['meta_description'] ?? null,
             'meta_keywords' => $validated['meta_keywords'] ?? null,
             'status' => $status,
+            'has_variant' => $has_variant,
         ]);
 
         // Return response
