@@ -69,3 +69,7 @@ Route::get('district', [DistrictController::class, 'index']);
 //color
 Route::post('/color', [ColorController::class, 'store']);
 Route::get('/colors', [ColorController::class, 'index']);
+Route::post('color/store', [ColorController::class, 'store']);
+Route::get('/color/{id}', [ColorController::class, 'edit']);
+Route::put('/colors/{id}', [ColorController::class, 'update']);
+Route::delete('/color/delete/{id}', [ColorController::class, 'destroy']);

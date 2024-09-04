@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Color extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'user_id',
-        'shop_id',
-        'color',
-        'status',
+    protected $fillable = ['color', 'user_id', 'shop_id', 'status'];
+
+    protected $casts = [
+        'status' => 'boolean',
     ];
 
     public function user()

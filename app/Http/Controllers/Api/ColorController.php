@@ -47,24 +47,26 @@ class ColorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'color' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id',
             'shop_id' => 'required|exists:shops,id',
-            'color' => 'required|string|max:255',
-            'status' => 'boolean',
+            'status' => 'required|boolean',
         ]);
 
-        $color = Color::create([
-            'user_id' => $request->user_id,
-            'shop_id' => $request->shop_id,
-            'color' => $request->color,
-            'status' => $request->status ?? true,
-        ]);
+        $color = new Color();
+        $color->color = $request->color;
+        $color->user_id = $request->user_id;
+        $color->shop_id = $request->shop_id;
+        $color->status = $request->status;
+        $color->save();
 
         return response()->json([
+            'status' => 200,
             'message' => 'Color created successfully!',
-            'data' => $color
-        ], 201);
+            'color' => $color,
+        ]);
     }
+
 
     /**
      * Display the specified resource.
@@ -83,9 +85,15 @@ class ColorController extends Controller
      * @param  \App\Models\Color  $color
      * @return \Illuminate\Http\Response
      */
-    public function edit(Color $color)
+    public function edit($id)
     {
-        //
+        $color = Color::find($id);
+
+        if (!$color) {
+            return response()->json(['error' => 'color not found'], 404);
+        }
+
+        return response()->json(['color' => $color]);
     }
 
     /**
@@ -95,9 +103,25 @@ class ColorController extends Controller
      * @param  \App\Models\Color  $color
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Color $color)
+
+
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'color' => 'required|string|max:255',
+            'status' => 'required|boolean',
+        ]);
+
+        $color = Color::findOrFail($id);
+        $color->color = $request->color;
+        $color->status = $request->status;
+        $color->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Color updated successfully!',
+            'color' => $color,
+        ]);
     }
 
     /**
@@ -106,8 +130,18 @@ class ColorController extends Controller
      * @param  \App\Models\Color  $color
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Color $color)
+    public function destroy($id)
     {
-        //
+        try {
+            $color = Color::findOrFail($id);
+            $color->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'color deleted successfully',
+            ]);
+        } catch (\Throwable $e) {
+            // Log and handle errors
+            return response()->json(['status' => 500, 'error' => 'An error occurred. Please try again later.'], 500);
+        }
     }
 }
