@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ShopController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ColorController;
 
 use App\Models\District;
 
@@ -64,3 +65,7 @@ Route::post('/product-create', [ProductController::class, 'store']);
 
 //district
 Route::get('district', [DistrictController::class, 'index']);
+
+//color
+Route::post('/color', [ColorController::class, 'store']);
+Route::get('/colors', [ColorController::class, 'index']);

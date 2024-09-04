@@ -20,7 +20,18 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
      */
 
     protected $fillable = [
-        'name', 'password', 'verification_code', 'email', 'address', 'phone', 'about', 'city', 'Region', 'country', 'ip', 'image',
+        'name',
+        'password',
+        'verification_code',
+        'email',
+        'address',
+        'phone',
+        'about',
+        'city',
+        'Region',
+        'country',
+        'ip',
+        'image',
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -56,6 +67,16 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     {
         return $this->hasMany(BusinessType::class);
     }
+
+
+
+    public function colors()
+    {
+        return $this->hasMany(Color::class);
+    }
+
+
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
