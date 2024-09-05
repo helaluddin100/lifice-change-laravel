@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ColorController;
+use App\Http\Controllers\Api\SizeController;
 
 use App\Models\District;
 
@@ -73,3 +74,12 @@ Route::post('color/store', [ColorController::class, 'store']);
 Route::get('/color/{id}', [ColorController::class, 'edit']);
 Route::put('/colors/{id}', [ColorController::class, 'update']);
 Route::delete('/color/delete/{id}', [ColorController::class, 'destroy']);
+
+
+//Size
+Route::post('/size', [SizeController::class, 'store']);
+Route::get('/sizes', [SizeController::class, 'index']);
+Route::post('size/store', [SizeController::class, 'store']);
+Route::get('/size/{id}', [SizeController::class, 'edit']);
+Route::put('/sizes/{id}', [SizeController::class, 'update']);
+Route::delete('/size/delete/{id}', [SizeController::class, 'destroy']);
