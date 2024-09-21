@@ -29,6 +29,19 @@ class SizeController extends Controller
         ]);
     }
 
+
+    public function getSizeByShop($id)
+    {
+        $sizes = Size::where('shop_id', $id)
+            ->where('status', 1) // Corrected this line
+            ->orderBy('id', 'desc')
+            ->get();
+        return response()->json([
+            'status' => 200,
+            'sizes' => $sizes,
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

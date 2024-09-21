@@ -18,16 +18,20 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('shop_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
+
             $table->string('name');
             $table->string('category')->nullable();
             $table->string('current_price');
-            $table->string('old_price')->nullable(); // Changed to nullable
+            $table->string('old_price')->nullable();
             $table->string('buy_price')->nullable();
             $table->string('product_code');
             $table->string('quantity');
             $table->string('warranty')->nullable();
-            $table->integer('sold_count')->default(0); // Changed to integer
-            $table->json('product_details')->nullable(); // Made nullable
+            $table->integer('sold_count')->default(0);
+            $table->json('product_details')->nullable();
+            $table->json('product_color')->nullable();
+            $table->json('product_size')->nullable();
+
 
             //product list details
             $table->json('product_info_list')->nullable();
@@ -41,7 +45,7 @@ return new class extends Migration
             $table->string('delivery_charge')->nullable();
 
             //product images
-            $table->json('images')->nullable(); // Made nullable
+            $table->json('images')->nullable();
 
             //product video
             $table->string('video')->nullable();

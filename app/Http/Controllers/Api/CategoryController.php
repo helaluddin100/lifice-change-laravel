@@ -29,22 +29,17 @@ class CategoryController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function getCategoriesByUser($id)
     {
-        //
+        $categories = Category::where('user_id', $id)
+            ->where('status', 1)
+            ->orderBy('id', 'desc')->get();
+        return response()->json([
+            'status' => 200,
+            'categories' => $categories,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         try {
@@ -154,7 +149,7 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        
+
 
         try {
             // Find the category by ID and delete it

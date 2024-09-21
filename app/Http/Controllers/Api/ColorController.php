@@ -28,6 +28,20 @@ class ColorController extends Controller
         ]);
     }
 
+    public function getColorByShop($id)
+    {
+        $colors = Color::where('shop_id', $id)
+            ->where('status', 1) // Corrected this line
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'colors' => $colors,
+        ]);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *

@@ -57,6 +57,8 @@ Route::get('/categories/{id}', [CategoryController::class, 'edit']);
 Route::put('/categories/{id}', [CategoryController::class, 'update']);
 Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy']);
 
+//get category by user
+Route::get('/all-categories/{id}', [CategoryController::class, 'getCategoriesByUser']);
 
 //Product
 Route::post('/product-create', [ProductController::class, 'store']);
@@ -75,6 +77,8 @@ Route::get('/color/{id}', [ColorController::class, 'edit']);
 Route::put('/colors/{id}', [ColorController::class, 'update']);
 Route::delete('/color/delete/{id}', [ColorController::class, 'destroy']);
 
+//get color by shop and user
+Route::get('/color/shop/{id}', [ColorController::class, 'getColorByShop']);
 
 //Size
 Route::post('/size', [SizeController::class, 'store']);
@@ -83,3 +87,4 @@ Route::post('size/store', [SizeController::class, 'store']);
 Route::get('/size/{id}', [SizeController::class, 'edit']);
 Route::put('/sizes/{id}', [SizeController::class, 'update']);
 Route::delete('/size/delete/{id}', [SizeController::class, 'destroy']);
+Route::get('/size/shop/{id}', [SizeController::class, 'getSizeByShop']);
