@@ -20,7 +20,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-
+        // Validate incoming request data
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'shop_id' => 'required|exists:shops,id',
@@ -33,9 +33,19 @@ class ProductController extends Controller
             'product_code' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
+
+
+            'product_colors' => 'nullable|array', // Validate colors array
+            'product_colors.*.color' => 'required|string|max:255', // Each color must have a value
+            'product_colors.*.price' => 'required|numeric', // Each color must have a price
+            'product_sizes' => 'nullable|array', // Validate sizes array
+            'product_sizes.*.size' => 'required|string|max:255', // Each size must have a value
+            'product_sizes.*.price' => 'required|numeric', // Each size must have a price
             'product_details' => 'nullable|array',
             'product_details.*.detail_type' => 'nullable|string|max:255',
             'product_details.*.detail_description' => 'nullable|string',
+
+
             'product_variant' => 'nullable|array',
             'product_variant.*.option' => 'nullable|string|max:255',
             'product_variant.*.cost' => 'nullable|numeric',
@@ -49,12 +59,11 @@ class ProductController extends Controller
             'has_variant' => 'nullable',
         ]);
 
-
-        // Ensure 'status' is treated as a boolean
+        // Ensure 'status' and 'has_variant' are treated as booleans
         $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
         $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-        // Handle file uploads
+        // Handle file uploads for images
         $imagesPaths = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -78,6 +87,8 @@ class ProductController extends Controller
             'warranty' => $validated['warranty'] ?? null,
             'product_details' => $validated['product_details'] ?? [],
             'product_variant' => $validated['product_variant'] ?? [],
+            'product_colors' => $validated['product_colors'] ?? [],
+            'product_sizes' => $validated['product_sizes'] ?? [],
             'images' => $imagesPaths,
             'video' => $validated['video'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
@@ -87,12 +98,16 @@ class ProductController extends Controller
             'has_variant' => $has_variant,
         ]);
 
-        // Return response
+
+
+        // Return response indicating the product was created successfully
         return response()->json([
             'message' => 'Product created successfully',
-            'data' => $product
+            'data' => $product,
         ], 201);
     }
+
+
 
 
 

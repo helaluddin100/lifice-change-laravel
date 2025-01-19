@@ -29,8 +29,8 @@ return new class extends Migration
             $table->string('warranty')->nullable();
             $table->integer('sold_count')->default(0);
             $table->json('product_details')->nullable();
-            $table->json('product_color')->nullable();
-            $table->json('product_size')->nullable();
+            $table->json('product_colors')->nullable();
+            $table->json('product_sizes')->nullable();
 
 
             //product list details

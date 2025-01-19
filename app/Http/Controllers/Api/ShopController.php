@@ -184,17 +184,15 @@ class ShopController extends Controller
                 'shop_subdomain_name' => 'nullable',
                 'shop_domain_name' => 'nullable',
 
-
                 'live_chat_whatsapp' => 'nullable',
                 'whatsapp_chat' => 'nullable',
-
 
                 'gtm_id' => 'nullable',
                 'facebook_pixel_id' => 'nullable',
                 'facebook_pixel_access_token' => 'nullable',
                 'facebook_pixel_event' => 'nullable',
 
-                // social link
+                // Social links
                 'facebook' => 'nullable',
                 'instagram' => 'nullable',
                 'linkedin' => 'nullable',
@@ -203,19 +201,24 @@ class ShopController extends Controller
                 'telegram' => 'nullable',
                 'whatsapp' => 'nullable',
                 'discord' => 'nullable'
-
             ]);
 
-            // Log the validated data to see what's being passed
-            Log::info('Validated data', $validatedData);
+            // Filter out null or empty fields
+            $filteredData = array_filter($validatedData, function ($value) {
+                return $value !== null && $value !== '';
+            });
+
+            // Log the filtered data to debug
+            Log::info('Filtered data', $filteredData);
 
             $shop = Shop::findOrFail($id);
-            $shop->update($validatedData);
+            $shop->update($filteredData);
 
             // Handle logo upload
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 if ($image->isValid()) {
+                    // Delete old image if it exists
                     if (File::exists($shop->logo)) {
                         File::delete($shop->logo);
                     }
@@ -242,6 +245,7 @@ class ShopController extends Controller
             return response()->json(['status' => 500, 'error' => $e->getMessage()]);
         }
     }
+
 
 
 

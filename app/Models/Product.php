@@ -34,6 +34,8 @@ class Product extends Model
         'meta_title',
         'meta_description',
         'meta_keywords',
+        'product_colors',  // Added for storing colors
+        'product_sizes',
         'status'
     ];
 
@@ -41,6 +43,8 @@ class Product extends Model
         'product_details' => 'array',
         'product_info_list' => 'array',
         'product_variant' => 'array',
+        'product_colors' => 'array',
+        'product_sizes' => 'array',
         'images' => 'array',
         'has_variant' => 'boolean',
         'has_delivery_charge' => 'boolean',
