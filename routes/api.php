@@ -88,3 +88,8 @@ Route::get('/size/{id}', [SizeController::class, 'edit']);
 Route::put('/sizes/{id}', [SizeController::class, 'update']);
 Route::delete('/size/delete/{id}', [SizeController::class, 'destroy']);
 Route::get('/size/shop/{id}', [SizeController::class, 'getSizeByShop']);
+
+
+//get product by shop and user
+Route::get('/categories/user/{id}', [ProductController::class, 'getCategoriesByUser']);
+Route::get('/products/user/{id}', [ProductController::class, 'show']);

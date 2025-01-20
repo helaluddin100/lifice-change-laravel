@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -69,6 +70,9 @@ class ProductController extends Controller
             foreach ($request->file('images') as $image) {
                 $path = $image->store('product_images', 'public');
                 $imagesPaths[] = $path;
+
+                // Log each saved path for debugging
+                \Log::info('Saved image path:', [$path]);
             }
         }
 
@@ -102,13 +106,39 @@ class ProductController extends Controller
 
         // Return response indicating the product was created successfully
         return response()->json([
+            'status' => 200, // Add the status field
             'message' => 'Product created successfully',
             'data' => $product,
-        ], 201);
+        ], 200);
     }
 
 
+    public function getCategoriesByUser($id)
+    {
+        $categories = Category::where('user_id', $id)->get();
+        return response()->json($categories);
+    }
 
+    // public function show($id)
+    // {
+    //     $shops = Product::where('user_id', $id)->get();
+    //     return response()->json($shops);
+    // }
+
+
+
+    public function show($userId, Request $request)
+    {
+        $query = Product::where('user_id', $userId);
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        $products = $query->get();
+
+        return response()->json($products);
+    }
 
 
 
