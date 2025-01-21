@@ -149,9 +149,14 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit($id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        return response()->json([
+            'status' => 200,
+            'product' => $product,
+        ]);
     }
 
     /**
