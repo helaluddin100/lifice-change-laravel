@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('quantity');
             $table->string('warranty')->nullable();
             $table->integer('sold_count')->default(0);
+
+            $table->boolean('has_details')->default(false);
             $table->json('product_details')->nullable();
             $table->json('product_colors')->nullable();
             $table->json('product_sizes')->nullable();
@@ -38,6 +40,8 @@ return new class extends Migration
 
             //product variant
             $table->boolean('has_variant')->default(false);
+
+            $table->string('variant_name')->nullable();
             $table->json('product_variant')->nullable();
 
             //default delivery charge
@@ -50,6 +54,8 @@ return new class extends Migration
             //product video
             $table->string('video')->nullable();
 
+            // product description
+            $table->longText('description')->nullable();
             //seo data
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();

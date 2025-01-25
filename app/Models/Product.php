@@ -36,7 +36,10 @@ class Product extends Model
         'meta_keywords',
         'product_colors',  // Added for storing colors
         'product_sizes',
-        'status'
+        'status',
+        'has_details',
+        'variant_name',
+        'description',
     ];
 
     protected $casts = [
