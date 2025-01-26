@@ -216,25 +216,24 @@ class ProductController extends Controller
 
         // Find the product by ID
         $product = Product::findOrFail($id);
+        // Retrieve existing images from the product
+        $existingImages = json_decode($product->image, true) ?? [];
 
-        $imagesPaths = $product->images ?? []; // Retrieve existing images
-
-        // Check if new images are provided in the request
-        if ($request->has('images')) {
-            foreach ($request->images as $image) {
-                // If the image is an uploaded file, store it
-                if ($image instanceof \Illuminate\Http\UploadedFile) {
-                    $path = $image->store('product_images', 'public');
-                    $imagesPaths[] = $path; // Add the new image path to the array
-                } else {
-                    // If the image is not a file (e.g., URL), add it directly
-                    $imagesPaths[] = $image;
-                }
+        // Handle new uploaded images
+        $uploadedImages = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $imageName = md5(uniqid()) . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('product_images'), $imageName);
+                $uploadedImages[] = 'product_images/' . $imageName;
             }
         }
 
-        // Remove duplicates from the images array
-        $imagesPaths = array_unique($imagesPaths);
+        // Merge existing images with newly uploaded images
+        $allImages = array_merge($existingImages, $uploadedImages);
+
+        // Directly set the images as a plain array, no need to JSON encode here
+        $product->images = $allImages;  // This stores the images as a plain array
 
         // Update the product
         $product->update([
@@ -253,7 +252,6 @@ class ProductController extends Controller
             'product_colors' => $validated['product_colors'] ?? [],
             'product_sizes' => $validated['product_sizes'] ?? [],
 
-            'images' => $imagesPaths,
             'video' => $validated['video'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
