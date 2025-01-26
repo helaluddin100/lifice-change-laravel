@@ -198,7 +198,7 @@ class ProductController extends Controller
             'product_variant.*.option' => 'nullable|string|max:255',
             'product_variant.*.cost' => 'nullable|numeric',
             'images' => 'nullable|array',
-            'images.*' => 'file|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable',
             'video' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
@@ -217,14 +217,24 @@ class ProductController extends Controller
         // Find the product by ID
         $product = Product::findOrFail($id);
 
-        // Handle file uploads for images
-        $imagesPaths = $product->images; // Keep existing images
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('product_images', 'public');
-                $imagesPaths[] = $path;
+        $imagesPaths = $product->images ?? []; // Retrieve existing images
+
+        // Check if new images are provided in the request
+        if ($request->has('images')) {
+            foreach ($request->images as $image) {
+                // If the image is an uploaded file, store it
+                if ($image instanceof \Illuminate\Http\UploadedFile) {
+                    $path = $image->store('product_images', 'public');
+                    $imagesPaths[] = $path; // Add the new image path to the array
+                } else {
+                    // If the image is not a file (e.g., URL), add it directly
+                    $imagesPaths[] = $image;
+                }
             }
         }
+
+        // Remove duplicates from the images array
+        $imagesPaths = array_unique($imagesPaths);
 
         // Update the product
         $product->update([
@@ -242,6 +252,7 @@ class ProductController extends Controller
             'product_variant' => $validated['product_variant'] ?? [],
             'product_colors' => $validated['product_colors'] ?? [],
             'product_sizes' => $validated['product_sizes'] ?? [],
+
             'images' => $imagesPaths,
             'video' => $validated['video'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
