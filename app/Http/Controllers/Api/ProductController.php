@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -68,14 +69,7 @@ class ProductController extends Controller
         $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
         $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-        // Handle file uploads for images
-        $imagesPaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('product_images', 'public');
-                $imagesPaths[] = $path;
-            }
-        }
+
 
         // Create the product
         $product = Product::create([
@@ -94,7 +88,6 @@ class ProductController extends Controller
             'product_variant' => $validated['product_variant'] ?? [],
             'product_colors' => $validated['product_colors'] ?? [],
             'product_sizes' => $validated['product_sizes'] ?? [],
-            'images' => $imagesPaths,
             'video' => $validated['video'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
@@ -105,7 +98,18 @@ class ProductController extends Controller
             'variant_name' => $validated['variant_name'] ?? null,
             'description' => $validated['description'] ?? null,
         ]);
+        // Handle image uploads and store in product_images table
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('product_images'), $imageName);
 
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => 'product_images/' . $imageName
+                ]);
+            }
+        }
 
 
         // Return response indicating the product was created successfully
@@ -123,17 +127,13 @@ class ProductController extends Controller
         return response()->json($categories);
     }
 
-    // public function show($id)
-    // {
-    //     $shops = Product::where('user_id', $id)->get();
-    //     return response()->json($shops);
-    // }
+
 
 
 
     public function show($userId, Request $request)
     {
-        $query = Product::where('user_id', $userId);
+        $query = Product::where('user_id', $userId)->with('images'); // Include images
 
         if ($request->has('category_id')) {
             $query->where('category_id', $request->input('category_id'));
@@ -147,6 +147,7 @@ class ProductController extends Controller
 
 
 
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -155,13 +156,14 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('images')->findOrFail($id);
 
         return response()->json([
             'status' => 200,
             'product' => $product,
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -172,9 +174,13 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+
         // Validate incoming request data
         $validated = $request->validate([
-            'category_id' => 'required',
+            'user_id' => 'required|exists:users,id',
+            'shop_id' => 'required|exists:shops,id',
+            'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
             'item_name' => 'nullable|string|max:255',
             'current_price' => 'required|numeric',
@@ -184,12 +190,12 @@ class ProductController extends Controller
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
 
-            'product_colors' => 'nullable|array', // Validate colors array
-            'product_colors.*.color' => 'required|string|max:255', // Each color must have a value
-            'product_colors.*.price' => 'required|numeric', // Each color must have a price
-            'product_sizes' => 'nullable|array', // Validate sizes array
-            'product_sizes.*.size' => 'required|string|max:255', // Each size must have a value
-            'product_sizes.*.price' => 'required|numeric', // Each size must have a price
+            'product_colors' => 'nullable|array',
+            'product_colors.*.color' => 'required|string|max:255',
+            'product_colors.*.price' => 'required|numeric',
+            'product_sizes' => 'nullable|array',
+            'product_sizes.*.size' => 'required|string|max:255',
+            'product_sizes.*.price' => 'required|numeric',
             'product_details' => 'nullable|array',
             'product_details.*.detail_type' => 'nullable|string|max:255',
             'product_details.*.detail_description' => 'nullable|string',
@@ -197,8 +203,13 @@ class ProductController extends Controller
             'product_variant' => 'nullable|array',
             'product_variant.*.option' => 'nullable|string|max:255',
             'product_variant.*.cost' => 'nullable|numeric',
+
             'images' => 'nullable|array',
             'images.*' => 'nullable',
+
+            'removed_images' => 'nullable|array',
+            'removed_images.*' => 'exists:product_images,id', // Ensure valid image IDs are provided
+
             'video' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
@@ -210,34 +221,17 @@ class ProductController extends Controller
             'description' => 'nullable',
         ]);
 
-        // Ensure 'status' and 'has_variant' are treated as booleans
+        // Convert boolean values
         $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
         $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-        // Find the product by ID
+        // Find the product
         $product = Product::findOrFail($id);
-        // Retrieve existing images from the product
-        $existingImages = json_decode($product->image, true) ?? [];
 
-        // Handle new uploaded images
-        $uploadedImages = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                $imageName = md5(uniqid()) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('product_images'), $imageName);
-                $uploadedImages[] = 'product_images/' . $imageName;
-            }
-        }
-
-        // Merge existing images with newly uploaded images
-        $allImages = array_merge($existingImages, $uploadedImages);
-
-        // Directly set the images as a plain array, no need to JSON encode here
-        $product->images = $allImages;  // This stores the images as a plain array
-
-        // Update the product
+        // Update product details
         $product->update([
-
+            'user_id' => $validated['user_id'],
+            'shop_id' => $validated['shop_id'],
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
             'item_name' => $validated['item_name'] ?? null,
@@ -251,7 +245,6 @@ class ProductController extends Controller
             'product_variant' => $validated['product_variant'] ?? [],
             'product_colors' => $validated['product_colors'] ?? [],
             'product_sizes' => $validated['product_sizes'] ?? [],
-
             'video' => $validated['video'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
@@ -263,13 +256,48 @@ class ProductController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
-        // Return response indicating the product was updated successfully
+
+        // Step 1: Remove images
+        if (!empty($validated['removed_images'])) {
+            foreach ($validated['removed_images'] as $imageId) {
+                $productImage = ProductImage::find($imageId);
+                if ($productImage) {
+                    $imagePath = public_path($productImage->image_path);
+
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath); // Delete the image from storage
+                    }
+                    $productImage->delete(); // Remove the record from the database
+                }
+            }
+        }
+
+        // Step 2: Upload and store new images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                if ($image->isValid()) {
+                    $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('product_images'), $imageName);
+
+                    // Save new image in the database
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => 'product_images/' . $imageName
+                    ]);
+                }
+            }
+        }
+
+        // Return response
         return response()->json([
-            'status' => 200, // Add the status field
+            'status' => 200,
             'message' => 'Product updated successfully',
-            'data' => $product,
+            'data' => $product->load('images'), // Load images in response
         ], 200);
     }
+
+
+
 
 
     /**
