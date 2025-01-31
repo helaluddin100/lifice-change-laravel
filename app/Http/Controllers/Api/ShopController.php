@@ -212,7 +212,20 @@ class ShopController extends Controller
             Log::info('Filtered data', $filteredData);
 
             $shop = Shop::findOrFail($id);
+
             $shop->update($filteredData);
+
+
+            $shop->slider = $request->slider ? 1 : 0;
+            $shop->today_sell = $request->today_sell ? 1 : 0;
+            $shop->new_arrival = $request->new_arrival ? 1 : 0;
+            $shop->offer_product = $request->offer_product ? 1 : 0;
+            $shop->hot_deal = $request->hot_deal ? 1 : 0;
+            $shop->flash_deal = $request->flash_deal ? 1 : 0;
+            $shop->top_rated = $request->top_rated ? 1 : 0;
+            $shop->top_selling = $request->top_selling ? 1 : 0;
+            $shop->related_product = $request->related_product ? 1 : 0;
+
 
             // Handle logo upload
             if ($request->hasFile('image')) {
