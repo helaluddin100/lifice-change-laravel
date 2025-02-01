@@ -200,7 +200,18 @@ class ShopController extends Controller
                 'tiktok' => 'nullable',
                 'telegram' => 'nullable',
                 'whatsapp' => 'nullable',
-                'discord' => 'nullable'
+                'discord' => 'nullable',
+
+                // ✅ Add boolean fields for settings
+                'slider' => 'nullable|boolean',
+                'today_sell' => 'nullable|boolean',
+                'new_arrival' => 'nullable|boolean',
+                'offer_product' => 'nullable|boolean',
+                'hot_deal' => 'nullable|boolean',
+                'flash_deal' => 'nullable|boolean',
+                'top_rated' => 'nullable|boolean',
+                'top_selling' => 'nullable|boolean',
+                'related_product' => 'nullable|boolean',
             ]);
 
             // Filter out null or empty fields
@@ -213,25 +224,13 @@ class ShopController extends Controller
 
             $shop = Shop::findOrFail($id);
 
+            // ✅ Merge the filtered data with boolean settings
             $shop->update($filteredData);
-
-
-            $shop->slider = $request->slider ? 1 : 0;
-            $shop->today_sell = $request->today_sell ? 1 : 0;
-            $shop->new_arrival = $request->new_arrival ? 1 : 0;
-            $shop->offer_product = $request->offer_product ? 1 : 0;
-            $shop->hot_deal = $request->hot_deal ? 1 : 0;
-            $shop->flash_deal = $request->flash_deal ? 1 : 0;
-            $shop->top_rated = $request->top_rated ? 1 : 0;
-            $shop->top_selling = $request->top_selling ? 1 : 0;
-            $shop->related_product = $request->related_product ? 1 : 0;
-
 
             // Handle logo upload
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 if ($image->isValid()) {
-                    // Delete old image if it exists
                     if (File::exists($shop->logo)) {
                         File::delete($shop->logo);
                     }
@@ -251,7 +250,6 @@ class ShopController extends Controller
                 'message' => 'Shop updated successfully',
             ]);
         } catch (ValidationException $e) {
-            // Return validation errors
             return response()->json(['status' => 422, 'errors' => $e->errors()]);
         } catch (\Throwable $e) {
             Log::error('Error updating shop', ['error' => $e->getMessage()]);
