@@ -23,6 +23,21 @@ class ShopController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+
+     public function findByShopUrl($shop_url)
+    {
+        $shop = Shop::where('shop_url', $shop_url)->first();
+
+        if ($shop) {
+            return response()->json($shop, 200);
+        }
+
+        return response()->json(['message' => 'Shop not found'], 404);
+    }
+
+
+
+
     public function countries()
     {
         $countries = Country::where('status', 1)->get();
@@ -48,10 +63,7 @@ class ShopController extends Controller
         return response()->json($shops);
     }
 
-    public function index()
-    {
-        //
-    }
+
 
     /**
      * Show the form for creating a new resource.

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DistrictController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Api\ShopController;
 
+use App\Http\Controllers\Admin\TemplateController;
 
 
 /*
@@ -54,6 +55,9 @@ Route::namespace('App\Http\Controllers')->group(
             Route::resource('/business', 'BusinessTypeController');
             Route::resource('/country', 'CountryController');
             Route::resource('/district', 'DistrictController');
+
+            Route::resource('templates', TemplateController::class);
+
         });
     }
 );

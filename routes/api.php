@@ -96,3 +96,7 @@ Route::get('/categories/user/{id}', [ProductController::class, 'getCategoriesByU
 Route::get('/products/user/{id}', [ProductController::class, 'show']);
 Route::get('/product/{id}/edit', [ProductController::class, 'edit'])->name('product.edit');
 Route::post('/products/{id}', [ProductController::class, 'update'])->name('product.update');
+
+
+//view shop
+Route::get('/shop/{shop_url}', [ShopController::class, 'findByShopUrl']);
