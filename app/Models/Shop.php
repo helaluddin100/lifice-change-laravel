@@ -44,7 +44,16 @@ class Shop extends Model
         'facebook_pixel_event',
         'facebook_pixel_access_token',
         'whatsapp_chat',
-        'live_chat_whatsapp'
+        'live_chat_whatsapp',
+        'slider',
+        'today_sell',
+        'new_arrival',
+        'offer_product',
+        'hot_deal',
+        'flash_deal',
+        'top_rated',
+        'top_selling',
+        'related_product'
     ];
 
 

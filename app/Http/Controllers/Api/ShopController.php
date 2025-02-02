@@ -200,7 +200,18 @@ class ShopController extends Controller
                 'tiktok' => 'nullable',
                 'telegram' => 'nullable',
                 'whatsapp' => 'nullable',
-                'discord' => 'nullable'
+                'discord' => 'nullable',
+
+                // ✅ Add boolean fields for settings
+                'slider' => 'nullable|boolean',
+                'today_sell' => 'nullable|boolean',
+                'new_arrival' => 'nullable|boolean',
+                'offer_product' => 'nullable|boolean',
+                'hot_deal' => 'nullable|boolean',
+                'flash_deal' => 'nullable|boolean',
+                'top_rated' => 'nullable|boolean',
+                'top_selling' => 'nullable|boolean',
+                'related_product' => 'nullable|boolean',
             ]);
 
             // Filter out null or empty fields
@@ -212,13 +223,14 @@ class ShopController extends Controller
             Log::info('Filtered data', $filteredData);
 
             $shop = Shop::findOrFail($id);
+
+            // ✅ Merge the filtered data with boolean settings
             $shop->update($filteredData);
 
             // Handle logo upload
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 if ($image->isValid()) {
-                    // Delete old image if it exists
                     if (File::exists($shop->logo)) {
                         File::delete($shop->logo);
                     }
@@ -238,7 +250,6 @@ class ShopController extends Controller
                 'message' => 'Shop updated successfully',
             ]);
         } catch (ValidationException $e) {
-            // Return validation errors
             return response()->json(['status' => 422, 'errors' => $e->errors()]);
         } catch (\Throwable $e) {
             Log::error('Error updating shop', ['error' => $e->getMessage()]);
