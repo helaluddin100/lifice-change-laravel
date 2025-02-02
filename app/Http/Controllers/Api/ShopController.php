@@ -24,16 +24,23 @@ class ShopController extends Controller
      */
 
 
-     public function findByShopUrl($shop_url)
-    {
-        $shop = Shop::where('shop_url', $shop_url)->first();
 
-        if ($shop) {
-            return response()->json($shop, 200);
-        }
+public function showShopWithTemplate($shop_url)
+{
+    $shop = Shop::where('shop_url', $shop_url)->with('template')->first(); // Eager load the template
 
-        return response()->json(['message' => 'Shop not found'], 404);
+    if (!$shop) {
+        return response()->json(['error' => 'Shop not found'], 404);
     }
+
+    return response()->json([
+        'shop' => $shop,
+        'template' => $shop->template ? $shop->template : null,
+    ]);
+}
+
+
+
 
 
 

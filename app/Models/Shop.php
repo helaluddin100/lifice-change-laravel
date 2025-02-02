@@ -69,4 +69,12 @@ class Shop extends Model
     {
         return $this->hasMany(Color::class);
     }
+
+
+
+    public function template()
+    {
+        return $this->hasOne(Template::class, 'id', 'template_type'); // Adjust the column names
+    }
+
 }

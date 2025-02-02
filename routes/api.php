@@ -99,4 +99,4 @@ Route::post('/products/{id}', [ProductController::class, 'update'])->name('produ
 
 
 //view shop
-Route::get('/shop/{shop_url}', [ShopController::class, 'findByShopUrl']);
+Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
