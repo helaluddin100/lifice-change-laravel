@@ -12,8 +12,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Image;
-use Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class ShopController extends Controller
 {
@@ -255,8 +255,21 @@ class ShopController extends Controller
      * @param  \App\Models\Shop  $shop
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Shop $shop)
+    public function destroy($id)
     {
-        //
+        $shop = Shop::find($id);
+
+        if (!$shop) {
+            return response()->json(['message' => 'Shop not found'], 404);
+        }
+
+        // Delete the logo file if it exists
+        if ($shop->logo && Storage::exists($shop->logo)) {
+            Storage::delete($shop->logo);
+        }
+
+        $shop->delete();
+
+        return response()->json(['message' => 'Shop and logo deleted successfully'], 200);
     }
 }

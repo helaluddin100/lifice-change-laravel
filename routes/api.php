@@ -47,6 +47,7 @@ Route::post('create-shop', [ShopController::class, 'store']);
 Route::get('/user/{userId}/shops', [ShopController::class, 'getUserShops']);
 Route::post('/update-shop/{shop}', [ShopController::class, 'update']);
 Route::get('/shop/{id}', [ShopController::class, 'edit']);
+Route::delete('/shops/{id}', [ShopController::class, 'destroy']);
 
 
 
