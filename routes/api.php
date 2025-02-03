@@ -24,19 +24,46 @@ Route::post('/auth/verify', [AuthController::class, 'verify']);
 
 
 
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::get('/user', function (Request $request) {
+//         return $request->user();
+//     });
+
+//     Route::get('/user-shop', function (Request $request) {
+//         $shop = \App\Models\Shop::where('user_id', $request->user()->id)->first();
+//         return response()->json($shop);
+//     });
+
+//     Route::post('/update/user', [UserController::class, 'updateUser']);
+//     Route::post('/logout', [AuthController::class, 'logout']);
+// });
+
+Route::get('/user-shop', function (Request $request) {
+    $userId = $request->query('user_id'); // Get user_id from query params
+
+    if (!$userId) {
+        return response()->json(['error' => 'User ID is required'], 400);
+    }
+
+    $shop = \App\Models\Shop::where('user_id', $userId)->first();
+
+    if (!$shop) {
+        return response()->json(['error' => 'Shop not found'], 404);
+    }
+
+    return response()->json($shop);
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    Route::get('/user-shop', function (Request $request) {
-        $shop = \App\Models\Shop::where('user_id', $request->user()->id)->first();
-        return response()->json($shop);
-    });
-
     Route::post('/update/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
+
 
 // Business types route
 Route::get('country', [ShopController::class, 'countries']);

@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
             'country' => 'Bangladesh',
             'phone' => '01792892198',
             'email' => 'helal@admin.com',
+            'email_verified_at' => now(),
             'password' => bcrypt('helaluddin'),
         ]);
         DB::table('users')->insert([
@@ -29,6 +30,7 @@ class UsersTableSeeder extends Seeder
             'country' => 'Bangladesh',
             'phone' => '01792892198',
             'email' => 'helal@user.com',
+            'email_verified_at' => now(),
             'password' => bcrypt('helaluddin'),
         ]);
         DB::table('users')->insert([
@@ -37,6 +39,7 @@ class UsersTableSeeder extends Seeder
             'country' => 'Bangladesh',
             'phone' => '01792892198',
             'email' => 'admin@admin.com',
+            'email_verified_at' => now(),
             'password' => bcrypt('helaluddin'),
         ]);
         DB::table('users')->insert([
@@ -45,6 +48,7 @@ class UsersTableSeeder extends Seeder
             'country' => 'Bangladesh',
             'phone' => '01792892198',
             'email' => 'helal@block.com',
+            'email_verified_at' => now(),
             'password' => bcrypt('helaluddin'),
         ]);
     }
