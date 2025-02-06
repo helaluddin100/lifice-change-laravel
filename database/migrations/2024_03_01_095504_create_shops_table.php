@@ -91,7 +91,7 @@ return new class extends Migration
             $table->boolean('top_selling')->default(0);
             $table->boolean('related_product')->default(0);
 
-            $table->string('template_type')->default('template1');
+            $table->string('template_type')->default('1');
             //status
             $table->boolean('status')->default(1);
 

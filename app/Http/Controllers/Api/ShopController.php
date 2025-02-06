@@ -116,6 +116,7 @@ public function showShopWithTemplate($shop_url)
             $shop = new Shop($validatedData);
             $shop->user_id = $userId;
             $shop->shop_url = $shop_url;
+            $shop->template_id = 1;
             $shop->save();
 
             // Log the success message

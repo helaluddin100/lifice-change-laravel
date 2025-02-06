@@ -11,8 +11,7 @@ use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ColorController;
 use App\Http\Controllers\Api\SizeController;
-
-use App\Models\District;
+use App\Http\Controllers\Api\ShopManageController;
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -127,3 +126,4 @@ Route::post('/products/{id}', [ProductController::class, 'update'])->name('produ
 
 //view shop
 Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
+Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
