@@ -127,3 +127,8 @@ Route::post('/products/{id}', [ProductController::class, 'update'])->name('produ
 //view shop
 Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
 Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
+Route::get('/shop-sizes/{id}', [ShopManageController::class, 'sizesShow']);
+Route::get('/shop-colors/{id}', [ShopManageController::class, 'colorsShow']);
+
+
+Route::get('products', [ProductController::class, 'index']);

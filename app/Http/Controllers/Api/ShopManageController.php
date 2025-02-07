@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category;
 use App\Models\User;
 
 class ShopManageController extends Controller
@@ -30,6 +29,52 @@ class ShopManageController extends Controller
         // Return the categories
         return response()->json($categories);
     }
+
+
+
+    public function sizesShow($userId)
+    {
+        // Find the user by ID (you could use validation or authorization as well)
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Fetch sizes related to the user
+        $sizes = $user->sizes;  // Assuming you have a 'sizes' relationship defined in the User model
+
+        if (is_null($sizes) || $sizes->isEmpty()) {
+            return response()->json(['message' => 'No sizes found for this user'], 404);
+        }
+
+        // Return the sizes
+        return response()->json($sizes);
+    }
+
+
+
+
+    public function colorsShow($userId)
+    {
+        // Find the user by ID (you could use validation or authorization as well)
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Fetch colors related to the user
+        $colors = $user->colors;  // Assuming you have a 'colors' relationship defined in the User model
+
+        if (is_null($colors) || $colors->isEmpty()) {
+            return response()->json(['message' => 'No colors found for this user'], 404);
+        }
+
+        // Return the colors
+        return response()->json($colors);
+    }
+
 
 
     /**
