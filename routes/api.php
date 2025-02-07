@@ -137,3 +137,8 @@ Route::post('setup-pages/store', [SetupShopPageController::class, 'store']);
 Route::get('/setup-pages/{id}', [SetupShopPageController::class, 'edit']);
 Route::put('/setup-pages/{id}', [SetupShopPageController::class, 'update']);
 Route::delete('/setup-pages/delete/{id}', [SetupShopPageController::class, 'destroy']);
+Route::get('/shop-sizes/{id}', [ShopManageController::class, 'sizesShow']);
+Route::get('/shop-colors/{id}', [ShopManageController::class, 'colorsShow']);
+
+
+Route::get('products', [ProductController::class, 'index']);
