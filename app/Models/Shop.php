@@ -70,7 +70,10 @@ class Shop extends Model
         return $this->hasMany(Color::class);
     }
 
-
+    public function setupShopPage()
+    {
+        return $this->hasOne(SetupShopPage::class);
+    }
 
     public function template()
     {

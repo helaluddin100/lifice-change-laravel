@@ -74,6 +74,10 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     {
         return $this->hasMany(Color::class);
     }
+    public function setupShopPage()
+    {
+        return $this->hasOne(SetupShopPage::class);
+    }
 
 
 
