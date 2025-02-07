@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ColorController;
+use App\Http\Controllers\Api\SetupShopPageController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ShopManageController;
 
@@ -127,6 +128,15 @@ Route::post('/products/{id}', [ProductController::class, 'update'])->name('produ
 //view shop
 Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
 Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
+
+
+//color
+Route::post('/setup-page', [SetupShopPageController::class, 'store']);
+Route::get('/setup-pages', [SetupShopPageController::class, 'index']);
+Route::post('setup-pages/store', [SetupShopPageController::class, 'store']);
+Route::get('/setup-pages/{id}', [SetupShopPageController::class, 'edit']);
+Route::put('/setup-pages/{id}', [SetupShopPageController::class, 'update']);
+Route::delete('/setup-pages/delete/{id}', [SetupShopPageController::class, 'destroy']);
 Route::get('/shop-sizes/{id}', [ShopManageController::class, 'sizesShow']);
 Route::get('/shop-colors/{id}', [ShopManageController::class, 'colorsShow']);
 
