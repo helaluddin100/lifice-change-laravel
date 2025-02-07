@@ -48,7 +48,11 @@ class ProductController extends Controller
 
         // Apply price range filter if provided
         if ($request->has('min_price') && $request->has('max_price')) {
-            $query->whereBetween('current_price', [$request->min_price, $request->max_price]);
+            $minPrice = $request->min_price;
+            $maxPrice = $request->max_price;
+
+            // Ensure the product's price falls within the provided range
+            $query->whereBetween('current_price', [$minPrice, $maxPrice]);
         }
 
         // Sorting logic (optional)
@@ -71,6 +75,7 @@ class ProductController extends Controller
 
         return response()->json($products);
     }
+
 
 
 
