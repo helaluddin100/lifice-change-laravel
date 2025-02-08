@@ -42,37 +42,29 @@ class SetupShopPageController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'about_us' => 'nullable',
-            'privacy_policy' => 'nullable',
-            'terms_con' => 'nullable',
-            'return_can' => 'nullable',
+            'about_us' => 'nullable|string',
+            'privacy_policy' => 'nullable|string',
+            'terms_con' => 'nullable|string',
+            'return_can' => 'nullable|string',
             'user_id' => 'required|exists:users,id',
             'shop_id' => 'required|exists:shops,id',
-            'status' => 'required|boolean',
+        ], [
+            'user_id.exists' => 'The selected user does not exist.',
+            'shop_id.exists' => 'The selected shop does not exist.',
         ]);
 
-        // Check if a setup shop page already exists for this user and shop
-        $setupShopPage = SetupShopPage::where('user_id', $request->user_id)
-            ->where('shop_id', $request->shop_id)
-            ->first();
+        $setupShopPage = SetupShopPage::updateOrCreate(
+            ['user_id' => $request->user_id, 'shop_id' => $request->shop_id],
+            $validatedData
+        );
 
-        if ($setupShopPage) {
-            // Update existing record
-            $setupShopPage->update($validatedData);
-            return response()->json([
-                'status' => 200,
-                'message' => 'Setup Shop Page updated successfully!',
-                'data' => $setupShopPage,
-            ]);
-        } else {
-            // Create new record
-            $setupShopPage = SetupShopPage::create($validatedData);
-            return response()->json([
-                'status' => 200,
-                'message' => 'Setup Shop Page created successfully!',
-                'data' => $setupShopPage,
-            ]);
-        }
+        return response()->json([
+            'status' => 200,
+            'message' => $setupShopPage->wasRecentlyCreated
+                ? 'Setup Shop Page created successfully!'
+                : 'Setup Shop Page updated successfully!',
+            'data' => $setupShopPage,
+        ]);
     }
 
 
