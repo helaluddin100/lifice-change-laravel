@@ -25,19 +25,19 @@ class ShopController extends Controller
 
 
 
-public function showShopWithTemplate($shop_url)
-{
-    $shop = Shop::where('shop_url', $shop_url)->with('template')->first(); // Eager load the template
+    public function showShopWithTemplate($shop_url)
+    {
+        $shop = Shop::where('shop_url', $shop_url)->with('template')->first(); // Eager load the template
 
-    if (!$shop) {
-        return response()->json(['error' => 'Shop not found'], 404);
+        if (!$shop) {
+            return response()->json(['error' => 'Shop not found'], 404);
+        }
+
+        return response()->json([
+            'shop' => $shop,
+            'template' => $shop->template ? $shop->template : null,
+        ]);
     }
-
-    return response()->json([
-        'shop' => $shop,
-        'template' => $shop->template ? $shop->template : null,
-    ]);
-}
 
 
 
@@ -116,7 +116,7 @@ public function showShopWithTemplate($shop_url)
             $shop = new Shop($validatedData);
             $shop->user_id = $userId;
             $shop->shop_url = $shop_url;
-            $shop->template_id = 1;
+            $shop->template_type = 1;
             $shop->save();
 
             // Log the success message

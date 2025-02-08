@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 {
@@ -110,5 +111,12 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     public function sizes()
     {
         return $this->hasMany(Size::class, 'user_id', 'id');
+    }
+
+
+
+    public function homeSliders(): HasMany
+    {
+        return $this->hasMany(HomeSlider::class);
     }
 }

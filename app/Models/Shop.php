@@ -80,4 +80,9 @@ class Shop extends Model
         return $this->hasOne(Template::class, 'id', 'template_type'); // Adjust the column names
     }
 
+
+    public function homeSliders()
+    {
+        return $this->hasMany(HomeSlider::class);
+    }
 }

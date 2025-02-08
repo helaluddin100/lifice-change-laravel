@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\ColorController;
 use App\Http\Controllers\Api\SetupShopPageController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ShopManageController;
+use App\Http\Controllers\Api\HomeSliderController;
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -142,3 +143,10 @@ Route::get('/shop-colors/{id}', [ShopManageController::class, 'colorsShow']);
 
 
 Route::get('products', [ProductController::class, 'index']);
+
+
+// Home slider
+Route::get('/sliders/{shop_id}', [HomeSliderController::class, 'index']);  // Get all sliders for a shop
+Route::post('/sliders', [HomeSliderController::class, 'store']);            // Create a new slider
+Route::post('/sliders/{id}', [HomeSliderController::class, 'update']);        // Update slider
+Route::delete('/sliders/{id}', [HomeSliderController::class, 'destroy']);
