@@ -22,8 +22,8 @@ class ProductController extends Controller
             return response()->json(['error' => 'Shop ID is required'], 400);
         }
 
-        // Start querying the Product model
-        $query = Product::where('shop_id', $shop_id);  // Filter by shop_id first
+        // Start querying the Product model with eager loading for images
+        $query = Product::where('shop_id', $shop_id)->with('images');
 
         // Apply category filter if provided
         if ($request->has('categories') && !empty($request->categories)) {
@@ -33,7 +33,6 @@ class ProductController extends Controller
         // Apply size filter if provided
         if ($request->has('sizes') && !empty($request->sizes)) {
             foreach ($request->sizes as $size) {
-                // Assuming size data is stored as JSON in 'product_sizes'
                 $query->whereJsonContains('product_sizes', ['size' => $size]);
             }
         }
@@ -41,40 +40,21 @@ class ProductController extends Controller
         // Apply color filter if provided
         if ($request->has('color') && !empty($request->color)) {
             foreach ($request->color as $color) {
-                // Assuming color data is stored as JSON in 'product_colors'
                 $query->whereJsonContains('product_colors', ['color' => $color]);
             }
         }
 
         // Apply price range filter if provided
         if ($request->has('min_price') && $request->has('max_price')) {
-            $minPrice = $request->min_price;
-            $maxPrice = $request->max_price;
-
-            // Ensure the product's price falls within the provided range
-            $query->whereBetween('current_price', [$minPrice, $maxPrice]);
+            $query->whereBetween('current_price', [$request->min_price, $request->max_price]);
         }
 
-        // Sorting logic (optional)
-        if ($request->has('sort_by')) {
-            switch ($request->sort_by) {
-                case 'price_low_to_high':
-                    $query->orderBy('current_price', 'asc');
-                    break;
-                case 'price_high_to_low':
-                    $query->orderBy('current_price', 'desc');
-                    break;
-                default:
-                    $query->orderBy('created_at', 'desc');
-                    break;
-            }
-        }
-
-        // Execute the query and get the filtered products
+        // Fetch filtered products along with their images
         $products = $query->get();
 
         return response()->json($products);
     }
+
 
 
 
