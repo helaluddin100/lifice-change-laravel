@@ -21,7 +21,6 @@ return new class extends Migration
             $table->longText('privacy_policy')->nullable();
             $table->longText('terms_con')->nullable();
             $table->longText('return_can')->nullable();
-            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
