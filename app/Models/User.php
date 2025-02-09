@@ -79,7 +79,10 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     {
         return $this->hasOne(SetupShopPage::class);
     }
-
+    public function aboutUs()
+    {
+        return $this->hasOne(AboutUs::class);
+    }
 
 
     /**

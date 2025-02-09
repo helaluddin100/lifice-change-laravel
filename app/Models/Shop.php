@@ -74,6 +74,12 @@ class Shop extends Model
     {
         return $this->hasOne(SetupShopPage::class);
     }
+    public function aboutUs()
+    {
+        return $this->hasOne(AboutUs::class);
+    }
+
+
 
     public function template()
     {

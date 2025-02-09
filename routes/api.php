@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AboutUsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -140,6 +141,16 @@ Route::put('/setup-pages/{id}', [SetupShopPageController::class, 'update']);
 Route::delete('/setup-pages/delete/{id}', [SetupShopPageController::class, 'destroy']);
 Route::get('/shop-sizes/{id}', [ShopManageController::class, 'sizesShow']);
 Route::get('/shop-colors/{id}', [ShopManageController::class, 'colorsShow']);
+
+//About
+Route::post('/abouts', [AboutUsController::class, 'store']);
+Route::get('/abouts', [AboutUsController::class, 'index']);
+Route::post('about/store', [AboutUsController::class, 'store']);
+Route::get('/abouts/{id}', [AboutUsController::class, 'edit']);
+Route::put('/abouts/{id}', [AboutUsController::class, 'update']);
+Route::delete('/abouts/delete/{id}', [AboutUsController::class, 'destroy']);
+Route::get('/abouts/{id}', [ShopManageController::class, 'aboutShow']);
+
 
 
 Route::get('products', [ProductController::class, 'index']);
