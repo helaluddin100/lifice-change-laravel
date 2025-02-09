@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ShopManageController;
 use App\Http\Controllers\Api\HomeSliderController;
 use App\Http\Controllers\Api\TopCategoryController;
+use App\Http\Controllers\Api\TodaySellProductController;
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -167,3 +168,13 @@ Route::delete('/sliders/{id}', [HomeSliderController::class, 'destroy']);
 Route::post('/store-top-categories', [TopCategoryController::class, 'store']);
 Route::get('/get-top-categories', [TopCategoryController::class, 'getTopCategories']);
 Route::delete('/delete-top-category/{categoryId}', [TopCategoryController::class, 'deleteTopCategory']);
+
+// Today sell products
+
+Route::get('/products', [ProductController::class, 'getProductsForUserAndShop']);
+
+Route::post('/store-today-sell-products', [TodaySellProductController::class, 'store']);
+
+Route::get('/get-today-sell-products', [TodaySellProductController::class, 'getSelectedProducts']);
+
+Route::delete('/delete-today-sell-product/{productId}', [TodaySellProductController::class, 'delete']);

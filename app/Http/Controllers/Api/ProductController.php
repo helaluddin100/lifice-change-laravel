@@ -10,6 +10,24 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+
+
+    public function getProductsForUserAndShop(Request $request)
+    {
+        // Validate the inputs to ensure both user_id and shop_id exist
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',  // Validate user_id
+            'shop_id' => 'required|integer|exists:shops,id',  // Validate shop_id
+        ]);
+
+        // Fetch products for the specified user_id and shop_id
+        $products = Product::where('user_id', $request->user_id)
+            ->where('shop_id', $request->shop_id)
+            ->get();
+
+        // Return the products as a JSON response
+        return response()->json($products, 200);
+    }
     /**
      * Display a listing of the resource.
      *

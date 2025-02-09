@@ -122,4 +122,9 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     {
         return $this->hasMany(HomeSlider::class);
     }
+
+    public function todaySellProducts()
+    {
+        return $this->hasMany(TodaySellProduct::class);
+    }
 }

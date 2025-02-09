@@ -91,4 +91,9 @@ class Shop extends Model
     {
         return $this->hasMany(HomeSlider::class);
     }
+
+    public function todaySellProducts()
+    {
+        return $this->hasMany(TodaySellProduct::class);
+    }
 }
