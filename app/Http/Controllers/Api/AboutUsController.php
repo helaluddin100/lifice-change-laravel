@@ -66,7 +66,6 @@ class AboutUsController extends Controller
     {
         //
     }
-
     public function edit($id)
     {
         $aboutUs = AboutUs::find($id);
@@ -76,18 +75,18 @@ class AboutUsController extends Controller
         }
 
         return response()->json([
-            'aboutUs' => $aboutUs,
+            'status' => 200,
+            'about' => $aboutUs, // Ensure the key is "about" to match the frontend
         ]);
     }
+
     public function update(Request $request, $id)
     {
-        // Validate the request
         $request->validate([
             'about_us' => 'nullable|string',
             'status' => 'required|boolean',
         ]);
 
-        // Find the existing AboutUs entry
         $aboutUs = AboutUs::findOrFail($id);
         $aboutUs->about_us = $request->about_us;
         $aboutUs->status = $request->status;
@@ -96,13 +95,24 @@ class AboutUsController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'About Us updated successfully!',
-            'aboutUs' => $aboutUs,
+            'about' => $aboutUs, // Use "about" instead of "aboutUs"
         ]);
     }
 
 
-    public function destroy(AboutUs $aboutUs)
+    public function destroy($id)
     {
-        //
+        $aboutUs = AboutUs::find($id);
+
+        if (!$aboutUs) {
+            return response()->json(['message' => 'About Us entry not found'], 404);
+        }
+
+        $aboutUs->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'About Us deleted successfully!',
+        ]);
     }
 }
