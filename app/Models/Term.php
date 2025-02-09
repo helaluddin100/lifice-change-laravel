@@ -5,11 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SetupShopPage extends Model
+class Term extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'about_us', 'privacy_policy', 'terms_con', 'return_can', 'user_id', 'shop_id', 'status'
+        'terms_con',
+        'user_id',
+        'shop_id',
+        'status'
     ];
     public function user()
     {

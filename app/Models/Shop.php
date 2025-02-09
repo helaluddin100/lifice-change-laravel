@@ -70,15 +70,25 @@ class Shop extends Model
         return $this->hasMany(Color::class);
     }
 
-    public function setupShopPage()
-    {
-        return $this->hasOne(SetupShopPage::class);
-    }
+
     public function aboutUs()
     {
         return $this->hasOne(AboutUs::class);
     }
+    public function privacyPolicies()
 
+    {
+        return $this->hasOne(PrivacyPolicy::class);
+    }
+    public function terms()
+
+    {
+        return $this->hasOne(Term::class);
+    }
+    public function cancellations()
+    {
+        return $this->hasOne(Cancellation::class);
+    }
 
 
     public function template()

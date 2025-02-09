@@ -5,16 +5,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\Auth\VerificationController;
+use App\Http\Controllers\Api\CancellationController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ShopController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ColorController;
-use App\Http\Controllers\Api\SetupShopPageController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ShopManageController;
 use App\Http\Controllers\Api\HomeSliderController;
+use App\Http\Controllers\Api\PrivacyPolicyController;
+use App\Http\Controllers\Api\TermController;
 use App\Http\Controllers\Api\TopCategoryController;
 
 // Public routes (no authentication required)
@@ -134,12 +136,6 @@ Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow'])
 
 
 //color
-Route::post('/setup-page', [SetupShopPageController::class, 'store']);
-Route::get('/setup-pages', [SetupShopPageController::class, 'index']);
-Route::post('setup-pages/store', [SetupShopPageController::class, 'store']);
-Route::get('/setup-pages/{id}', [SetupShopPageController::class, 'edit']);
-Route::put('/setup-pages/{id}', [SetupShopPageController::class, 'update']);
-Route::delete('/setup-pages/delete/{id}', [SetupShopPageController::class, 'destroy']);
 Route::get('/shop-sizes/{id}', [ShopManageController::class, 'sizesShow']);
 Route::get('/shop-colors/{id}', [ShopManageController::class, 'colorsShow']);
 
@@ -151,6 +147,33 @@ Route::get('/abouts/{id}', [AboutUsController::class, 'edit']);
 Route::put('/abouts/{id}', [AboutUsController::class, 'update']);
 Route::delete('/abouts/{id}', [AboutUsController::class, 'destroy']);
 // Route::get('/abouts/{id}', [ShopManageController::class, 'aboutShow']);
+
+// Privacy Policy
+Route::post('/privacy', [PrivacyPolicyController::class, 'store']);
+Route::get('/privacy', [PrivacyPolicyController::class, 'index']);
+Route::post('privacy/store', [PrivacyPolicyController::class, 'store']);
+Route::get('/privacy/{id}', [PrivacyPolicyController::class, 'edit']);
+Route::put('/privacy/{id}', [PrivacyPolicyController::class, 'update']);
+Route::delete('/privacy/{id}', [PrivacyPolicyController::class, 'destroy']);
+// Route::get('/privacy/{id}', [ShopManageController::class, 'aboutShow']);
+
+// Terms and Conditions
+Route::post('/term', [TermController::class, 'store']);
+Route::get('/term', [TermController::class, 'index']);
+Route::post('term/store', [TermController::class, 'store']);
+Route::get('/term/{id}', [TermController::class, 'edit']);
+Route::put('/term/{id}', [TermController::class, 'update']);
+Route::delete('/term/{id}', [TermController::class, 'destroy']);
+// Route::get('/privacy/{id}', [ShopManageController::class, 'aboutShow']);
+
+// Return and Cancellation Policy
+Route::post('/cancellation', [CancellationController::class, 'store']);
+Route::get('/cancellation', [CancellationController::class, 'index']);
+Route::post('cancellation/store', [CancellationController::class, 'store']);
+Route::get('/cancellation/{id}', [CancellationController::class, 'edit']);
+Route::put('/cancellation/{id}', [CancellationController::class, 'update']);
+Route::delete('/cancellation/{id}', [CancellationController::class, 'destroy']);
+// Route::get('/cancellation/{id}', [ShopManageController::class, 'aboutShow']);
 
 
 
