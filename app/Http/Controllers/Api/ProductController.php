@@ -23,6 +23,7 @@ class ProductController extends Controller
         // Fetch products for the specified user_id and shop_id
         $products = Product::where('user_id', $request->user_id)
             ->where('shop_id', $request->shop_id)
+            ->with('images') // Eager load images
             ->get();
 
         // Return the products as a JSON response
