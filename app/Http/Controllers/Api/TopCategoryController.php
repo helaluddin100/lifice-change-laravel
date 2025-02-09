@@ -92,48 +92,25 @@ class TopCategoryController extends Controller
         return response()->json(['message' => 'Top categories saved successfully!'], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\TopCategory  $topCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function show(TopCategory $topCategory)
+    public function deleteTopCategory($categoryId, Request $request)
     {
-        //
-    }
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'shop_id' => 'required|integer|exists:shops,id',
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\TopCategory  $topCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TopCategory $topCategory)
-    {
-        //
-    }
+        // Find the top category by user, shop, and category ID
+        $topCategory = TopCategory::where('user_id', $request->user_id)
+            ->where('shop_id', $request->shop_id)
+            ->where('category_id', $categoryId)
+            ->first();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TopCategory  $topCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, TopCategory $topCategory)
-    {
-        //
-    }
+        if (!$topCategory) {
+            return response()->json(['message' => 'Category not found!'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\TopCategory  $topCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(TopCategory $topCategory)
-    {
-        //
+        $topCategory->delete();
+
+        return response()->json(['message' => 'Category removed successfully!'], 200);
     }
 }

@@ -166,3 +166,4 @@ Route::delete('/sliders/{id}', [HomeSliderController::class, 'destroy']);
 //Top category
 Route::post('/store-top-categories', [TopCategoryController::class, 'store']);
 Route::get('/get-top-categories', [TopCategoryController::class, 'getTopCategories']);
+Route::delete('/delete-top-category/{categoryId}', [TopCategoryController::class, 'deleteTopCategory']);
