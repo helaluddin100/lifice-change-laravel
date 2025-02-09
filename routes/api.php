@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\SetupShopPageController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ShopManageController;
 use App\Http\Controllers\Api\HomeSliderController;
+use App\Http\Controllers\Api\TopCategoryController;
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -161,3 +162,7 @@ Route::get('/sliders/{shop_id}', [HomeSliderController::class, 'index']);  // Ge
 Route::post('/sliders', [HomeSliderController::class, 'store']);            // Create a new slider
 Route::post('/sliders/{id}', [HomeSliderController::class, 'update']);        // Update slider
 Route::delete('/sliders/{id}', [HomeSliderController::class, 'destroy']);
+
+//Top category
+Route::post('/store-top-categories', [TopCategoryController::class, 'store']);
+Route::get('/get-top-categories', [TopCategoryController::class, 'getTopCategories']);
