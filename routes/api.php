@@ -148,8 +148,8 @@ Route::get('/abouts', [AboutUsController::class, 'index']);
 Route::post('about/store', [AboutUsController::class, 'store']);
 Route::get('/abouts/{id}', [AboutUsController::class, 'edit']);
 Route::put('/abouts/{id}', [AboutUsController::class, 'update']);
-Route::delete('/abouts/delete/{id}', [AboutUsController::class, 'destroy']);
-Route::get('/abouts/{id}', [ShopManageController::class, 'aboutShow']);
+Route::delete('/abouts/{id}', [AboutUsController::class, 'destroy']);
+// Route::get('/abouts/{id}', [ShopManageController::class, 'aboutShow']);
 
 
 
