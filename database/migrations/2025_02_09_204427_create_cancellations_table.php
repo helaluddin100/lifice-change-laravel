@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('setup_shop_pages', function (Blueprint $table) {
+        Schema::create('cancellations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('shop_id')->constrained()->onDelete('cascade');
-            $table->longText('about_us')->nullable();
-            $table->longText('privacy_policy')->nullable();
-            $table->longText('terms_con')->nullable();
-            $table->longText('return_can')->nullable();
+            $table->longText('cancellation')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('setup_shop_pages');
+        Schema::dropIfExists('cancellations');
     }
 };
