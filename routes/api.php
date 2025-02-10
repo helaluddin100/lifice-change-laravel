@@ -20,6 +20,14 @@ use App\Http\Controllers\Api\TermController;
 use App\Http\Controllers\Api\TopCategoryController;
 use App\Http\Controllers\Api\TodaySellProductController;
 use App\Http\Controllers\Api\NewArrivalsController;
+use App\Http\Controllers\Api\TopSellingProductController;
+
+
+
+
+
+
+
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -208,3 +216,10 @@ Route::delete('/delete-today-sell-product/{productId}', [TodaySellProductControl
 Route::post('/store-new-arrivals', [NewArrivalsController::class, 'store']);
 Route::get('/get-new-arrivals', [NewArrivalsController::class, 'getSelectedProducts']);
 Route::delete('/delete-new-arrivals/{productId}', [NewArrivalsController::class, 'delete']);
+
+
+// Top Selling product
+
+Route::post('/store-top-selling', [TopSellingProductController::class, 'store']);
+Route::get('/get-top-selling', [TopSellingProductController::class, 'getSelectedProducts']);
+Route::delete('/delete-top-selling/{productId}', [TopSellingProductController::class, 'delete']);

@@ -71,4 +71,9 @@ class Product extends Model
     {
         return $this->hasMany(NewArrival::class);
     }
+
+    public function topSellingProducts()
+    {
+        return $this->hasMany(TopSellingProduct::class);
+    }
 }
