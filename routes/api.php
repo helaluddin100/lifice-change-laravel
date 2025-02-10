@@ -145,6 +145,8 @@ Route::post('/products/{id}', [ProductController::class, 'update'])->name('produ
 Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
 Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
 
+Route::get('/home-sliders/{shop_id}', [ShopManageController::class, 'getSlidersByShop']);
+
 
 //color
 Route::get('/shop-sizes/{id}', [ShopManageController::class, 'sizesShow']);

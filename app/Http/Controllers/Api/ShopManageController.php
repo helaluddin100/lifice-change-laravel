@@ -5,9 +5,23 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\HomeSlider;
 
 class ShopManageController extends Controller
 {
+
+    public function getSlidersByShop($shop_id)
+    {
+        $sliders = HomeSlider::where('shop_id', $shop_id)
+            ->where('status', true) // Only fetch active sliders
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $sliders
+        ]);
+    }
+
 
 
     public function categoryShow($userId)
