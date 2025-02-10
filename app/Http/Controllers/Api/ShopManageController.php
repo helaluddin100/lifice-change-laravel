@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\HomeSlider;
+use App\Models\TopCategory;
 
 class ShopManageController extends Controller
 {
@@ -19,6 +20,17 @@ class ShopManageController extends Controller
         return response()->json([
             'success' => true,
             'data' => $sliders
+        ]);
+    }
+
+    public function getTopCategoryByShop($shop_id)
+    {
+        $categories = TopCategory::where('shop_id', $shop_id)
+            ->with('category')
+            ->get();
+        return response()->json([
+            'success' => true,
+            'data' => $categories
         ]);
     }
 

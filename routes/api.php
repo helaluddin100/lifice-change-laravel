@@ -146,11 +146,13 @@ Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplat
 Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
 
 Route::get('/home-sliders/{shop_id}', [ShopManageController::class, 'getSlidersByShop']);
+Route::get('/top-category/{shop_id}', [ShopManageController::class, 'getTopCategoryByShop']);
 
 
 //color
 Route::get('/shop-sizes/{id}', [ShopManageController::class, 'sizesShow']);
 Route::get('/shop-colors/{id}', [ShopManageController::class, 'colorsShow']);
+
 
 //About
 Route::post('/abouts', [AboutUsController::class, 'store']);
