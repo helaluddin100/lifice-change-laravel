@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\TodaySellProduct;
+use App\Models\ProductImage;
 
 class TodaySellProductController extends Controller
 {
@@ -36,7 +37,6 @@ class TodaySellProductController extends Controller
         return response()->json(['message' => 'Products saved successfully!'], 200);
     }
 
-    // Get selected products for a user and shop
     public function getSelectedProducts(Request $request)
     {
         $request->validate([
@@ -44,20 +44,33 @@ class TodaySellProductController extends Controller
             'shop_id' => 'required|integer|exists:shops,id',
         ]);
 
+        // Fetch selected products for the given user_id and shop_id
         $products = TodaySellProduct::where('user_id', $request->user_id)
             ->where('shop_id', $request->shop_id)
-            ->with('product') // Eager load related product
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->product->id,
-                    'name' => $item->product->name,
-                    'image' => $item->product->image ?? '/default-product.png', // Provide default image if null
-                ];
-            });
+            ->get();
 
-        return response()->json(['products' => $products], 200);
+        // Fetch images for each product based on product_id
+        $productsWithImages = $products->map(function ($item) {
+            $product = $item->product; // Access the product
+
+            // Fetch images based on product_id
+            $images = ProductImage::where('product_id', $product->id)->get();
+
+            // Check if images exist, otherwise use default image
+            $image = $images->isNotEmpty() ? asset($images->first()->image_path) : '/default-product.png';
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'image' => $image, // Return the first image URL or default
+            ];
+        });
+
+        return response()->json(['products' => $productsWithImages], 200);
     }
+
+
+
 
 
     // Delete a selected product for a user and shop
