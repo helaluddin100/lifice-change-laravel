@@ -136,4 +136,10 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     {
         return $this->hasMany(TodaySellProduct::class);
     }
+
+
+    public function newArrival()
+    {
+        return $this->hasMany(NewArrival::class);
+    }
 }

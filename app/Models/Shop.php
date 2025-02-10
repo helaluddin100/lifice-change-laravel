@@ -106,4 +106,9 @@ class Shop extends Model
     {
         return $this->hasMany(TodaySellProduct::class);
     }
+
+    public function newArrival()
+    {
+        return $this->hasMany(NewArrival::class);
+    }
 }

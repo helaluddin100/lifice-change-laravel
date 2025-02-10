@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\PrivacyPolicyController;
 use App\Http\Controllers\Api\TermController;
 use App\Http\Controllers\Api\TopCategoryController;
 use App\Http\Controllers\Api\TodaySellProductController;
+use App\Http\Controllers\Api\NewArrivalsController;
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -198,8 +199,12 @@ Route::delete('/delete-top-category/{categoryId}', [TopCategoryController::class
 Route::get('/products', [ProductController::class, 'getProductsForUserAndShop']);
 
 Route::post('/store-today-sell-products', [TodaySellProductController::class, 'store']);
-
 Route::get('/get-today-sell-products', [TodaySellProductController::class, 'getSelectedProducts']);
-
 Route::delete('/delete-today-sell-product/{productId}', [TodaySellProductController::class, 'delete']);
-Route::delete('/delete-top-category/{categoryId}', [TopCategoryController::class, 'deleteTopCategory']);
+
+
+// New Arrivals product
+
+Route::post('/store-new-arrivals', [NewArrivalsController::class, 'store']);
+Route::get('/get-new-arrivals', [NewArrivalsController::class, 'getSelectedProducts']);
+Route::delete('/delete-new-arrivals/{productId}', [NewArrivalsController::class, 'delete']);
