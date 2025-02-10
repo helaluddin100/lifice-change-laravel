@@ -116,4 +116,10 @@ class Shop extends Model
     {
         return $this->hasMany(TopSellingProduct::class);
     }
+
+
+    public function newArrivalBanner()
+    {
+        return $this->hasMany(NewArrivalBanner::class);
+    }
 }

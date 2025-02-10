@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\TopCategoryController;
 use App\Http\Controllers\Api\TodaySellProductController;
 use App\Http\Controllers\Api\NewArrivalsController;
 use App\Http\Controllers\Api\TopSellingProductController;
+use App\Http\Controllers\Api\NewArrivalBannerController;
 
 
 
@@ -195,7 +196,6 @@ Route::get('/sliders/{shop_id}', [HomeSliderController::class, 'index']);  // Ge
 Route::post('/sliders', [HomeSliderController::class, 'store']);            // Create a new slider
 Route::post('/sliders/{id}', [HomeSliderController::class, 'update']);        // Update slider
 Route::delete('/sliders/{id}', [HomeSliderController::class, 'destroy']);
-Route::delete('/sliders/{id}', [HomeSliderController::class, 'destroy']);
 
 //Top category
 Route::post('/store-top-categories', [TopCategoryController::class, 'store']);
@@ -223,3 +223,9 @@ Route::delete('/delete-new-arrivals/{productId}', [NewArrivalsController::class,
 Route::post('/store-top-selling', [TopSellingProductController::class, 'store']);
 Route::get('/get-top-selling', [TopSellingProductController::class, 'getSelectedProducts']);
 Route::delete('/delete-top-selling/{productId}', [TopSellingProductController::class, 'delete']);
+
+// Home slider
+Route::get('/new-arrival/{shop_id}', [NewArrivalBannerController::class, 'index']);  // Get all new-arrival for a shop
+Route::post('/new-arrival', [NewArrivalBannerController::class, 'store']);            // Create a new slider
+Route::post('/new-arrival/{id}', [NewArrivalBannerController::class, 'update']);        // Update slider
+Route::delete('/new-arrival/{id}', [NewArrivalBannerController::class, 'destroy']);
