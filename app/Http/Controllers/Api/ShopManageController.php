@@ -6,10 +6,25 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\HomeSlider;
+use App\Models\NewArrival;
 use App\Models\TopCategory;
 
 class ShopManageController extends Controller
 {
+
+    public function todayNewArrivalByShop($shop_id)
+    {
+        // Fetch the new arrivals with the product and the related product images
+        $newarrival = NewArrival::where('shop_id', $shop_id)
+            ->with(['product', 'product.images'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $newarrival
+        ]);
+    }
+
 
     public function getSlidersByShop($shop_id)
     {

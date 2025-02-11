@@ -145,8 +145,6 @@ Route::delete('/product/{id}', [ProductController::class, 'destroy']);
 Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
 Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
 
-Route::get('/home-sliders/{shop_id}', [ShopManageController::class, 'getSlidersByShop']);
-Route::get('/top-category/{shop_id}', [ShopManageController::class, 'getTopCategoryByShop']);
 
 
 //color
@@ -200,11 +198,13 @@ Route::get('/sliders/{shop_id}', [HomeSliderController::class, 'index']);  // Ge
 Route::post('/sliders', [HomeSliderController::class, 'store']);            // Create a new slider
 Route::post('/sliders/{id}', [HomeSliderController::class, 'update']);        // Update slider
 Route::delete('/sliders/{id}', [HomeSliderController::class, 'destroy']);
+Route::get('/home-sliders/{shop_id}', [ShopManageController::class, 'getSlidersByShop']);
 
 //Top category
 Route::post('/store-top-categories', [TopCategoryController::class, 'store']);
 Route::get('/get-top-categories', [TopCategoryController::class, 'getTopCategories']);
 Route::delete('/delete-top-category/{categoryId}', [TopCategoryController::class, 'deleteTopCategory']);
+Route::get('/top-category/{shop_id}', [ShopManageController::class, 'getTopCategoryByShop']);
 
 // Today sell products
 
@@ -216,10 +216,10 @@ Route::delete('/delete-today-sell-product/{productId}', [TodaySellProductControl
 
 
 // New Arrivals product
-
 Route::post('/store-new-arrivals', [NewArrivalsController::class, 'store']);
 Route::get('/get-new-arrivals', [NewArrivalsController::class, 'getSelectedProducts']);
 Route::delete('/delete-new-arrivals/{productId}', [NewArrivalsController::class, 'delete']);
+Route::get('/today-new-arrrival/{shop_id}', [ShopManageController::class, 'todayNewArrivalByShop']);
 
 
 // Top Selling product
@@ -228,7 +228,7 @@ Route::post('/store-top-selling', [TopSellingProductController::class, 'store'])
 Route::get('/get-top-selling', [TopSellingProductController::class, 'getSelectedProducts']);
 Route::delete('/delete-top-selling/{productId}', [TopSellingProductController::class, 'delete']);
 
-// Home slider
+// New Arrival Banner
 Route::get('/new-arrival/{shop_id}', [NewArrivalBannerController::class, 'index']);  // Get all new-arrival for a shop
 Route::post('/new-arrival', [NewArrivalBannerController::class, 'store']);            // Create a new slider
 Route::post('/new-arrival/{id}', [NewArrivalBannerController::class, 'update']);        // Update slider
