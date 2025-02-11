@@ -232,6 +232,7 @@ class ShopController extends Controller
                 'top_rated' => 'nullable|boolean',
                 'top_selling' => 'nullable|boolean',
                 'related_product' => 'nullable|boolean',
+                'top_category' => 'nullable|boolean',
             ]);
 
             // Filter out null or empty fields

@@ -90,6 +90,8 @@ return new class extends Migration
             $table->boolean('top_rated')->default(0);
             $table->boolean('top_selling')->default(0);
             $table->boolean('related_product')->default(0);
+            $table->boolean('top_category')->default(0);
+
 
             $table->string('template_type')->default('1');
             //status

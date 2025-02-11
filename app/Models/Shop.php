@@ -53,6 +53,7 @@ class Shop extends Model
         'flash_deal',
         'top_rated',
         'top_selling',
+        'top_category',
         'related_product'
     ];
 
