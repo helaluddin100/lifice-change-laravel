@@ -190,7 +190,7 @@ Route::delete('/cancellation/{id}', [CancellationController::class, 'destroy']);
 
 
 
-Route::get('products', [ProductController::class, 'index']);
+Route::get('products/with-filter', [ProductController::class, 'index']);
 
 
 // Home slider
