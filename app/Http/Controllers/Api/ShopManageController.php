@@ -8,9 +8,23 @@ use App\Models\User;
 use App\Models\HomeSlider;
 use App\Models\NewArrival;
 use App\Models\TopCategory;
+use App\Models\TopSellingProduct;
 
 class ShopManageController extends Controller
 {
+
+    public function topSellingProductByShop($shop_id)
+    {
+        // Fetch the top selling products with the product and the related product images
+        $topselling = TopSellingProduct::where('shop_id', $shop_id)
+            ->with(['product', 'product.images'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $topselling
+        ]);
+    }
 
     public function todayNewArrivalByShop($shop_id)
     {

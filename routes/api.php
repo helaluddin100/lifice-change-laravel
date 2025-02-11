@@ -227,6 +227,7 @@ Route::get('/today-new-arrrival/{shop_id}', [ShopManageController::class, 'today
 Route::post('/store-top-selling', [TopSellingProductController::class, 'store']);
 Route::get('/get-top-selling', [TopSellingProductController::class, 'getSelectedProducts']);
 Route::delete('/delete-top-selling/{productId}', [TopSellingProductController::class, 'delete']);
+Route::get('/top-selling-product/{shop_id}', [ShopManageController::class, 'topSellingProductByShop']);
 
 // New Arrival Banner
 Route::get('/new-arrival/{shop_id}', [NewArrivalBannerController::class, 'index']);  // Get all new-arrival for a shop
