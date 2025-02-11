@@ -98,7 +98,7 @@ Route::delete('/shops/{id}', [ShopController::class, 'destroy']);
 Route::post('category/store', [CategoryController::class, 'store']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'edit']);
-Route::put('/categories/{id}', [CategoryController::class, 'update']);
+Route::post('/categories/{id}', [CategoryController::class, 'update']);
 Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy']);
 
 //get category by user
