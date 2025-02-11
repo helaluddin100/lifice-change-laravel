@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use App\Models\Category;
@@ -17,11 +17,14 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        // Get the user ID from the request
         $userId = $request->query('user_id');
-
-        // Fetch categories for the specified user
-        $categories = Category::where('user_id', $userId)->get();
+        $categories = Category::where('user_id', $userId)->get()->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'image' => $category->image_url, // Using the accessor
+            ];
+        });
 
         return response()->json([
             'status' => 200,
@@ -47,13 +50,22 @@ class CategoryController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'user_id' => 'required',
+                'status' => 'required|boolean',
             ]);
             $userId = $request->input('user_id');
             // Create a new category instance
             $category = new Category();
             $category->name = $validatedData['name'];
             $category->user_id = $userId;
-            // Set any other attributes as needed
+            $category->status = $request->status;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('category_images'), $imageName);
+                $category->image = $imageName;
+            }
+
+
             $category->save();
 
             return response()->json([
@@ -112,13 +124,29 @@ class CategoryController extends Controller
             // Validate incoming request
             $validatedData = $request->validate([
                 'name' => 'required|string',
+                'image' => 'required',
+                'status' => 'required|boolean',
             ]);
 
             // Find the category by ID
             $category = Category::findOrFail($id);
+            $category->name = $validatedData['name'];
+            $category->status = $validatedData['status'];
+            if ($request->hasFile('image')) {
+                // Delete the old image
+                if ($category->image && file_exists(public_path('category_images/' . $category->image))) {
+                    unlink(public_path('category_images/' . $category->image));
+                }
 
-            // Update category attributes
-            $category->update($validatedData);
+                // Upload new image
+                $image = $request->file('image');
+                $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('category_images'), $imageName);
+                $category->image = $imageName;
+            }
+
+            // Save updated category
+            $category->save();
 
             // Log success message
             Log::info('Category updated successfully', ['id' => $category->id]);
@@ -149,13 +177,20 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-
-
         try {
-            // Find the category by ID and delete it
+            // Find the category by ID
             $category = Category::findOrFail($id);
-            $category->delete();
 
+            // Check if category has an image and delete it from storage
+            if ($category->image) {
+                $imagePath = public_path('category_images/' . $category->image);
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+
+            // Delete the category from the database
+            $category->delete();
 
             // Return success response
             return response()->json([
