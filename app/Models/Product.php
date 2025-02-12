@@ -92,4 +92,18 @@ class Product extends Model
     }
 
 
+    public function getProductSizesAttribute($value)
+    {
+        // Decode the JSON field stored in product_sizes
+        $sizeIds = json_decode($value);
+
+        // Retrieve sizes based on the size IDs
+        if ($sizeIds) {
+            return Size::whereIn('id', array_column($sizeIds, 'size'))->get();
+        }
+
+        return [];
+    }
+
+
 }

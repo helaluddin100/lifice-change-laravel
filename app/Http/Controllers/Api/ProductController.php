@@ -14,7 +14,7 @@ class ProductController extends Controller
 
     public function productDetails($slug)
     {
-        // Fetch the product with its images and colors using the slug
+        // Fetch the product with its images and sizes using the slug
         $product = Product::with(['images'])  // Load images
                           ->where('slug', $slug)
                           ->first();
@@ -24,12 +24,13 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        // Return the product data along with images and decoded product colors
+        // Return the product data along with images and decoded product sizes
         return response()->json([
             'status' => 200,
             'data' => $product
         ]);
     }
+
 
 
 
