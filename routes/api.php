@@ -234,3 +234,6 @@ Route::get('/new-arrival/{shop_id}', [NewArrivalBannerController::class, 'index'
 Route::post('/new-arrival', [NewArrivalBannerController::class, 'store']);            // Create a new slider
 Route::post('/new-arrival/{id}', [NewArrivalBannerController::class, 'update']);        // Update slider
 Route::delete('/new-arrival/{id}', [NewArrivalBannerController::class, 'destroy']);
+
+// Product Details
+Route::get('products/{slug}', [ProductController::class, 'productDetails']);

@@ -41,6 +41,7 @@ class Product extends Model
         'has_details',
         'variant_name',
         'description',
+        'slug',
     ];
 
     protected $casts = [
@@ -75,6 +76,19 @@ class Product extends Model
     public function topSellingProducts()
     {
         return $this->hasMany(TopSellingProduct::class);
+    }
+
+    public function getProductColorsAttribute($value)
+    {
+        // Decode the JSON field stored in product_colors
+        $colorIds = json_decode($value);
+
+        // Retrieve colors based on the color IDs
+        if ($colorIds) {
+            return Color::whereIn('id', array_column($colorIds, 'color'))->get();
+        }
+
+        return [];
     }
 
 

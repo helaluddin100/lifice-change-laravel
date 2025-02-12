@@ -7,9 +7,31 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
 class ProductController extends Controller
 {
+
+
+    public function productDetails($slug)
+    {
+        // Fetch the product with its images and colors using the slug
+        $product = Product::with(['images'])  // Load images
+                          ->where('slug', $slug)
+                          ->first();
+
+        // Check if product exists
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        // Return the product data along with images and decoded product colors
+        return response()->json([
+            'status' => 200,
+            'data' => $product
+        ]);
+    }
+
+
 
 
     public function getProductsForUserAndShop(Request $request)
@@ -78,6 +100,7 @@ class ProductController extends Controller
 
 
 
+
     public function store(Request $request)
     {
         // Validate incoming request data
@@ -93,19 +116,15 @@ class ProductController extends Controller
             'product_code' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
-
-
-            'product_colors' => 'nullable|array', // Validate colors array
-            'product_colors.*.color' => 'required|string|max:255', // Each color must have a value
-            'product_colors.*.price' => 'required|numeric', // Each color must have a price
-            'product_sizes' => 'nullable|array', // Validate sizes array
-            'product_sizes.*.size' => 'required|string|max:255', // Each size must have a value
-            'product_sizes.*.price' => 'required|numeric', // Each size must have a price
+            'product_colors' => 'nullable|array',
+            'product_colors.*.color' => 'required|string|max:255',
+            'product_colors.*.price' => 'required|numeric',
+            'product_sizes' => 'nullable|array',
+            'product_sizes.*.size' => 'required|string|max:255',
+            'product_sizes.*.price' => 'required|numeric',
             'product_details' => 'nullable|array',
             'product_details.*.detail_type' => 'nullable|string|max:255',
             'product_details.*.detail_description' => 'nullable|string',
-
-
             'product_variant' => 'nullable|array',
             'product_variant.*.option' => 'nullable|string|max:255',
             'product_variant.*.cost' => 'nullable|numeric',
@@ -120,14 +139,20 @@ class ProductController extends Controller
             'has_details' => 'nullable',
             'variant_name' => 'nullable|string|max:255',
             'description' => 'nullable',
-
         ]);
 
         // Ensure 'status' and 'has_variant' are treated as booleans
         $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
         $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
+        // Generate the product slug
+        $slug = Str::slug($validated['name']); // Generate a slug from the product name
 
+        // Check if the slug already exists, and if so, append a number to make it unique
+        $slugCount = Product::where('slug', $slug)->count();
+        if ($slugCount > 0) {
+            $slug = $slug . '-' . ($slugCount + 1); // Append a number to make it unique
+        }
 
         // Create the product
         $product = Product::create([
@@ -135,6 +160,7 @@ class ProductController extends Controller
             'shop_id' => $validated['shop_id'],
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
+            'slug' => $slug,  // Add the generated slug
             'item_name' => $validated['item_name'] ?? null,
             'current_price' => $validated['current_price'],
             'old_price' => $validated['old_price'] ?? null,
@@ -156,6 +182,7 @@ class ProductController extends Controller
             'variant_name' => $validated['variant_name'] ?? null,
             'description' => $validated['description'] ?? null,
         ]);
+
         // Handle image uploads and store in product_images table
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -169,7 +196,6 @@ class ProductController extends Controller
             }
         }
 
-
         // Return response indicating the product was created successfully
         return response()->json([
             'status' => 200, // Add the status field
@@ -177,6 +203,7 @@ class ProductController extends Controller
             'data' => $product,
         ], 200);
     }
+
 
 
     public function getCategoriesByUser($id)
