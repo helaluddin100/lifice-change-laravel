@@ -15,7 +15,7 @@ class ProductController extends Controller
     public function productDetails($slug)
     {
         // Fetch the product with its images and sizes using the slug
-        $product = Product::with(['images'])  // Load images
+        $product = Product::with(['images','category'])  // Load images
                           ->where('slug', $slug)
                           ->first();
 

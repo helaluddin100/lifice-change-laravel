@@ -78,6 +78,11 @@ class Product extends Model
         return $this->hasMany(TopSellingProduct::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id'); // 'category_id' is the foreign key
+    }
+
     public function getProductColorsAttribute($value)
     {
         // Decode the JSON field stored in product_colors
