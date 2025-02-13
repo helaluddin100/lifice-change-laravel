@@ -7,11 +7,31 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\HomeSlider;
 use App\Models\NewArrival;
+use App\Models\Division;
+use App\Models\District;
 use App\Models\TopCategory;
 use App\Models\TopSellingProduct;
 
 class ShopManageController extends Controller
 {
+
+// Controller: ShopManageController.php
+
+public function divisions($id) {
+    $divisions = Division::where('country_id', $id)->get(['id', 'name']);
+    return response()->json([
+        'success' => true,
+        'data' => $divisions
+    ]);
+}
+
+public function districts(Request $request) {
+    $divisionId = $request->input('division'); // Fetch division id, not name
+    $districts = District::where('division_id', $divisionId)->get(['id', 'name']); // Fetch districts by division id
+
+    return response()->json($districts); // Return the districts
+}
+
 
     public function topSellingProductByShop($shop_id)
     {
