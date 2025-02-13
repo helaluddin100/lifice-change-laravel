@@ -2,34 +2,95 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Size;
+use App\Models\Color;
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Support\Str;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
+
 class ProductController extends Controller
 {
 
 
-    public function productDetails($slug)
-    {
-        // Fetch the product with its images and sizes using the slug
-        $product = Product::with(['images','category'])  // Load images
-                          ->where('slug', $slug)
-                          ->first();
+    // public function productDetails($slug)
+    // {
+    //     // Fetch the product with its images and sizes using the slug
+    //     $product = Product::with(['images','category'])  // Load images
+    //                       ->where('slug', $slug)
+    //                       ->first();
 
-        // Check if product exists
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+    //     // Check if product exists
+    //     if (!$product) {
+    //         return response()->json(['message' => 'Product not found'], 404);
+    //     }
+
+    //     // Return the product data along with images and decoded product sizes
+    //     return response()->json([
+    //         'status' => 200,
+    //         'data' => $product
+    //     ]);
+    // }
+
+
+    public function productDetails($slug)
+{
+    $product = Product::with(['images','category'])-> where('slug', $slug)->first();
+
+    if ($product) {
+        // Decode the product_colors JSON data
+        $productColors = $product->product_colors ?? [];
+        $colors = [];
+
+        // Loop through each color in the product_colors
+        if (!empty($productColors)) {
+            foreach ($productColors as $colorData) {
+                // Find the color by ID
+                $colorRecord = Color::find($colorData['color']); // Assuming 'color' is the ID
+
+                // If the color exists, add it to the $colors array
+                if ($colorRecord) {
+                    $colors[] = [
+                        'color_name' => $colorRecord->color,  // Color name from the Color table
+                        'price' => $colorData['price'],       // Price from the JSON data
+                    ];
+                }
+            }
         }
 
-        // Return the product data along with images and decoded product sizes
+        // Decode the product_sizes JSON data
+        $productSizes = $product->product_sizes ?? [];
+        $sizes = [];
+
+        // Loop through each size in the product_sizes
+        if (!empty($productSizes)) {
+            foreach ($productSizes as $sizeData) {
+                // Directly using the size value from the JSON (no need for a join)
+                $sizes[] = [
+                    'size_name' => $sizeData['size'],  // Size value from the JSON data
+                    'price' => $sizeData['price'],     // Price from the JSON data
+                ];
+            }
+        }
+
+        // Add colors and sizes to the $product object
+        $product->colors = $colors;
+        $product->sizes = $sizes;
+
+        // Return the response with the product data
         return response()->json([
             'status' => 200,
             'data' => $product
         ]);
     }
+
+    return response()->json(['error' => 'Product not found'], 404);
+}
+
+
+
 
 
 

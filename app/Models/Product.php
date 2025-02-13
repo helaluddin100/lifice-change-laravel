@@ -83,32 +83,7 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id'); // 'category_id' is the foreign key
     }
 
-    public function getProductColorsAttribute($value)
-    {
-        // Decode the JSON field stored in product_colors
-        $colorIds = json_decode($value);
 
-        // Retrieve colors based on the color IDs
-        if ($colorIds) {
-            return Color::whereIn('id', array_column($colorIds, 'color'))->get();
-        }
-
-        return [];
-    }
-
-
-    public function getProductSizesAttribute($value)
-    {
-        // Decode the JSON field stored in product_sizes
-        $sizeIds = json_decode($value);
-
-        // Retrieve sizes based on the size IDs
-        if ($sizeIds) {
-            return Size::whereIn('id', array_column($sizeIds, 'size'))->get();
-        }
-
-        return [];
-    }
 
 
 }
