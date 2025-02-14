@@ -243,3 +243,4 @@ Route::get('products/{slug}', [ProductController::class, 'productDetails']);
 // Routes in routes/api.php
 Route::get('/divisions/{id}', [ShopManageController::class, 'divisions']);
 Route::get('/districts', [ShopManageController::class, 'districts']);
+Route::get('/upazilas', [ShopManageController::class, 'upazilas']);
