@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\TodaySellProductController;
 use App\Http\Controllers\Api\NewArrivalsController;
 use App\Http\Controllers\Api\TopSellingProductController;
 use App\Http\Controllers\Api\NewArrivalBannerController;
+use App\Http\Controllers\Api\OrderController;
 
 
 
@@ -244,3 +245,13 @@ Route::get('products/{slug}', [ProductController::class, 'productDetails']);
 Route::get('/divisions/{id}', [ShopManageController::class, 'divisions']);
 Route::get('/districts', [ShopManageController::class, 'districts']);
 Route::get('/upazilas', [ShopManageController::class, 'upazilas']);
+
+
+
+// Order api
+
+Route::post('/orders', [OrderController::class, 'store']);  // Place an order (No authentication required)
+Route::get('/orders', [OrderController::class, 'index']);   // Get all orders
+Route::get('/orders/{id}', [OrderController::class, 'show']);  // Get a single order
+Route::put('/orders/{id}', [OrderController::class, 'update']);  // Update order status
+Route::delete('/orders/{id}', [OrderController::class, 'destroy']);  // Delete an order
