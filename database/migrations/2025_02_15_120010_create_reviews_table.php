@@ -18,8 +18,10 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('shop_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->integer('rating'); // 1-5 Star Rating
+            $table->string('email');
+            $table->integer('rating');
             $table->text('review')->nullable();
+            $table->string('ip_address');
             $table->boolean('status')->default(0);
             $table->foreignId('parent_id')->nullable()->constrained('reviews')->onDelete('cascade'); // Reply System
             $table->timestamps();

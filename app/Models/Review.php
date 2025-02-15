@@ -12,10 +12,12 @@ class Review extends Model
         'product_id',
         'shop_id',
         'name',
+        'email',
         'rating',
         'review',
         'status',
-        'parent_id'
+        'parent_id',
+        'ip_address'
     ];
 
     // Relationship with Product
