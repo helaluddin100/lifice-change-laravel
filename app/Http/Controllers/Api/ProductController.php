@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;
 
 use App\Models\Size;
 use App\Models\Color;
@@ -9,7 +10,6 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
@@ -19,17 +19,17 @@ class ProductController extends Controller
     {
         $relatedProducts = Product::where('category_id', $category_id)
             ->where('id', '!=', $exclude_product_id)
-            ->where('status', 1) 
+            ->where('status', 1)
             ->with('images') // শুধুমাত্র 'images' রিলেশন আনবে
-            ->take(6) 
+            ->take(6)
             ->get();
-    
+
         return response()->json([
             'status' => 200,
             'data' => $relatedProducts
         ]);
     }
-    
+
 
 
     public function productDetails($slug)

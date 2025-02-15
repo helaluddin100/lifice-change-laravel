@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\NewArrivalsController;
 use App\Http\Controllers\Api\TopSellingProductController;
 use App\Http\Controllers\Api\NewArrivalBannerController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReviewController;
 
 
 
@@ -259,3 +260,11 @@ Route::delete('/orders/{id}', [OrderController::class, 'destroy']);  // Delete a
 // Related Product
 
 Route::get('/products/related/{category_id}/{exclude_product_id}', [ProductController::class, 'relatedProducts']);
+
+
+
+// product review route
+Route::get('/reviews/{product_id}', [ReviewController::class, 'getReviews']);
+Route::post('/reviews/add', [ReviewController::class, 'addReview']);
+Route::post('/reviews/reply', [ReviewController::class, 'replyReview']);
+Route::post('/reviews/approve/{review_id}', [ReviewController::class, 'approveReview']); // Admin approval
