@@ -255,3 +255,7 @@ Route::get('/orders', [OrderController::class, 'index']);   // Get all orders
 Route::get('/orders/{id}', [OrderController::class, 'show']);  // Get a single order
 Route::put('/orders/{id}', [OrderController::class, 'update']);  // Update order status
 Route::delete('/orders/{id}', [OrderController::class, 'destroy']);  // Delete an order
+
+// Related Product
+
+Route::get('/products/related/{category_id}/{exclude_product_id}', [ProductController::class, 'relatedProducts']);

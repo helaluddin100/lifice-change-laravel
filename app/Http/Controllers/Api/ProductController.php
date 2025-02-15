@@ -15,24 +15,21 @@ class ProductController extends Controller
 {
 
 
-    // public function productDetails($slug)
-    // {
-    //     // Fetch the product with its images and sizes using the slug
-    //     $product = Product::with(['images','category'])  // Load images
-    //                       ->where('slug', $slug)
-    //                       ->first();
-
-    //     // Check if product exists
-    //     if (!$product) {
-    //         return response()->json(['message' => 'Product not found'], 404);
-    //     }
-
-    //     // Return the product data along with images and decoded product sizes
-    //     return response()->json([
-    //         'status' => 200,
-    //         'data' => $product
-    //     ]);
-    // }
+    public function relatedProducts($category_id, $exclude_product_id)
+    {
+        $relatedProducts = Product::where('category_id', $category_id)
+            ->where('id', '!=', $exclude_product_id)
+            ->where('status', 1) 
+            ->with('images') // শুধুমাত্র 'images' রিলেশন আনবে
+            ->take(6) 
+            ->get();
+    
+        return response()->json([
+            'status' => 200,
+            'data' => $relatedProducts
+        ]);
+    }
+    
 
 
     public function productDetails($slug)
