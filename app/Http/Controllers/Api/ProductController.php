@@ -20,7 +20,7 @@ class ProductController extends Controller
         $relatedProducts = Product::where('category_id', $category_id)
             ->where('id', '!=', $exclude_product_id)
             ->where('status', 1)
-            ->with('images') // শুধুমাত্র 'images' রিলেশন আনবে
+            ->with('images')
             ->take(6)
             ->get();
 
