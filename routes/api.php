@@ -268,3 +268,7 @@ Route::get('/reviews/{product_id}', [ReviewController::class, 'getReviews']);
 Route::post('/reviews/add', [ReviewController::class, 'addReview']);
 Route::post('/reviews/reply', [ReviewController::class, 'replyReview']);
 Route::post('/reviews/approve/{review_id}', [ReviewController::class, 'approveReview']); // Admin approval
+
+
+// category by product show
+Route::get('/products/category/{category}', [ProductController::class, 'getProductsByCategory']);

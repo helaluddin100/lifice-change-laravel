@@ -15,6 +15,20 @@ class ProductController extends Controller
 {
 
 
+    public function getProductsByCategory($category)
+    {
+        $products = Product::where('category_id', $category)
+            ->where('status', 1)
+            ->with(['images', 'category']) // make sure 'category' is loaded
+            ->get();
+
+        return response()->json($products);
+    }
+
+
+
+
+
     public function relatedProducts($category_id, $exclude_product_id)
     {
         $relatedProducts = Product::where('category_id', $category_id)
