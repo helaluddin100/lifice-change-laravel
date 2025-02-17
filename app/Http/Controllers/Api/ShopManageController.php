@@ -24,15 +24,32 @@ class ShopManageController extends Controller
     public function getDashboardData($shopId, $userId)
     {
         // Today sales data
-        $todaySales = Order::where('shop_id', $shopId)
+        $TotalPendingOrder = Order::where('shop_id', $shopId)
             ->where('user_id', $userId)
-            ->whereDate('created_at', today())
-            ->sum('total_price'); // Assuming the column for the total order amount is 'total_price'
+            ->where('order_status', 'pending')
+            ->sum('total_price');
+
+
+        // Today success sales data
+        $todaySuccessSales = Order::where('shop_id', $shopId)
+            ->where('user_id', $userId)
+            ->where('order_status', 'delivered')
+            ->whereDate('updated_at', today())
+            ->sum('total_price');
+
+        $todayPendingSales = Order::where('shop_id', $shopId)
+            ->where('user_id', $userId)
+            ->where('order_status', 'pending')
+            ->whereDate('updated_at', today())
+            ->sum('total_price');
+
+
 
         // Monthly sales data
         $monthlySales = Order::where('shop_id', $shopId)
             ->where('user_id', $userId)
-            ->whereMonth('created_at', now()->month)
+            ->where('order_status', 'delivered')
+            ->whereMonth('updated_at', now()->month)
             ->sum('total_price');
 
         // Most sold items using OrderItem and Order tables (top 10)
@@ -44,8 +61,8 @@ class ShopManageController extends Controller
             ->whereMonth('orders.created_at', now()->month)
             ->groupBy('products.name')
             ->orderByDesc('product_count')
-            ->take(10) // Get top 10 most sold products
-            ->get(); // Get the results as an array
+            ->take(10)
+            ->get();
 
         $lowStock = Product::where('user_id', $userId)
             ->where('shop_id', $shopId)
@@ -54,10 +71,12 @@ class ShopManageController extends Controller
 
 
         return response()->json([
-            'today_sales' => $todaySales,
+            'total_pending_order' => $TotalPendingOrder,
             'monthly_sales' => $monthlySales,
             'most_sold_items' => $mostSoldItems,
             'low_stock' => $lowStock,
+            'today_success_sales' => $todaySuccessSales,
+            'today_pending_sales' => $todayPendingSales,
         ]);
     }
 
