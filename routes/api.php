@@ -272,3 +272,6 @@ Route::post('/reviews/approve/{review_id}', [ReviewController::class, 'approveRe
 
 // category by product show
 Route::get('/products/category/{category}', [ProductController::class, 'getProductsByCategory']);
+
+
+Route::get('/dashboard-data/{shopId}/{userId}', [ShopManageController::class, 'getDashboardData']);
