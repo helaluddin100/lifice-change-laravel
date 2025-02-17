@@ -11,6 +11,19 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+
+
+    public function getOrders($shopId, $userId)
+    {
+        $orders = Order::where('shop_id', $shopId)
+                       ->where('user_id', $userId)
+                       ->get();
+
+        return response()->json($orders);
+    }
+
+
+
     /**
      * Store a new order (API: POST /api/orders)
      */
@@ -111,7 +124,7 @@ class OrderController extends Controller
     public function update(Request $request, $id)
     {
         $order = Order::find($id);
-        
+
         if (!$order) {
             return response()->json(['error' => 'Order not found'], 404);
         }
