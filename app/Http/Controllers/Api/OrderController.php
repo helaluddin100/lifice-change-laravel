@@ -12,12 +12,17 @@ use Illuminate\Support\Facades\Validator;
 class OrderController extends Controller
 {
 
-
-    public function getOrders($shopId, $userId)
+    public function getOrders($shopId, $userId, $status = null)
     {
-        $orders = Order::where('shop_id', $shopId)
-                       ->where('user_id', $userId)
-                       ->get();
+        $query = Order::where('shop_id', $shopId)
+            ->where('user_id', $userId);
+
+        // If status is provided, filter by status
+        if ($status) {
+            $query->where('order_status', $status);
+        }
+
+        $orders = $query->get();
 
         return response()->json($orders);
     }
@@ -31,8 +36,8 @@ class OrderController extends Controller
     {
         // Validate request data
         $validator = Validator::make($request->all(), [
-            'user_id'       =>'required',
-            'shop_id'       =>'required',
+            'user_id'       => 'required',
+            'shop_id'       => 'required',
 
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|max:255',
@@ -44,7 +49,7 @@ class OrderController extends Controller
             'promo_code'    => 'nullable|string',
             'total_price'   => 'required|numeric',
             'delivery_charge' => 'required|numeric',
-            'payment_method'=> 'required|in:cash_on_delivery,online_payment',
+            'payment_method' => 'required|in:cash_on_delivery,online_payment',
             'cart_items'    => 'required|array',
             'cart_items.*.product_id' => 'required|exists:products,id',
             'cart_items.*.product_name' => 'required|string',
@@ -71,7 +76,7 @@ class OrderController extends Controller
             'upazila'        => $request->upazila,
             'promo_code'     => $request->promo_code,
             'total_price'    => $request->total_price,
-            'delivery_charge'=> $request->delivery_charge,
+            'delivery_charge' => $request->delivery_charge,
             'payment_method' => $request->payment_method,
             'order_status'   => 'pending',
         ]);

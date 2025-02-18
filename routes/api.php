@@ -275,4 +275,4 @@ Route::get('/products/category/{category}', [ProductController::class, 'getProdu
 
 
 Route::get('/dashboard-data/{shopId}/{userId}', [ShopManageController::class, 'getDashboardData']);
-Route::get('/my-orders/{shopId}/{userId}', [OrderController::class, 'getOrders']);
+Route::get('/my-orders/{shopId}/{userId}/{status?}', [OrderController::class, 'getOrders']);
