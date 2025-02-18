@@ -2,15 +2,54 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
 use App\Models\Order;
+
+use App\Models\Product;
 use App\Models\OrderItem;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+
+    public function getSingleOrder($orderId)
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        $orderItems = OrderItem::where('order_id', $orderId)->get();
+
+        $orderItemsWithProductDetails = $orderItems->map(function ($item) {
+            $product = Product::with('images')->find($item->product_id);
+
+            if ($product) {
+                $item->product_details = $product;
+
+                $item->product_image = $product->images && $product->images->isNotEmpty()
+                    ? asset('storage/' . $product->images->first()->image_path)
+                    : null;
+            } else {
+                $item->product_details = null;
+                $item->product_image = null;
+            }
+
+            return $item;
+        });
+
+        return response()->json([
+            'order' => $order,
+            'order_items' => $orderItemsWithProductDetails,
+        ]);
+    }
+
+
+
+
+
 
     public function getOrders($shopId, $userId, $status = null)
     {
@@ -63,10 +102,15 @@ class OrderController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
 
+        do {
+            $randomNumber = rand(100000, 999999);
+            $existingOrder = Order::where('order_id', 'BT-' . $randomNumber)->first();
+        } while ($existingOrder);
+
         // Create the order
         $order = Order::create([
-            'user_id'        => $request->user_id,  // Optional: if logged in
-            'shop_id'        => $request->shop_id,  // Optional: if logged in
+            'user_id'        => $request->user_id,
+            'shop_id'        => $request->shop_id,
             'name'           => $request->name,
             'email'          => $request->email,
             'phone'          => $request->phone,
@@ -78,6 +122,7 @@ class OrderController extends Controller
             'total_price'    => $request->total_price,
             'delivery_charge' => $request->delivery_charge,
             'payment_method' => $request->payment_method,
+            'order_id'       => 'BT-' . $randomNumber,
             'order_status'   => 'pending',
         ]);
 
