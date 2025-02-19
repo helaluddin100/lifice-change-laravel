@@ -9,6 +9,8 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\OrderStatusUpdated;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -29,9 +31,10 @@ class OrderController extends Controller
         $order->order_status = $validated['order_status'];
         $order->save();
 
+        Mail::to($order->email)->send(new OrderStatusUpdated($order));
+
         return response()->json(['message' => 'Order status updated successfully', 'order' => $order], 200);
     }
-
 
 
 
