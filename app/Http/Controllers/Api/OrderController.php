@@ -13,6 +13,28 @@ use Illuminate\Support\Facades\Validator;
 class OrderController extends Controller
 {
 
+
+    public function updateStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'order_status' => 'required|string|in:pending,processing,shipped,delivered,canceled',
+        ]);
+
+        $order = Order::find($id);
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        $order->order_status = $validated['order_status'];
+        $order->save();
+
+        return response()->json(['message' => 'Order status updated successfully', 'order' => $order], 200);
+    }
+
+
+
+
     public function getSingleOrder($orderId)
     {
         $order = Order::find($orderId);
@@ -61,7 +83,7 @@ class OrderController extends Controller
             $query->where('order_status', $status);
         }
 
-        $orders = $query->get();
+        $orders = $query->orderBy('created_at', 'desc')->get();
 
         return response()->json($orders);
     }
