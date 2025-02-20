@@ -280,3 +280,4 @@ Route::get('/my-orders/{shopId}/{userId}/{status?}', [OrderController::class, 'g
 // single order view page
 Route::get('/order/{orderId}', [OrderController::class, 'getSingleOrder']);
 Route::post('/order/{id}/status', [OrderController::class, 'updateStatus']);
+Route::get('/order/{id}/invoice', [OrderController::class, 'generateInvoice']);

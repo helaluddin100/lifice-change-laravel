@@ -10,10 +10,50 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\OrderStatusUpdated;
+use App\Models\Shop;
 use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
+
+    public function generateInvoice($orderId)
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        $shop = Shop::find($order->shop_id);
+
+        $orderItems = OrderItem::where('order_id', $orderId)->get();
+
+        $orderItemsWithProductDetails = $orderItems->map(function ($item) {
+            $product = Product::with('images')->find($item->product_id);
+
+            if ($product) {
+                $item->product_details = $product;
+
+                $item->product_image = $product->images && $product->images->isNotEmpty()
+                    ? asset('storage/' . $product->images->first()->image_path)
+                    : null;
+            } else {
+                $item->product_details = null;
+                $item->product_image = null;
+            }
+
+            return $item;
+        });
+
+        $pdf = PDF::loadView('invoices.invoice', [
+            'order' => $order,
+            'shop' => $shop,
+            'order_items' => $orderItemsWithProductDetails,
+        ]);
+
+        return $pdf->download('invoice.pdf');
+    }
 
 
     public function updateStatus(Request $request, $id)
