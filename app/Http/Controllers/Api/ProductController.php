@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 
 use App\Models\Size;
@@ -10,6 +11,7 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -106,13 +108,6 @@ class ProductController extends Controller
     }
 
 
-
-
-
-
-
-
-
     public function getProductsForUserAndShop(Request $request)
     {
         // Validate the inputs to ensure both user_id and shop_id exist
@@ -174,11 +169,6 @@ class ProductController extends Controller
 
         return response()->json($products);
     }
-
-
-
-
-
 
     public function store(Request $request)
     {
@@ -265,9 +255,19 @@ class ProductController extends Controller
         // Handle image uploads and store in product_images table
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('product_images'), $imageName);
+                // Generate a unique image name
+                $imageName = md5(uniqid()) . '.webp';
 
+                // Open the uploaded image
+                $img = Image::make($image);
+
+                // Convert the image to WebP format and reduce file size
+                $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+
+                // Save the image in the public directory
+                $img->save(public_path('product_images/' . $imageName));
+
+                // Store the image in the product_images table
                 ProductImage::create([
                     'product_id' => $product->id,
                     'image_path' => 'product_images/' . $imageName
@@ -282,6 +282,7 @@ class ProductController extends Controller
             'data' => $product,
         ], 200);
     }
+
 
 
 
@@ -336,10 +337,9 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, $id)
     {
-
-
         // Validate incoming request data
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -368,7 +368,7 @@ class ProductController extends Controller
             'product_variant.*.option' => 'nullable|string|max:255',
             'product_variant.*.cost' => 'nullable|numeric',
 
-            'images' => 'nullable|array',
+            'images' => 'nullable',
             'images.*' => 'nullable',
 
             'removed_images' => 'nullable|array',
@@ -420,7 +420,6 @@ class ProductController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
-
         // Step 1: Remove images
         if (!empty($validated['removed_images'])) {
             foreach ($validated['removed_images'] as $imageId) {
@@ -440,8 +439,17 @@ class ProductController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 if ($image->isValid()) {
-                    $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('product_images'), $imageName);
+                    // Generate a unique image name
+                    $imageName = md5(uniqid()) . '.webp';
+
+                    // Open the uploaded image
+                    $img = Image::make($image);
+
+                    // Convert the image to WebP format and reduce file size
+                    $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+
+                    // Save the image in the public directory
+                    $img->save(public_path('product_images/' . $imageName));
 
                     // Save new image in the database
                     ProductImage::create([
@@ -453,12 +461,16 @@ class ProductController extends Controller
         }
 
         // Return response
-        return response()->json([
-            'status' => 200,
-            'message' => 'Product updated successfully',
-            'data' => $product->load('images'), // Load images in response
-        ], 200);
+        return response()->json(
+            [
+                'status' => 200,
+                'message' => 'Product updated successfully',
+                'data' => $product->load('images'), // Load images in response
+            ],
+            200
+        );
     }
+
 
 
 
@@ -481,5 +493,4 @@ class ProductController extends Controller
             'message' => 'Product and associated images deleted successfully',
         ]);
     }
-
 }

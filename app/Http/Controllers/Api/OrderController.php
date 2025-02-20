@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Mail\OrderStatusUpdated;
 use App\Models\Shop;
 use Illuminate\Support\Facades\Mail;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class OrderController extends Controller
 {
