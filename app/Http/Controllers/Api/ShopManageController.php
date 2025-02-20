@@ -15,7 +15,11 @@ use App\Models\TopCategory;
 use Illuminate\Http\Request;
 use App\Models\TopSellingProduct;
 use App\Http\Controllers\Controller;
+use App\Models\AboutUs;
+use App\Models\Cancellation;
 use App\Models\OrderItem;
+use App\Models\PrivacyPolicy;
+use App\Models\Term;
 
 class ShopManageController extends Controller
 {
@@ -227,4 +231,40 @@ class ShopManageController extends Controller
         // Return the colors
         return response()->json($colors);
     }
+
+
+
+    public function aboutShow($shop_id)
+    {
+        $abouts = AboutUs::where('shop_id', $shop_id)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $abouts
+        ]);
+    }
+    public function privacyShow($shop_id)
+    {
+        $privacy = PrivacyPolicy::where('shop_id', $shop_id)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $privacy
+        ]);
+    }
+    public function termShow($shop_id)
+    {
+        $term = Term::where('shop_id', $shop_id)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $term
+        ]);
+    }
+    public function cancellationShow($shop_id)
+    {
+        $cancellation = Cancellation::where('shop_id', $shop_id)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $cancellation
+        ]);
+    }
+
 }
