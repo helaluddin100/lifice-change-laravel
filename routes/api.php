@@ -161,7 +161,7 @@ Route::post('about/store', [AboutUsController::class, 'store']);
 Route::get('/abouts/{id}', [AboutUsController::class, 'edit']);
 Route::put('/abouts/{id}', [AboutUsController::class, 'update']);
 Route::delete('/abouts/{id}', [AboutUsController::class, 'destroy']);
-// Route::get('/abouts/{id}', [ShopManageController::class, 'aboutShow']);
+Route::get('/abouts/{id}', [ShopManageController::class, 'aboutShow']);
 
 // Privacy Policy
 Route::post('/privacy', [PrivacyPolicyController::class, 'store']);
@@ -170,7 +170,7 @@ Route::post('privacy/store', [PrivacyPolicyController::class, 'store']);
 Route::get('/privacy/{id}', [PrivacyPolicyController::class, 'edit']);
 Route::put('/privacy/{id}', [PrivacyPolicyController::class, 'update']);
 Route::delete('/privacy/{id}', [PrivacyPolicyController::class, 'destroy']);
-// Route::get('/privacy/{id}', [ShopManageController::class, 'aboutShow']);
+Route::get('/privacy/{id}', [ShopManageController::class, 'privacyShow']);
 
 // Terms and Conditions
 Route::post('/term', [TermController::class, 'store']);
@@ -179,7 +179,7 @@ Route::post('term/store', [TermController::class, 'store']);
 Route::get('/term/{id}', [TermController::class, 'edit']);
 Route::put('/term/{id}', [TermController::class, 'update']);
 Route::delete('/term/{id}', [TermController::class, 'destroy']);
-// Route::get('/privacy/{id}', [ShopManageController::class, 'aboutShow']);
+Route::get('/term/{id}', [ShopManageController::class, 'termShow']);
 
 // Return and Cancellation Policy
 Route::post('/cancellation', [CancellationController::class, 'store']);
@@ -188,7 +188,7 @@ Route::post('cancellation/store', [CancellationController::class, 'store']);
 Route::get('/cancellation/{id}', [CancellationController::class, 'edit']);
 Route::put('/cancellation/{id}', [CancellationController::class, 'update']);
 Route::delete('/cancellation/{id}', [CancellationController::class, 'destroy']);
-// Route::get('/cancellation/{id}', [ShopManageController::class, 'aboutShow']);
+Route::get('/cancellation/{id}', [ShopManageController::class, 'cancellationShow']);
 
 
 
