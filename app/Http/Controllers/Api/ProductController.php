@@ -353,7 +353,6 @@ class ProductController extends Controller
             'product_code' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
-
             'product_colors' => 'nullable|array',
             'product_colors.*.color' => 'required|string|max:255',
             'product_colors.*.price' => 'required|numeric',
@@ -363,17 +362,12 @@ class ProductController extends Controller
             'product_details' => 'nullable|array',
             'product_details.*.detail_type' => 'nullable|string|max:255',
             'product_details.*.detail_description' => 'nullable|string',
-
             'product_variant' => 'nullable|array',
             'product_variant.*.option' => 'nullable|string|max:255',
             'product_variant.*.cost' => 'nullable|numeric',
-
             'images' => 'nullable',
-            'images.*' => 'nullable',
-
             'removed_images' => 'nullable|array',
-            'removed_images.*' => 'exists:product_images,id', // Ensure valid image IDs are provided
-
+            'removed_images.*' => 'nullable|integer', // Validate the image IDs as integers
             'video' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
@@ -423,7 +417,11 @@ class ProductController extends Controller
         // Step 1: Remove images
         if (!empty($validated['removed_images'])) {
             foreach ($validated['removed_images'] as $imageId) {
-                $productImage = ProductImage::find($imageId);
+                // Ensure the image ID exists and belongs to the correct product
+                $productImage = ProductImage::where('id', $imageId)
+                    ->where('product_id', $product->id) // Ensure image belongs to the current product
+                    ->first();
+
                 if ($productImage) {
                     $imagePath = public_path($productImage->image_path);
 
@@ -431,6 +429,12 @@ class ProductController extends Controller
                         unlink($imagePath); // Delete the image from storage
                     }
                     $productImage->delete(); // Remove the record from the database
+                } else {
+                    // Image ID doesn't belong to the product or doesn't exist
+                    return response()->json([
+                        'status' => 400,
+                        'message' => 'Invalid image ID or image does not belong to this product.',
+                    ], 400);
                 }
             }
         }
@@ -470,6 +474,8 @@ class ProductController extends Controller
             200
         );
     }
+
+
 
 
 
