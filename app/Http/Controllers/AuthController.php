@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -106,13 +107,22 @@ class AuthController extends Controller
             return response()->json(['message' => 'User already verified!'], 400);
         }
 
-        // নতুন ভেরিফিকেশন কোড তৈরি করা
+        // Check if the user requested a resend within the last 2 minutes
+        $cacheKey = 'resend_verification_' . $user->email;
+        if (Cache::has($cacheKey)) {
+            return response()->json(['message' => 'Please wait 2 minutes before requesting a new code.'], 429);
+        }
+
+        // Generate a new verification code
         $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $user->verification_code = $verificationCode;
         $user->save();
 
-        // ইমেইল পাঠানো
+        // Send email
         $user->notify(new VerifyEmail($verificationCode));
+
+        // Store the request time in cache for 2 minutes
+        Cache::put($cacheKey, true, now()->addMinutes(2));
 
         return response()->json(['message' => 'New verification email sent!']);
     }

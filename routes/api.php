@@ -29,6 +29,14 @@ use App\Http\Controllers\Api\ReviewController;
 
 
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/update/user', [UserController::class, 'updateUser']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
 
 
@@ -37,6 +45,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
 Route::post('/auth/verify', [AuthController::class, 'verify']);
+Route::post('/auth/resend-verification', [AuthController::class, 'resendVerificationEmail']);
 
 // Protected routes (authentication required)
 
@@ -72,17 +81,8 @@ Route::get('/user-shop', function (Request $request) {
     return response()->json($shop);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
-    Route::post('/update/user', [UserController::class, 'updateUser']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-});
 
 
-Route::post('/auth/resend-verification', [AuthController::class, 'resendVerificationEmail']);
 
 
 // Business types route
