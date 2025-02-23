@@ -82,6 +82,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
+Route::post('/auth/resend-verification', [AuthController::class, 'resendVerificationEmail']);
+
 
 // Business types route
 Route::get('country', [ShopController::class, 'countries']);

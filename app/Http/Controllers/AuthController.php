@@ -51,33 +51,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function login(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     $credentials = $request->only('email', 'password');
-
-    //     if (Auth::attempt($credentials)) {
-    //         $user = Auth::user();
-
-    //         // Check if the user's email is verified
-    //         if ($user->email_verified_at) {
-    //             $token = JWTAuth::fromUser($user);
-
-    //             return response()->json(['token' => $token]);
-    //         } else {
-    //             // If the email is not verified, log the user out
-    //             Auth::logout();
-
-    //             return response()->json(['error' => 'Account not verified'], 401);
-    //         }
-    //     }
-
-    //     return response()->json(['error' => 'Invalid credentials'], 401);
-    // }
 
     public function login(Request $request)
     {
@@ -92,10 +65,20 @@ class AuthController extends Controller
 
             // Check if the user's email is verified
             if (!$user->email_verified_at) {
-                // If the email is not verified, log the user out
-                Auth::logout();
+                // Generate a new verification code
+                $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                $user->verification_code = $verificationCode;
+                $user->save();
 
-                return response()->json(['error' => 'Account not verified'], 401);
+                // Send verification email
+                $user->notify(new VerifyEmail($verificationCode));
+
+                return response()->json([
+                    'error' => 'Account not verified',
+                    'redirect' => '/verify-email', // ✅ Redirect user to verification page
+                    'email' => $user->email,
+                    'message' => 'A new verification email has been sent to your email address.'
+                ], 200);
             }
 
             // If the user's email is verified, generate and return a token
@@ -109,6 +92,31 @@ class AuthController extends Controller
             return response(['error' => 'Something went wrong. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    public function resendVerificationEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user->email_verified_at) {
+            return response()->json(['message' => 'User already verified!'], 400);
+        }
+
+        // নতুন ভেরিফিকেশন কোড তৈরি করা
+        $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $user->verification_code = $verificationCode;
+        $user->save();
+
+        // ইমেইল পাঠানো
+        $user->notify(new VerifyEmail($verificationCode));
+
+        return response()->json(['message' => 'New verification email sent!']);
+    }
+
 
     /**
      * Log the user out and revoke the access token.
