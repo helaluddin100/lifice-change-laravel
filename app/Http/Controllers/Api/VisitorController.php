@@ -33,15 +33,15 @@ class VisitorController extends Controller
             'vpn' => 'nullable|boolean',
         ]);
 
-        // Check if visitor data exists in the last 24 hours
-        $lastVisit = VisitorData::where('user_id', $request->user_id)
-                                ->where('shop_id', $request->shop_id)
-                                ->latest()
-                                ->first();
+        // // Check if visitor data exists in the last 24 hours
+        // $lastVisit = VisitorData::where('user_id', $request->user_id)
+        //                         ->where('shop_id', $request->shop_id)
+        //                         ->latest()
+        //                         ->first();
 
-        if ($lastVisit && $lastVisit->created_at->diffInHours(now()) < 24) {
-            return response()->json(['message' => 'Visitor data already submitted within the last 24 hours'], 400);
-        }
+        // if ($lastVisit && $lastVisit->created_at->diffInHours(now()) < 24) {
+        //     return response()->json(['message' => 'Visitor data already submitted within the last 24 hours'], 400);
+        // }
 
         // Store visitor data
         VisitorData::create($request->all());
