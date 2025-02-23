@@ -123,4 +123,11 @@ class Shop extends Model
     {
         return $this->hasMany(NewArrivalBanner::class);
     }
+
+
+    // Relationship with VisitorData
+    public function visitorData()
+    {
+        return $this->hasMany(VisitorData::class);
+    }
 }

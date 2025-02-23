@@ -24,7 +24,7 @@ use App\Http\Controllers\Api\TopSellingProductController;
 use App\Http\Controllers\Api\NewArrivalBannerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReviewController;
-
+use App\Http\Controllers\Api\VisitorController;
 use App\Models\User;
 use App\Models\Shop;
 
@@ -295,3 +295,6 @@ Route::get('/my-orders/{shopId}/{userId}/{status?}', [OrderController::class, 'g
 Route::get('/order/{orderId}', [OrderController::class, 'getSingleOrder']);
 Route::post('/order/{id}/status', [OrderController::class, 'updateStatus']);
 Route::get('/order/{id}/invoice', [OrderController::class, 'generateInvoice']);
+
+
+Route::post('/visitor-data', [VisitorController::class, 'store']);

@@ -152,4 +152,11 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     {
         return $this->hasMany(NewArrivalBanner::class);
     }
+
+
+    // Relationship with VisitorData
+    public function visitorData()
+    {
+        return $this->hasMany(VisitorData::class);
+    }
 }
