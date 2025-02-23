@@ -25,18 +25,30 @@ use App\Http\Controllers\Api\NewArrivalBannerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReviewController;
 
-
+use App\Models\User;
+use App\Models\Shop;
 
 
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        $user = $request->user();
+
+        // Check if the user has a shop
+        $userShop = Shop::where('user_id', $user->id)->first();
+
+        // Add the 'hasShop' field inside the 'user' array
+        return response()->json([
+            'user' => array_merge($user->toArray(), [
+                'hasShop' => $userShop ? true : false,  // Add 'hasShop' to the user data
+            ]),
+        ]);
     });
 
     Route::post('/update/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
 
 
 

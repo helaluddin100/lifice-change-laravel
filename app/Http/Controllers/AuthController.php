@@ -76,11 +76,17 @@ class AuthController extends Controller
 
                 return response()->json([
                     'error' => 'Account not verified',
-                    'redirect' => '/verify-email', // ✅ Redirect user to verification page
+                    'redirect' => '/verify-email',
                     'email' => $user->email,
                     'message' => 'A new verification email has been sent to your email address.'
                 ], 200);
             }
+
+            // Refresh shops data from DB (important after delete)
+            $user->load('shops'); // ✅ Load fresh 'shops' relationship data
+
+            // Check if the user has a shop
+            $hasShop = $user->shops()->exists(); // ✅ Re-check the shop existence
 
             // If the user's email is verified, generate and return a token
             $token = $user->createToken('token')->plainTextToken;
@@ -88,11 +94,14 @@ class AuthController extends Controller
             return response([
                 'user' => $user,
                 'token' => $token,
+                'redirect' => $hasShop ? '/dashboard' : '/createshop', // ✅ Redirect based on shop existence
             ]);
         } catch (\Exception $e) {
             return response(['error' => 'Something went wrong. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
 
     public function resendVerificationEmail(Request $request)
