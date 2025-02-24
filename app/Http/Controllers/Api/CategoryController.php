@@ -18,19 +18,27 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $userId = $request->query('user_id');
-        $categories = Category::where('user_id', $userId)->get()->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-                'image' => $category->image_url, // Using the accessor
-            ];
-        });
+
+        $categories = Category::where('user_id', $userId)
+            ->withCount('products')
+            ->get()
+            ->map(function ($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'image' => $category->image_url,
+                    'product_count' => $category->products_count,
+                ];
+            });
 
         return response()->json([
             'status' => 200,
             'categories' => $categories,
         ]);
     }
+
+
+
 
     public function getCategoriesByUser($id)
     {

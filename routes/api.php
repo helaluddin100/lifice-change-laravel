@@ -34,13 +34,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         $user = $request->user();
 
-        // Check if the user has a shop
         $userShop = Shop::where('user_id', $user->id)->first();
 
-        // Add the 'hasShop' field inside the 'user' array
         return response()->json([
             'user' => array_merge($user->toArray(), [
-                'hasShop' => $userShop ? true : false,  // Add 'hasShop' to the user data
+                'hasShop' => $userShop ? true : false,
             ]),
         ]);
     });
