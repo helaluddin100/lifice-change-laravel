@@ -12,9 +12,11 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ColorController;
+use App\Http\Controllers\Api\FlashDealProductController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ShopManageController;
 use App\Http\Controllers\Api\HomeSliderController;
+use App\Http\Controllers\Api\HotDealProductController;
 use App\Http\Controllers\Api\PrivacyPolicyController;
 use App\Http\Controllers\Api\TermController;
 use App\Http\Controllers\Api\TopCategoryController;
@@ -25,6 +27,8 @@ use App\Http\Controllers\Api\NewArrivalBannerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\VisitorController;
+use App\Http\Controllers\Api\OfferProductController;
+use App\Http\Controllers\Api\TopRatedProductController;
 use App\Models\User;
 use App\Models\Shop;
 
@@ -249,6 +253,35 @@ Route::post('/new-arrival', [NewArrivalBannerController::class, 'store']);      
 Route::post('/new-arrival/{id}', [NewArrivalBannerController::class, 'update']);        // Update slider
 Route::delete('/new-arrival/{id}', [NewArrivalBannerController::class, 'destroy']);
 Route::get('/new-arrival-banners/{shop_id}', [ShopManageController::class, 'getArrivalBannersByShop']);
+
+// Offer Product
+Route::post('/store-offer-product', [OfferProductController::class, 'store']);
+Route::get('/get-offer-product', [OfferProductController::class, 'getSelectedProducts']);
+Route::delete('/delete-offer-product/{productId}', [OfferProductController::class, 'delete']);
+Route::get('/offer-product/{shop_id}', [ShopManageController::class, 'offerProductByShop']);
+
+// Hot Deal Product
+Route::post('/store-hot-deal-product', [HotDealProductController::class, 'store']);
+Route::get('/get-hot-deal-product', [HotDealProductController::class, 'getSelectedProducts']);
+Route::delete('/delete-hot-deal-product/{productId}', [HotDealProductController::class, 'delete']);
+Route::get('/hot-deal-product/{shop_id}', [ShopManageController::class, 'hotDealProductByShop']);
+
+// Hot Deal Product
+Route::post('/store-flash-deal-product', [FlashDealProductController::class, 'store']);
+Route::get('/get-flash-deal-product', [FlashDealProductController::class, 'getSelectedProducts']);
+Route::delete('/delete-flash-deal-product/{productId}', [FlashDealProductController::class, 'delete']);
+Route::get('/flash-deal-product/{shop_id}', [ShopManageController::class, 'flashDealProductByShop']);
+
+// Hot Deal Product
+Route::post('/store-top-rated-product', [TopRatedProductController::class, 'store']);
+Route::get('/get-top-rated-product', [TopRatedProductController::class, 'getSelectedProducts']);
+Route::delete('/delete-top-rated-product/{productId}', [TopRatedProductController::class, 'delete']);
+Route::get('/top-rated-product/{shop_id}', [ShopManageController::class, 'topRatedProductByShop']);
+
+
+
+
+
 // Product Details
 Route::get('products/{slug}', [ProductController::class, 'productDetails']);
 

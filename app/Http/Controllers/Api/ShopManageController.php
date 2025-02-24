@@ -17,11 +17,15 @@ use App\Models\TopSellingProduct;
 use App\Http\Controllers\Controller;
 use App\Models\AboutUs;
 use App\Models\Cancellation;
+use App\Models\FlashDealProduct;
+use App\Models\HotDealProduct;
 use App\Models\NewArrivalBanner;
+use App\Models\OfferProduct;
 use App\Models\OrderItem;
 use App\Models\PrivacyPolicy;
 use App\Models\Term;
 use App\Models\TodaySellProduct;
+use App\Models\TopRatedProduct;
 
 class ShopManageController extends Controller
 {
@@ -119,7 +123,6 @@ class ShopManageController extends Controller
 
     public function topSellingProductByShop($shop_id)
     {
-        // Fetch the top selling products with the product and the related product images
         $topselling = TopSellingProduct::where('shop_id', $shop_id)
             ->with(['product', 'product.images'])
             ->get();
@@ -129,6 +132,52 @@ class ShopManageController extends Controller
             'data' => $topselling
         ]);
     }
+
+    public function offerProductByShop($shop_id)
+    {
+        $offers = OfferProduct::where('shop_id', $shop_id)
+            ->with(['product', 'product.images'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $offers
+        ]);
+    }
+    public function hotDealProductByShop($shop_id)
+    {
+        $hotDeals = HotDealProduct::where('shop_id', $shop_id)
+            ->with(['product', 'product.images'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $hotDeals
+        ]);
+    }
+    public function flashDealProductByShop($shop_id)
+    {
+        $flashDeals = FlashDealProduct::where('shop_id', $shop_id)
+            ->with(['product', 'product.images'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $flashDeals
+        ]);
+    }
+    public function topRatedProductByShop($shop_id)
+    {
+        $topRateds = TopRatedProduct::where('shop_id', $shop_id)
+            ->with(['product', 'product.images'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $topRateds
+        ]);
+    }
+
 
     public function todayNewArrivalByShop($shop_id)
     {
