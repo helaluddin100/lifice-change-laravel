@@ -227,7 +227,7 @@ Route::get('/products', [ProductController::class, 'getProductsForUserAndShop'])
 Route::post('/store-today-sell-products', [TodaySellProductController::class, 'store']);
 Route::get('/get-today-sell-products', [TodaySellProductController::class, 'getSelectedProducts']);
 Route::delete('/delete-today-sell-product/{productId}', [TodaySellProductController::class, 'delete']);
-
+Route::get('/today-sell/{shop_id}', [ShopManageController::class, 'todaySellByShop']);
 
 // New Arrivals product
 Route::post('/store-new-arrivals', [NewArrivalsController::class, 'store']);
@@ -248,7 +248,7 @@ Route::get('/new-arrival/{shop_id}', [NewArrivalBannerController::class, 'index'
 Route::post('/new-arrival', [NewArrivalBannerController::class, 'store']);            // Create a new slider
 Route::post('/new-arrival/{id}', [NewArrivalBannerController::class, 'update']);        // Update slider
 Route::delete('/new-arrival/{id}', [NewArrivalBannerController::class, 'destroy']);
-
+Route::get('/new-arrival-banners/{shop_id}', [ShopManageController::class, 'getArrivalBannersByShop']);
 // Product Details
 Route::get('products/{slug}', [ProductController::class, 'productDetails']);
 

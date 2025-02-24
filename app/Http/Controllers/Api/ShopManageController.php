@@ -17,9 +17,11 @@ use App\Models\TopSellingProduct;
 use App\Http\Controllers\Controller;
 use App\Models\AboutUs;
 use App\Models\Cancellation;
+use App\Models\NewArrivalBanner;
 use App\Models\OrderItem;
 use App\Models\PrivacyPolicy;
 use App\Models\Term;
+use App\Models\TodaySellProduct;
 
 class ShopManageController extends Controller
 {
@@ -165,7 +167,31 @@ class ShopManageController extends Controller
         ]);
     }
 
+    public function todaySellByShop($shop_id)
+    {
+        // Fetch the new arrivals with the product and the related product images
+        $todaysell = TodaySellProduct::where('shop_id', $shop_id)
+            ->with(['product', 'product.images'])
+            ->get();
 
+        return response()->json([
+            'success' => true,
+            'data' => $todaysell
+        ]);
+    }
+
+
+    public function getArrivalBannersByShop($shop_id)
+    {
+        $arrivalBanners = NewArrivalBanner::where('shop_id', $shop_id)
+            ->where('status', true)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $arrivalBanners
+        ]);
+    }
 
     public function categoryShow($userId)
     {
@@ -266,5 +292,4 @@ class ShopManageController extends Controller
             'data' => $cancellation
         ]);
     }
-
 }
