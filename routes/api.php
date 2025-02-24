@@ -298,3 +298,4 @@ Route::get('/order/{id}/invoice', [OrderController::class, 'generateInvoice']);
 
 
 Route::post('/visitor-data', [VisitorController::class, 'store']);
+Route::get('/all-visitor-data', [VisitorController::class, 'getVisitorData']);
