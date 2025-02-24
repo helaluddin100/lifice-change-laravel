@@ -45,12 +45,12 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 
-    Route::post('/update/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 
 
+Route::post('/update/user/{id}', [UserController::class, 'updateUser']);
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
