@@ -232,6 +232,7 @@ class ShopController extends Controller
                 'slider' => 'nullable|boolean',
                 'today_sell' => 'nullable|boolean',
                 'new_arrival' => 'nullable|boolean',
+                'new_arrival_banner' => 'nullable|boolean',
                 'offer_product' => 'nullable|boolean',
                 'hot_deal' => 'nullable|boolean',
                 'flash_deal' => 'nullable|boolean',

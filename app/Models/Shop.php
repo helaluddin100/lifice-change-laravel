@@ -48,6 +48,7 @@ class Shop extends Model
         'slider',
         'today_sell',
         'new_arrival',
+        'new_arrival_banner',
         'offer_product',
         'hot_deal',
         'flash_deal',
