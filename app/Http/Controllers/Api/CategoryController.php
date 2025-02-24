@@ -7,6 +7,7 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Facades\Image;
 
 class CategoryController extends Controller
 {
@@ -53,7 +54,7 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        try {
+
             // Validate incoming request
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
@@ -61,19 +62,32 @@ class CategoryController extends Controller
                 'status' => 'required|boolean',
             ]);
             $userId = $request->input('user_id');
+
             // Create a new category instance
             $category = new Category();
             $category->name = $validatedData['name'];
             $category->user_id = $userId;
             $category->status = $request->status;
+
+            // Handle image upload and convert to WebP format
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
-                $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('category_images'), $imageName);
-                $category->image = $imageName;
+                $imageName = md5(uniqid()) . '.webp'; // WEBP format
+
+                // Open the uploaded image and convert it to WEBP format
+                $img = Image::make($image);
+
+                // Convert the image to WebP format and reduce file size
+                $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+
+                // Save the image in the public directory (category_images folder)
+                $img->save(public_path('category_images/' . $imageName));
+
+                // Assign the image name to the category
+                $category->image =$imageName;
             }
 
-
+            // Save the category
             $category->save();
 
             return response()->json([
@@ -81,15 +95,9 @@ class CategoryController extends Controller
                 'message' => 'Category created successfully',
                 'category' => $category, // Optionally return the created category data
             ]);
-        } catch (\Throwable $e) {
-            // Log and handle any errors
-            Log::error('Error creating Shop', ['error' => $e->getMessage()]);
-            return response()->json([
-                'status' => 500,
-                'error' => 'An error occurred. Please try again later.',
-            ], 500);
-        }
+
     }
+
 
     /**
      * Display the specified resource.
@@ -132,7 +140,7 @@ class CategoryController extends Controller
             // Validate incoming request
             $validatedData = $request->validate([
                 'name' => 'required|string',
-                'image' => 'required',
+                'image' => 'nullable|image', // Image validation for different types
                 'status' => 'required|boolean',
             ]);
 
@@ -140,24 +148,31 @@ class CategoryController extends Controller
             $category = Category::findOrFail($id);
             $category->name = $validatedData['name'];
             $category->status = $validatedData['status'];
+
+            // Check if an image was uploaded
             if ($request->hasFile('image')) {
-                // Delete the old image
+                // Delete the old image if it exists
                 if ($category->image && file_exists(public_path('category_images/' . $category->image))) {
                     unlink(public_path('category_images/' . $category->image));
                 }
 
-                // Upload new image
+                // Handle new image upload and conversion to WebP
                 $image = $request->file('image');
-                $imageName = md5(uniqid()) . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('category_images'), $imageName);
-                $category->image = $imageName;
+                $imageName = md5(uniqid()) . '.webp'; // Generate a unique name with .webp extension
+
+                // Open the uploaded image and convert it to WebP format
+                $img = Image::make($image);
+                $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+
+                // Save the image to the public directory
+                $img->save(public_path('category_images/' . $imageName));
+
+                // Assign the new image name to the category
+                $category->image =  $imageName;
             }
 
-            // Save updated category
+            // Save the updated category
             $category->save();
-
-            // Log success message
-            Log::info('Category updated successfully', ['id' => $category->id]);
 
             // Return success response
             return response()->json([
@@ -169,11 +184,11 @@ class CategoryController extends Controller
             // Return validation errors
             return response()->json(['status' => 422, 'errors' => $e->errors()]);
         } catch (\Throwable $e) {
-            // Log and handle other errors
-            Log::error('Error updating category', ['error' => $e->getMessage()]);
+            // Handle other errors
             return response()->json(['status' => 500, 'error' => 'An error occurred. Please try again later.'], 500);
         }
     }
+
 
 
 
