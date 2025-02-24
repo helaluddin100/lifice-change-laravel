@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 
 use App\Models\VisitorData;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class VisitorController extends Controller
 {
@@ -55,31 +54,28 @@ class VisitorController extends Controller
 
     public function getVisitorData(Request $request)
     {
-        try {
-            // Log received data for debugging
-            Log::info("Fetching visitor data for user_id: " . $request->query('user_id') . ", shop_id: " . $request->query('shop_id'));
+        $request->validate([
+            'user_id' => 'required|integer',
+            'shop_id' => 'required|integer'
+        ]);
 
-            // Validate the query parameters
-            $request->validate([
-                'user_id' => 'required|integer',
-                'shop_id' => 'required|integer'
-            ]);
+        $query = VisitorData::where('user_id', $request->query('user_id'))
+            ->where('shop_id', $request->query('shop_id'));
 
-            // Fetch visitor data
-            $visitors = VisitorData::where('user_id', $request->query('user_id'))
-                ->where('shop_id', $request->query('shop_id'))
-                ->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $visitors
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error("Error fetching visitor data: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Server Error'
-            ], 500);
+        if ($request->filled('search')) {
+            $search = $request->query('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%$search%")
+                    ->orWhere('user_id', 'like', "%$search%")
+                    ->orWhere('shop_id', 'like', "%$search%");
+            });
         }
+
+        $visitors = $query->paginate(25);
+
+        return response()->json([
+            'success' => true,
+            'data' => $visitors
+        ]);
     }
 }

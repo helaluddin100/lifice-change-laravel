@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Image;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Models\VisitorData;
 
 class ShopController extends Controller
 {
@@ -66,8 +67,13 @@ class ShopController extends Controller
 
     public function getUserShops($userId)
     {
-        $shops = Shop::where('user_id', $userId)->get();
-        return response()->json($shops);
+        $shops = Shop::where('user_id', $userId)
+            ->withCount('visitorData')
+            ->get();
+
+        return response()->json(
+            $shops
+        );
     }
 
 
