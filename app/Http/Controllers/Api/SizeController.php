@@ -4,7 +4,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Product;
 use App\Models\Size;
 use Illuminate\Http\Request;
 
@@ -19,13 +19,20 @@ class SizeController extends Controller
     {
         // Get the user ID from the request
         $userId = $request->query('user_id');
-
-        // Fetch categories for the specified user
         $sizes = Size::where('user_id', $userId)->get();
+        $sizesWithProductCount = $sizes->map(
+            function ($size) use ($userId) {
+                $productCount = Product::where('user_id', $userId)
+                    ->whereRaw("JSON_CONTAINS(product_sizes, ?)", [json_encode([['size' => (string)$size->id]])])
+                    ->count();
+
+                return $size->setAttribute('product_count', $productCount);
+            }
+        );
 
         return response()->json([
             'status' => 200,
-            'sizes' => $sizes,
+            'sizes' => $sizesWithProductCount,
         ]);
     }
 

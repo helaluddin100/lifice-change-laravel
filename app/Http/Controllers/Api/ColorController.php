@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-
 use App\Models\Color;
+
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ColorController extends Controller
 {
@@ -16,17 +17,25 @@ class ColorController extends Controller
      */
     public function index(Request $request)
     {
-        // Get the user ID from the request
         $userId = $request->query('user_id');
 
-        // Fetch categories for the specified user
-        $colors = Color::where('user_id', $userId)->get();
+        $colors = Color::where('user_id', $userId)->get()->map(function ($color) use ($userId) {
+            $color->product_count = Product::where('user_id', $userId)
+                ->whereRaw("JSON_CONTAINS(product_colors, ?)", [json_encode([['color' => (string)$color->id]])])
+                ->count();
+            return $color;
+        });
 
         return response()->json([
             'status' => 200,
             'colors' => $colors,
         ]);
     }
+
+
+
+
+
 
     public function getColorByShop($id)
     {
