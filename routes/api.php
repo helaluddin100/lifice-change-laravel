@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ColorController;
+use App\Http\Controllers\Api\CustomerBenefitController;
 use App\Http\Controllers\Api\FlashDealProductController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ShopManageController;
@@ -284,7 +285,12 @@ Route::get('/get-top-rated-product', [TopRatedProductController::class, 'getSele
 Route::delete('/delete-top-rated-product/{productId}', [TopRatedProductController::class, 'delete']);
 Route::get('/top-rated-product/{shop_id}', [ShopManageController::class, 'topRatedProductByShop']);
 
-
+//  Customer Benefit
+Route::get('/customer-benefit/{shop_id}', [CustomerBenefitController::class, 'index']);
+Route::post('/customer-benefit', [CustomerBenefitController::class, 'store']);
+Route::post('/customer-benefit/{id}', [CustomerBenefitController::class, 'update']);        
+Route::delete('/customer-benefit/{id}', [CustomerBenefitController::class, 'destroy']);
+Route::get('/customer-benefit-banners/{shop_id}', [ShopManageController::class, 'getCustomerBenefitByShop']);
 
 
 
