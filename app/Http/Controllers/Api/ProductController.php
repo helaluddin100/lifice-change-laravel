@@ -180,18 +180,24 @@ class ProductController extends Controller
             'shop_id' => 'required|exists:shops,id',
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
-            'item_name' => 'nullable|string|max:255',
+            // 'item_name' => 'nullable|string|max:255',
             'current_price' => 'required|numeric',
             'old_price' => 'nullable|numeric',
             'buy_price' => 'nullable|numeric',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
-            'product_colors' => 'nullable|array',
-            'product_colors.*.color' => 'required|string|max:255',
-            'product_colors.*.price' => 'required|numeric',
-            'product_sizes' => 'nullable|array',
-            'product_sizes.*.size' => 'required|string|max:255',
-            'product_sizes.*.price' => 'required|numeric',
+
+
+            'product_colors' => 'sometimes|required|array',
+            'product_colors.*.color' => 'nullable|string|max:255',
+            'product_colors.*.price' => 'nullable|numeric',
+
+            'product_sizes' => 'sometimes|required|array',
+            'product_sizes.*.size' => 'nullable|string|max:255',
+            'product_sizes.*.price' => 'nullable|numeric',
+
+
+
             'product_details' => 'nullable|array',
             'product_details.*.detail_type' => 'nullable|string|max:255',
             'product_details.*.detail_description' => 'nullable|string',
@@ -204,11 +210,11 @@ class ProductController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
-            'status' => 'nullable',
+            'status' => 'required',
             'has_variant' => 'nullable',
             'has_details' => 'nullable',
             'variant_name' => 'nullable|string|max:255',
-            'description' => 'nullable',
+            'description' => 'required',
         ]);
 
         // Ensure 'status' and 'has_variant' are treated as booleans
@@ -235,18 +241,17 @@ class ProductController extends Controller
             'shop_id' => $validated['shop_id'],
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
-            'slug' => $slug,  // Add the generated slug
-            'item_name' => $validated['item_name'] ?? null,
+            'slug' => $slug,
             'current_price' => $validated['current_price'],
             'old_price' => $validated['old_price'] ?? null,
             'buy_price' => $validated['buy_price'] ?? null,
             'product_code' => $randomNumber,
             'quantity' => $validated['quantity'],
             'warranty' => $validated['warranty'] ?? null,
-            'product_details' => $validated['product_details'] ?? [],
-            'product_variant' => $validated['product_variant'] ?? [],
-            'product_colors' => $validated['product_colors'] ?? [],
-            'product_sizes' => $validated['product_sizes'] ?? [],
+            'product_details' => !empty($validated['product_details']) ? $validated['product_details'] : null, // ✅ Fix for empty array
+            'product_variant' => !empty($validated['product_variant']) ? $validated['product_variant'] : null, // ✅ Fix for empty array
+            'product_colors' => !empty($validated['product_colors']) ? $validated['product_colors'] : null, // ✅ Fix for empty array
+            'product_sizes' => !empty($validated['product_sizes']) ? $validated['product_sizes'] : null, // ✅ Fix for empty array
             'video' => $validated['video'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
@@ -255,8 +260,9 @@ class ProductController extends Controller
             'has_variant' => $has_variant,
             'has_details' => filter_var($validated['has_details'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'variant_name' => $validated['variant_name'] ?? null,
-            'description' => $validated['description'] ?? null,
+            'description' => $validated['description'],
         ]);
+
 
         // Handle image uploads and store in product_images table
         if ($request->hasFile('images')) {
@@ -268,7 +274,7 @@ class ProductController extends Controller
                 $img = Image::make($image);
 
                 // Convert the image to WebP format and reduce file size
-                $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+                $img->encode('webp', 80);
 
                 // Save the image in the public directory
                 $img->save(public_path('product_images/' . $imageName));

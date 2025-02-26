@@ -123,6 +123,7 @@ class ShopController extends Controller
             $shop->user_id = $userId;
             $shop->shop_url = $shop_url;
             $shop->template_type = 1;
+            $shop->vat_tax = 0;
             $shop->save();
 
             // Log the success message
