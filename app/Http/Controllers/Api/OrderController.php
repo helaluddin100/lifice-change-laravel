@@ -62,18 +62,20 @@ class OrderController extends Controller
             'order_status' => 'required|string|in:pending,processing,shipped,delivered,canceled',
         ]);
 
-        $order = Order::find($id);
+        $order = Order::with('orderItems')->find($id);
 
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
 
-        // Check if the status is changing to "delivered"
         if ($order->order_status !== 'delivered' && $validated['order_status'] === 'delivered') {
             foreach ($order->orderItems as $item) {
                 $product = Product::find($item->product_id);
                 if ($product) {
-                    $product->quantity -= $item->quantity;
+                    $product->quantity = max(0, $product->quantity - $item->quantity);
+
+                    $product->sold_count = $product->sold_count + $item->quantity;
+
                     $product->save();
                 }
             }
@@ -84,8 +86,12 @@ class OrderController extends Controller
 
         Mail::to($order->email)->send(new OrderStatusUpdated($order));
 
-        return response()->json(['message' => 'Order status updated successfully', 'order' => $order], 200);
+        return response()->json([
+            'message' => 'Order status updated successfully',
+            'order' => $order
+        ], 200);
     }
+
 
 
 
