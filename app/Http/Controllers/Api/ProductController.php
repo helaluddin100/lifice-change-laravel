@@ -199,7 +199,7 @@ class ProductController extends Controller
             'product_variant.*.option' => 'nullable|string|max:255',
             'product_variant.*.cost' => 'nullable|numeric',
             'images' => 'nullable|array',
-            'images.*' => 'file|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'file|mimes:jpeg,png,jpg,gif,webp|max:6000',
             'video' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
@@ -331,9 +331,6 @@ class ProductController extends Controller
     }
 
 
-
-
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -387,7 +384,7 @@ class ProductController extends Controller
             'product_variant.*.cost' => 'nullable|numeric',
             'images' => 'nullable',
             'removed_images' => 'nullable|array',
-            'removed_images.*' => 'nullable|integer', // Validate the image IDs as integers
+            'removed_images.*' => 'nullable|integer',
             'video' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
