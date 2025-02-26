@@ -17,6 +17,7 @@ use App\Models\TopSellingProduct;
 use App\Http\Controllers\Controller;
 use App\Models\AboutUs;
 use App\Models\Cancellation;
+use App\Models\CustomerBenefit;
 use App\Models\FlashDealProduct;
 use App\Models\HotDealProduct;
 use App\Models\NewArrivalBanner;
@@ -239,6 +240,17 @@ class ShopManageController extends Controller
         return response()->json([
             'success' => true,
             'data' => $arrivalBanners
+        ]);
+    }
+    public function getCustomerBenefitByShop($shop_id)
+    {
+        $customerBenefits = CustomerBenefit::where('shop_id', $shop_id)
+            ->where('status', true)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $customerBenefits
         ]);
     }
 
