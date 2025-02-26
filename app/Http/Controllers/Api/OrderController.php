@@ -68,6 +68,17 @@ class OrderController extends Controller
             return response()->json(['message' => 'Order not found'], 404);
         }
 
+        // Check if the status is changing to "delivered"
+        if ($order->order_status !== 'delivered' && $validated['order_status'] === 'delivered') {
+            foreach ($order->orderItems as $item) {
+                $product = Product::find($item->product_id);
+                if ($product) {
+                    $product->quantity -= $item->quantity;
+                    $product->save();
+                }
+            }
+        }
+
         $order->order_status = $validated['order_status'];
         $order->save();
 
