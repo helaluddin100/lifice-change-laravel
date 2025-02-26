@@ -132,7 +132,6 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // Get the shop_id from the request, ensure it's provided
         $shop_id = $request->get('shop_id');
         if (!$shop_id) {
             return response()->json(['error' => 'Shop ID is required'], 400);
@@ -141,10 +140,9 @@ class ProductController extends Controller
         // Start querying the Product model with eager loading for images
         $query = Product::where('shop_id', $shop_id)->with('images');
 
-        // Apply category filter if provided (Now using 'category' instead of 'categories')
-        if ($request->has('category') && !empty($request->category)) {
-            $category = $request->get('category');
-            $query->where('category_id', $category); // Filter by single category
+        // Apply category filter if provided
+        if ($request->has('categories') && !empty($request->categories)) {
+            $query->whereIn('category_id', $request->categories);
         }
 
         // Apply size filter if provided
@@ -166,20 +164,9 @@ class ProductController extends Controller
             $query->whereBetween('current_price', [$request->min_price, $request->max_price]);
         }
 
-        // Apply search if provided
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->get('search');
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%$searchTerm%")
-                    ->orWhere('product_code', 'LIKE', "%$searchTerm%");
-            });
-        }
+        // Fetch filtered products along with their images
+        $products = $query->get();
 
-        // Paginate the results, with a customizable per-page limit (default 10)
-        $perPage = $request->get('per_page', 10); // Use per_page query param if available
-        $products = $query->paginate($perPage);
-
-        // Return paginated results as JSON
         return response()->json($products);
     }
 
@@ -315,17 +302,57 @@ class ProductController extends Controller
 
 
 
-    public function show($userId, Request $request)
+    public function show(Request $request)
     {
-        $query = Product::where('user_id', $userId)->with('images'); // Include images
+         // Get the shop_id from the request, ensure it's provided
+         $shop_id = $request->get('shop_id');
+         if (!$shop_id) {
+             return response()->json(['error' => 'Shop ID is required'], 400);
+         }
 
-        if ($request->has('category_id')) {
-            $query->where('category_id', $request->input('category_id'));
-        }
+         // Start querying the Product model with eager loading for images
+         $query = Product::where('shop_id', $shop_id)->with('images');
 
-        $products = $query->get();
+         // Apply category filter if provided (Now using 'category' instead of 'categories')
+         if ($request->has('category') && !empty($request->category)) {
+             $category = $request->get('category');
+             $query->where('category_id', $category); // Filter by single category
+         }
 
-        return response()->json($products);
+         // Apply size filter if provided
+         if ($request->has('sizes') && !empty($request->sizes)) {
+             foreach ($request->sizes as $size) {
+                 $query->whereJsonContains('product_sizes', ['size' => $size]);
+             }
+         }
+
+         // Apply color filter if provided
+         if ($request->has('color') && !empty($request->color)) {
+             foreach ($request->color as $color) {
+                 $query->whereJsonContains('product_colors', ['color' => $color]);
+             }
+         }
+
+         // Apply price range filter if provided
+         if ($request->has('min_price') && $request->has('max_price')) {
+             $query->whereBetween('current_price', [$request->min_price, $request->max_price]);
+         }
+
+         // Apply search if provided
+         if ($request->has('search') && !empty($request->search)) {
+             $searchTerm = $request->get('search');
+             $query->where(function ($q) use ($searchTerm) {
+                 $q->where('name', 'LIKE', "%$searchTerm%")
+                     ->orWhere('product_code', 'LIKE', "%$searchTerm%");
+             });
+         }
+
+         // Paginate the results, with a customizable per-page limit (default 10)
+         $perPage = $request->get('per_page', 10); // Use per_page query param if available
+         $products = $query->paginate($perPage);
+
+         // Return paginated results as JSON
+         return response()->json($products);
     }
 
 

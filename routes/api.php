@@ -154,7 +154,13 @@ Route::get('/size/shop/{id}', [SizeController::class, 'getSizeByShop']);
 
 //get product by shop and user
 Route::get('/categories/user/{id}', [ProductController::class, 'getCategoriesByUser']);
-Route::get('/products/user/{id}', [ProductController::class, 'show']);
+
+
+
+// Route::get('/products/user/{id}', [ProductController::class, 'show']);
+
+Route::get('products/search/filter', [ProductController::class, 'show']);
+
 Route::get('/product/{id}/edit', [ProductController::class, 'edit'])->name('product.edit');
 Route::post('/products/{id}', [ProductController::class, 'update'])->name('product.update');
 Route::delete('/product/{id}', [ProductController::class, 'destroy']);
