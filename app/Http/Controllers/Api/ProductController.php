@@ -169,11 +169,14 @@ class ProductController extends Controller
         // Apply search if provided
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->get('search');
-            $query->where('name', 'LIKE', "%$searchTerm%");
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', "%$searchTerm%")
+                    ->orWhere('product_code', 'LIKE', "%$searchTerm%");
+            });
         }
 
         // Paginate the results, with a customizable per-page limit (default 10)
-        $perPage = $request->get('per_page', 2); // Use per_page query param if available
+        $perPage = $request->get('per_page', 10); // Use per_page query param if available
         $products = $query->paginate($perPage);
 
         // Return paginated results as JSON
@@ -194,7 +197,6 @@ class ProductController extends Controller
             'current_price' => 'required|numeric',
             'old_price' => 'nullable|numeric',
             'buy_price' => 'nullable|numeric',
-            'product_code' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
             'product_colors' => 'nullable|array',
@@ -235,6 +237,11 @@ class ProductController extends Controller
             $slug = $slug . '-' . ($slugCount + 1); // Append a number to make it unique
         }
 
+
+        do {
+            $randomNumber = rand(100000, 999999);
+            $existingProduct = Product::where('product_code', $randomNumber)->first();
+        } while ($existingProduct);
         // Create the product
         $product = Product::create([
             'user_id' => $validated['user_id'],
@@ -246,7 +253,7 @@ class ProductController extends Controller
             'current_price' => $validated['current_price'],
             'old_price' => $validated['old_price'] ?? null,
             'buy_price' => $validated['buy_price'] ?? null,
-            'product_code' => $validated['product_code'],
+            'product_code' => $randomNumber,
             'quantity' => $validated['quantity'],
             'warranty' => $validated['warranty'] ?? null,
             'product_details' => $validated['product_details'] ?? [],
@@ -362,7 +369,6 @@ class ProductController extends Controller
             'current_price' => 'required|numeric',
             'old_price' => 'nullable|numeric',
             'buy_price' => 'nullable|numeric',
-            'product_code' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
             'product_colors' => 'nullable|array',
@@ -408,7 +414,6 @@ class ProductController extends Controller
             'current_price' => $validated['current_price'],
             'old_price' => $validated['old_price'] ?? null,
             'buy_price' => $validated['buy_price'] ?? null,
-            'product_code' => $validated['product_code'],
             'quantity' => $validated['quantity'],
             'warranty' => $validated['warranty'] ?? null,
             'product_details' => $validated['product_details'] ?? [],
