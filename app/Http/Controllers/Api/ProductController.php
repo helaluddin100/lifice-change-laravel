@@ -93,14 +93,32 @@ class ProductController extends Controller
                 }
             }
 
+
+
             // Add colors and sizes to the $product object
             $product->colors = $colors;
             $product->sizes = $sizes;
 
+            $reviewsCount = $product->reviews()
+            ->whereNull('parent_id') // Ensure it's a main review
+            ->where('status', 1) // Only approved reviews
+            ->count();
+
+            // Calculate average rating from all reviews
+            $averageRating = $product->reviews()
+                ->whereNull('parent_id') // Main reviews
+                ->where('status', 1) // Approved reviews
+                ->avg('rating'); // Get the average rating
+
+
+
+
             // Return the response with the product data
             return response()->json([
                 'status' => 200,
-                'data' => $product
+                'data' => $product,
+                'reviews_count' => $reviewsCount,
+                'average_rating' => $averageRating,
             ]);
         }
 

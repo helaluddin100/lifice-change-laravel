@@ -82,4 +82,9 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class, 'category_id'); // 'category_id' is the foreign key
     }
+
+    public function reviews()
+{
+    return $this->hasMany(Review::class); // Assuming Review model is related to Product
+}
 }

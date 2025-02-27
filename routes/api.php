@@ -288,7 +288,7 @@ Route::get('/top-rated-product/{shop_id}', [ShopManageController::class, 'topRat
 //  Customer Benefit
 Route::get('/customer-benefit/{shop_id}', [CustomerBenefitController::class, 'index']);
 Route::post('/customer-benefit', [CustomerBenefitController::class, 'store']);
-Route::post('/customer-benefit/{id}', [CustomerBenefitController::class, 'update']);        
+Route::post('/customer-benefit/{id}', [CustomerBenefitController::class, 'update']);
 Route::delete('/customer-benefit/{id}', [CustomerBenefitController::class, 'destroy']);
 Route::get('/customer-benefit-banners/{shop_id}', [ShopManageController::class, 'getCustomerBenefitByShop']);
 
