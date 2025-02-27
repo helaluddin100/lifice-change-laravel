@@ -376,12 +376,16 @@ class ProductController extends Controller
             'buy_price' => 'nullable|numeric',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
+
             'product_colors' => 'nullable|array',
             'product_colors.*.color' => 'required|string|max:255',
             'product_colors.*.price' => 'required|numeric',
+
             'product_sizes' => 'nullable|array',
             'product_sizes.*.size' => 'required|string|max:255',
             'product_sizes.*.price' => 'required|numeric',
+
+
             'product_details' => 'nullable|array',
             'product_details.*.detail_type' => 'nullable|string|max:255',
             'product_details.*.detail_description' => 'nullable|string',
@@ -423,8 +427,8 @@ class ProductController extends Controller
             'warranty' => $validated['warranty'] ?? null,
             'product_details' => $validated['product_details'] ?? [],
             'product_variant' => $validated['product_variant'] ?? [],
-            'product_colors' => $validated['product_colors'] ?? [],
-            'product_sizes' => $validated['product_sizes'] ?? [],
+            'product_colors' => $validated['product_colors'] ?? null,
+            'product_sizes' => $validated['product_sizes'] ?? null,
             'video' => $validated['video'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
