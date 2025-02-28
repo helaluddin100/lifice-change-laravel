@@ -149,59 +149,69 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        $shop_id = $request->get('shop_id');
-        if (!$shop_id) {
-            return response()->json(['error' => 'Shop ID is required'], 400);
-        }
-
-        // Start querying the Product model with eager loading for images
-        $query = Product::where('shop_id', $shop_id)->with('images');
-
-        // Apply category filter if provided
-        if ($request->has('categories') && !empty($request->categories)) {
-            $query->whereIn('category_id', $request->categories);
-        }
-
-        // Apply size filter if provided
-        if ($request->has('sizes') && !empty($request->sizes)) {
-            $query->where(function($query) use ($request) {
-                foreach ($request->sizes as $size) {
-                    $query->orWhereJsonContains('product_sizes', ['size' => $size]);
-                }
-            });
-        }
-
-        // Apply color filter if provided
-        if ($request->has('color') && !empty($request->color)) {
-            $query->where(function($query) use ($request) {
-                foreach ($request->color as $color) {
-                    $query->orWhereJsonContains('product_colors', ['color' => $color]);
-                }
-            });
-        }
-
-        // Apply price range filter if provided
-        if ($request->has('min_price') && $request->has('max_price')) {
-            // Ensure the min_price and max_price are converted to numeric values
-            $minPrice = (float) $request->get('min_price');  // Convert to float
-            $maxPrice = (float) $request->get('max_price'); // Convert to float
-
-            // Ensure the price is within the range
-            $query->where(function($query) use ($minPrice, $maxPrice) {
-                $query->whereRaw('CAST(current_price AS DECIMAL(10, 2)) >= ?', [$minPrice])  // Convert current_price to decimal
-                      ->whereRaw('CAST(current_price AS DECIMAL(10, 2)) <= ?', [$maxPrice]); // Convert current_price to decimal
-            });
-        }
-
-        // Paginate results, 16 products per page (use the page query parameter for lazy loading)
-        $page = $request->get('page', 1); // Default to page 1 if no page is provided
-
-        // Get the total count of products
-        $products = $query->paginate(16, ['*'], 'page', $page);  // 16 products per page
-
-        return response()->json($products);
+{
+    $shop_id = $request->get('shop_id');
+    if (!$shop_id) {
+        return response()->json(['error' => 'Shop ID is required'], 400);
     }
+
+    // Start querying the Product model with eager loading for images
+    $query = Product::where('shop_id', $shop_id)
+                    ->where('status', 1)  // Filter products by status (only active products with status 1)
+                    ->with('images');
+
+    // Apply category filter if provided
+    if ($request->has('categories') && !empty($request->categories)) {
+        $query->whereIn('category_id', $request->categories);
+    }
+
+    // Apply size filter if provided
+    if ($request->has('sizes') && !empty($request->sizes)) {
+        $query->where(function($query) use ($request) {
+            foreach ($request->sizes as $size) {
+                $query->orWhereJsonContains('product_sizes', ['size' => $size]);
+            }
+        });
+    }
+
+    // Apply color filter if provided
+    if ($request->has('color') && !empty($request->color)) {
+        $query->where(function($query) use ($request) {
+            foreach ($request->color as $color) {
+                $query->orWhereJsonContains('product_colors', ['color' => $color]);
+            }
+        });
+    }
+
+    // Apply price range filter if provided
+    if ($request->has('min_price') && $request->has('max_price')) {
+        $minPrice = (float) $request->get('min_price');
+        $maxPrice = (float) $request->get('max_price');
+        $query->where(function($query) use ($minPrice, $maxPrice) {
+            $query->whereRaw('CAST(current_price AS DECIMAL(10, 2)) >= ?', [$minPrice])
+                  ->whereRaw('CAST(current_price AS DECIMAL(10, 2)) <= ?', [$maxPrice]);
+        });
+    }
+
+    // Apply sorting if provided
+    if ($request->has('sort_by')) {
+        $sortBy = $request->get('sort_by');
+        if ($sortBy === 'price-low-to-high') {
+            $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) ASC');
+        } elseif ($sortBy === 'price-high-to-low') {
+            $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) DESC');
+        }
+    }
+
+    // Paginate results, 16 products per page (use the page query parameter for lazy loading)
+    $page = $request->get('page', 1);
+
+    // Get the total count of products
+    $products = $query->paginate(16, ['*'], 'page', $page);
+
+    return response()->json($products);
+}
+
 
 
 
