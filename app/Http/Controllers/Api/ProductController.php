@@ -149,44 +149,48 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        $shop_id = $request->get('shop_id');
-        if (!$shop_id) {
-            return response()->json(['error' => 'Shop ID is required'], 400);
-        }
-
-        // Start querying the Product model with eager loading for images
-        $query = Product::where('shop_id', $shop_id)->with('images');
-
-        // Apply category filter if provided
-        if ($request->has('categories') && !empty($request->categories)) {
-            $query->whereIn('category_id', $request->categories);
-        }
-
-        // Apply size filter if provided
-        if ($request->has('sizes') && !empty($request->sizes)) {
-            foreach ($request->sizes as $size) {
-                $query->whereJsonContains('product_sizes', ['size' => $size]);
-            }
-        }
-
-        // Apply color filter if provided
-        if ($request->has('color') && !empty($request->color)) {
-            foreach ($request->color as $color) {
-                $query->whereJsonContains('product_colors', ['color' => $color]);
-            }
-        }
-
-        // Apply price range filter if provided
-        if ($request->has('min_price') && $request->has('max_price')) {
-            $query->whereBetween('current_price', [$request->min_price, $request->max_price]);
-        }
-
-        // Fetch filtered products along with their images
-        $products = $query->get();
-
-        return response()->json($products);
+{
+    $shop_id = $request->get('shop_id');
+    if (!$shop_id) {
+        return response()->json(['error' => 'Shop ID is required'], 400);
     }
+
+    // Start querying the Product model with eager loading for images
+    $query = Product::where('shop_id', $shop_id)->with('images');
+
+    // Apply category filter if provided
+    if ($request->has('categories') && !empty($request->categories)) {
+        $query->whereIn('category_id', $request->categories);
+    }
+
+    // Apply size filter if provided
+    if ($request->has('sizes') && !empty($request->sizes)) {
+        $query->where(function($query) use ($request) {
+            foreach ($request->sizes as $size) {
+                $query->orWhereJsonContains('product_sizes', ['size' => $size]);
+            }
+        });
+    }
+
+    // Apply color filter if provided
+    if ($request->has('color') && !empty($request->color)) {
+        $query->where(function($query) use ($request) {
+            foreach ($request->color as $color) {
+                $query->orWhereJsonContains('product_colors', ['color' => $color]);
+            }
+        });
+    }
+
+    // Apply price range filter if provided
+    if ($request->has('min_price') && $request->has('max_price')) {
+        $query->whereBetween('current_price', [$request->min_price, $request->max_price]);
+    }
+
+    // Fetch filtered products along with their images
+    $products = $query->get();
+
+    return response()->json($products);
+}
 
 
 
