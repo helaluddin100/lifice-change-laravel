@@ -13,7 +13,7 @@ class Contactus extends Model
     protected $table = 'contactus';
 
     protected $fillable = [
-        'shop_id', 'name', 'email', 'phone', 'subject', 'message', 'reply'
+        'shop_id', 'name', 'email', 'phone', 'subject', 'message', 'reply','status'
     ];
 
     public function shop()

@@ -78,6 +78,9 @@ class ContactusController extends Controller
             return response()->json(['error' => 'Contact not found'], 404);
         }
 
+        // **Update Status to 1 (Mark as Read)**
+        $contact->update(['status' => 1]);
+
         return response()->json([
             'status' => 200,
             'data' => $contact
