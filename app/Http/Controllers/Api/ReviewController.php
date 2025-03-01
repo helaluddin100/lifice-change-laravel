@@ -104,6 +104,23 @@ class ReviewController extends Controller
 
 
 
+
+public function show($id)
+{
+
+    $review = Review::with('replies')->find($id);
+
+    if (!$review) {
+        return response()->json(['error' => 'Review not found'], 404);
+    }
+
+    return response()->json([
+        'status' => 200,
+        'data' => $review
+    ]);
+}
+
+
    // Reply to a Review
    public function replyReview(Request $request)
    {
@@ -112,24 +129,36 @@ class ReviewController extends Controller
            'shop_id' => 'required|exists:shops,id',
            'parent_id' => 'required|exists:reviews,id',
            'name' => 'required|string|max:100',
+           'email' => 'required|email',
            'review' => 'required|string'
        ]);
 
+       // ✅ Reply Create
        $reply = Review::create([
            'product_id' => $request->product_id,
            'shop_id' => $request->shop_id,
            'parent_id' => $request->parent_id,
            'name' => $request->name,
+           'email' => $request->email,
            'review' => $request->review,
-           'status' => 1 // Replies are automatically approved
+           'rating' => 0, // ✅ Replies don't have ratings
+           'status' => 1, // ✅ Replies are auto-approved
+           'ip_address' => request()->ip(), // ✅ Auto-detect IP
        ]);
+
+       // ✅ Parent Review Status Update (Mark as Approved)
+       $parentReview = Review::find($request->parent_id);
+       if ($parentReview && $parentReview->status == 0) {
+           $parentReview->update(['status' => 1]);
+       }
 
        return response()->json([
            'status' => 201,
-           'message' => 'Reply added successfully',
+           'message' => 'Reply added successfully & Parent review approved!',
            'data' => $reply
        ]);
    }
+
 
    // Approve a Review (For Admin)
    public function approveReview($review_id)
