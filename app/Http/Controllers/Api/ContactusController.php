@@ -43,12 +43,32 @@ class ContactusController extends Controller
 
 
 
-
-    public function index($shop_id)
+    public function index(Request $request, $shop_id)
     {
-        $messages = Contactus::where('shop_id', $shop_id)->get();
-        return response()->json($messages);
+        $query = Contactus::where('shop_id', $shop_id);
+
+        // Search Filter (subject, name, email, phone, message)
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('subject', 'LIKE', "%{$search}%")
+                  ->orWhere('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhere('phone', 'LIKE', "%{$search}%")
+                  ->orWhere('message', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // Pagination (Default: 10 per page)
+        $messages = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $messages
+        ]);
     }
+
+
 
     public function reply(Request $request, $id)
     {

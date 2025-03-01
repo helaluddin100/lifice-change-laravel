@@ -347,5 +347,5 @@ Route::get('/all-visitor-data', [VisitorController::class, 'getVisitorData']);
 // Contact Us
 
 Route::post('/contactus', [ContactusController::class, 'store']);
-Route::get('/contactus/{shop_id}', [ContactusController::class, 'index'])->middleware('auth:sanctum');
-Route::post('/contactus/reply/{id}', [ContactusController::class, 'reply'])->middleware('auth:sanctum');
+Route::get('/contactus/{shop_id}', [ContactusController::class, 'index']);
+Route::post('/contactus/reply/{id}', [ContactusController::class, 'reply']);
