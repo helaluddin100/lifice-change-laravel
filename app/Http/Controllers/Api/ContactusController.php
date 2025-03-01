@@ -70,18 +70,31 @@ class ContactusController extends Controller
 
 
 
-    public function reply(Request $request, $id)
+    public function show($id)
     {
-        $message = Contactus::findOrFail($id);
-        $message->reply = $request->reply;
-        $message->save();
+        $contact = Contactus::find($id);
 
-        Mail::raw($request->reply, function ($mail) use ($message) {
-            $mail->to($message->email)
-                 ->from($message->shop->email) // শপের ইমেইল থেকে পাঠাবে
-                 ->subject('Reply to your message');
-        });
+        if (!$contact) {
+            return response()->json(['error' => 'Contact not found'], 404);
+        }
 
-        return response()->json(['message' => 'Reply Sent Successfully', 'data' => $message]);
+        return response()->json([
+            'status' => 200,
+            'data' => $contact
+        ]);
     }
+
+    public function destroy($id)
+{
+    $contact = Contactus::find($id);
+
+    if (!$contact) {
+        return response()->json(['error' => 'Contact not found'], 404);
+    }
+
+    $contact->delete();
+
+    return response()->json(['message' => 'Contact deleted successfully']);
+}
+
 }

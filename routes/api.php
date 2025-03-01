@@ -348,4 +348,6 @@ Route::get('/all-visitor-data', [VisitorController::class, 'getVisitorData']);
 
 Route::post('/contactus', [ContactusController::class, 'store']);
 Route::get('/contactus/{shop_id}', [ContactusController::class, 'index']);
-Route::post('/contactus/reply/{id}', [ContactusController::class, 'reply']);
+Route::get('/contactus/email/{id}', [ContactusController::class, 'show']);
+
+Route::delete('/contactus/{id}', [ContactusController::class, 'destroy']);
