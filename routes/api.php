@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\OfferProductController;
 use App\Http\Controllers\Api\TopRatedProductController;
 use App\Models\User;
 use App\Models\Shop;
+use App\Http\Controllers\Api\ContactusController;
 
 
 
@@ -342,3 +343,9 @@ Route::get('/order/{id}/invoice', [OrderController::class, 'generateInvoice']);
 
 Route::post('/visitor-data', [VisitorController::class, 'store']);
 Route::get('/all-visitor-data', [VisitorController::class, 'getVisitorData']);
+
+// Contact Us
+
+Route::post('/contactus', [ContactusController::class, 'store']);
+Route::get('/contactus/{shop_id}', [ContactusController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/contactus/reply/{id}', [ContactusController::class, 'reply'])->middleware('auth:sanctum');
