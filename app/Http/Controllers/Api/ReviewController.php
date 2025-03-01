@@ -71,6 +71,38 @@ class ReviewController extends Controller
        ]);
    }
 
+   public function showAllReviews(Request $request, $id)
+{
+    // Get search query (if any)
+    $search = $request->query('search');
+
+    // Fetch reviews with search functionality
+    $query = Review::where('shop_id', $id)->with('replies', 'product');
+
+    if (!empty($search)) {
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'LIKE', "%{$search}%")
+              ->orWhere('email', 'LIKE', "%{$search}%")
+              ->orWhere('review', 'LIKE', "%{$search}%");
+        });
+    }
+
+    // Apply pagination (10 reviews per page)
+    $reviews = $query->orderBy('created_at', 'desc')->paginate(10);
+
+    // Check if reviews exist
+    if ($reviews->isEmpty()) {
+        return response()->json(['error' => 'No reviews found'], 404);
+    }
+
+
+    return response()->json([
+        'status' => 200,
+        'data' => $reviews
+    ]);
+}
+
+
 
    // Reply to a Review
    public function replyReview(Request $request)
