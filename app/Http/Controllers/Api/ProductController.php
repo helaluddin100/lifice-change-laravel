@@ -100,9 +100,19 @@ class ProductController extends Controller
             $product->sizes = $sizes;
 
             $reviewsCount = $product->reviews()
-            ->whereNull('parent_id') // Ensure it's a main review
-            ->where('status', 1) // Only approved reviews
-            ->count();
+                ->whereNull('parent_id')
+                ->where('status', 1)
+                ->count();
+
+
+            // Get Paginated Reviews with Replies
+            $reviews = $product->reviews()
+                ->whereNull('parent_id') // Main reviews only
+                ->where('status', 1)
+                ->with('replies') // Load Replies for Each Review
+                ->orderBy('created_at', 'desc')
+                ->paginate(5); // ✅ Pagination Enabled (5 reviews per page)
+
 
             // Calculate average rating from all reviews
             $averageRating = $product->reviews()
@@ -119,6 +129,7 @@ class ProductController extends Controller
                 'data' => $product,
                 'reviews_count' => $reviewsCount,
                 'average_rating' => $averageRating,
+                'reviews' => $reviews,
             ]);
         }
 
@@ -149,68 +160,68 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-{
-    $shop_id = $request->get('shop_id');
-    if (!$shop_id) {
-        return response()->json(['error' => 'Shop ID is required'], 400);
-    }
-
-    // Start querying the Product model with eager loading for images
-    $query = Product::where('shop_id', $shop_id)
-                    ->where('status', 1)  // Filter products by status (only active products with status 1)
-                    ->with('images');
-
-    // Apply category filter if provided
-    if ($request->has('categories') && !empty($request->categories)) {
-        $query->whereIn('category_id', $request->categories);
-    }
-
-    // Apply size filter if provided
-    if ($request->has('sizes') && !empty($request->sizes)) {
-        $query->where(function($query) use ($request) {
-            foreach ($request->sizes as $size) {
-                $query->orWhereJsonContains('product_sizes', ['size' => $size]);
-            }
-        });
-    }
-
-    // Apply color filter if provided
-    if ($request->has('color') && !empty($request->color)) {
-        $query->where(function($query) use ($request) {
-            foreach ($request->color as $color) {
-                $query->orWhereJsonContains('product_colors', ['color' => $color]);
-            }
-        });
-    }
-
-    // Apply price range filter if provided
-    if ($request->has('min_price') && $request->has('max_price')) {
-        $minPrice = (float) $request->get('min_price');
-        $maxPrice = (float) $request->get('max_price');
-        $query->where(function($query) use ($minPrice, $maxPrice) {
-            $query->whereRaw('CAST(current_price AS DECIMAL(10, 2)) >= ?', [$minPrice])
-                  ->whereRaw('CAST(current_price AS DECIMAL(10, 2)) <= ?', [$maxPrice]);
-        });
-    }
-
-    // Apply sorting if provided
-    if ($request->has('sort_by')) {
-        $sortBy = $request->get('sort_by');
-        if ($sortBy === 'price-low-to-high') {
-            $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) ASC');
-        } elseif ($sortBy === 'price-high-to-low') {
-            $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) DESC');
+    {
+        $shop_id = $request->get('shop_id');
+        if (!$shop_id) {
+            return response()->json(['error' => 'Shop ID is required'], 400);
         }
+
+        // Start querying the Product model with eager loading for images
+        $query = Product::where('shop_id', $shop_id)
+            ->where('status', 1)  // Filter products by status (only active products with status 1)
+            ->with('images');
+
+        // Apply category filter if provided
+        if ($request->has('categories') && !empty($request->categories)) {
+            $query->whereIn('category_id', $request->categories);
+        }
+
+        // Apply size filter if provided
+        if ($request->has('sizes') && !empty($request->sizes)) {
+            $query->where(function ($query) use ($request) {
+                foreach ($request->sizes as $size) {
+                    $query->orWhereJsonContains('product_sizes', ['size' => $size]);
+                }
+            });
+        }
+
+        // Apply color filter if provided
+        if ($request->has('color') && !empty($request->color)) {
+            $query->where(function ($query) use ($request) {
+                foreach ($request->color as $color) {
+                    $query->orWhereJsonContains('product_colors', ['color' => $color]);
+                }
+            });
+        }
+
+        // Apply price range filter if provided
+        if ($request->has('min_price') && $request->has('max_price')) {
+            $minPrice = (float) $request->get('min_price');
+            $maxPrice = (float) $request->get('max_price');
+            $query->where(function ($query) use ($minPrice, $maxPrice) {
+                $query->whereRaw('CAST(current_price AS DECIMAL(10, 2)) >= ?', [$minPrice])
+                    ->whereRaw('CAST(current_price AS DECIMAL(10, 2)) <= ?', [$maxPrice]);
+            });
+        }
+
+        // Apply sorting if provided
+        if ($request->has('sort_by')) {
+            $sortBy = $request->get('sort_by');
+            if ($sortBy === 'price-low-to-high') {
+                $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) ASC');
+            } elseif ($sortBy === 'price-high-to-low') {
+                $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) DESC');
+            }
+        }
+
+        // Paginate results, 16 products per page (use the page query parameter for lazy loading)
+        $page = $request->get('page', 1);
+
+        // Get the total count of products
+        $products = $query->paginate(16, ['*'], 'page', $page);
+
+        return response()->json($products);
     }
-
-    // Paginate results, 16 products per page (use the page query parameter for lazy loading)
-    $page = $request->get('page', 1);
-
-    // Get the total count of products
-    $products = $query->paginate(16, ['*'], 'page', $page);
-
-    return response()->json($products);
-}
 
 
 
@@ -356,30 +367,30 @@ class ProductController extends Controller
 
     public function show(Request $request)
     {
-         $shop_id = $request->get('shop_id');
-         if (!$shop_id) {
-             return response()->json(['error' => 'Shop ID is required'], 400);
-         }
+        $shop_id = $request->get('shop_id');
+        if (!$shop_id) {
+            return response()->json(['error' => 'Shop ID is required'], 400);
+        }
 
-         $query = Product::where('shop_id', $shop_id)->with('images');
+        $query = Product::where('shop_id', $shop_id)->with('images');
 
-         if ($request->has('category') && !empty($request->category)) {
-             $category = $request->get('category');
-             $query->where('category_id', $category);
-         }
+        if ($request->has('category') && !empty($request->category)) {
+            $category = $request->get('category');
+            $query->where('category_id', $category);
+        }
 
-         if ($request->has('search') && !empty($request->search)) {
-             $searchTerm = $request->get('search');
-             $query->where(function ($q) use ($searchTerm) {
-                 $q->where('name', 'LIKE', "%$searchTerm%")
-                     ->orWhere('product_code', 'LIKE', "%$searchTerm%");
-             });
-         }
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->get('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', "%$searchTerm%")
+                    ->orWhere('product_code', 'LIKE', "%$searchTerm%");
+            });
+        }
 
-         $perPage = $request->get('per_page', 10);
-         $products = $query->paginate($perPage);
+        $perPage = $request->get('per_page', 10);
+        $products = $query->paginate($perPage);
 
-         return response()->json($products);
+        return response()->json($products);
     }
 
 
