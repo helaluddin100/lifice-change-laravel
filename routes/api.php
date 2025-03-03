@@ -34,6 +34,7 @@ use App\Models\User;
 use App\Models\Shop;
 use App\Http\Controllers\Api\ContactusController;
 
+use App\Http\Controllers\Api\TemplateController;
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -353,3 +354,5 @@ Route::get('/contactus/{shop_id}', [ContactusController::class, 'index']);
 Route::get('/contactus/email/{id}', [ContactusController::class, 'show']);
 
 Route::delete('/contactus/{id}', [ContactusController::class, 'destroy']);
+
+Route::get('/get-template', [TemplateController::class, 'index']);
