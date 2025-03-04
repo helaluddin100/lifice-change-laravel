@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('template_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('product_id')->nullable()->constrained()->onDelete('set null'); // Optional
+            $table->foreignId('product_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('country_id')->nullable()->constrained('countries')->onDelete('set null');
 
             $table->string('title');
             $table->string('slug')->unique();
@@ -26,7 +27,9 @@ return new class extends Migration
             // Contact Information
             $table->string('phone', 20)->nullable();
             $table->string('email', 255)->nullable();
-            $table->string('country', 3)->nullable(); // ISO 3-letter country code (e.g., BGD, USA)
+
+            // Delivery Charge
+            $table->decimal('delivery_charge', 10, 2)->nullable();
 
             // Page Settings
             $table->json('settings')->nullable();
@@ -35,24 +38,26 @@ return new class extends Migration
             // Page Sections
             $table->json('hero_setting')->nullable();
             $table->json('social_media')->nullable();
-            $table->json('partner')->nullable();
-            $table->json('testimonial')->nullable();
-            $table->json('feature')->nullable();
+            $table->json('partners')->nullable();
+            $table->json('testimonials')->nullable();
+            $table->json('features')->nullable();
             $table->json('feature_details')->nullable();
-            $table->json('feature_details_b')->nullable();
+            $table->json('additional_features')->nullable();
             $table->json('faq')->nullable();
 
-            // Brand & Media
+            // Branding & Media
             $table->string('brand_logo')->nullable();
-            $table->json('video_settings')->nullable(); // Video + Poster + Links
+            $table->json('video_settings')->nullable();
 
             // Domain & Publish
-            $table->string('domain')->nullable();
-            $table->boolean('published')->default(false);
+            $table->string('domain')->unique()->nullable();
+            $table->boolean('is_published')->default(false);
 
             $table->timestamps();
         });
     }
+
+
 
 
     /**

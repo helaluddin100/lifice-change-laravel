@@ -13,11 +13,12 @@ class LandingPage extends Model
         'user_id',
         'template_id',
         'category_id',
+        'product_id',
         'title',
         'slug',
         'phone',
         'email',
-        'country',
+        'country_id',
         'settings',
         'seo_settings',
         'hero_setting',
@@ -31,7 +32,8 @@ class LandingPage extends Model
         'brand_logo',
         'video_settings',
         'domain',
-        'published'
+        'published',
+        'delivery_charge',
     ];
 
     protected $casts = [
@@ -48,27 +50,29 @@ class LandingPage extends Model
         'video_settings' => 'array'
     ];
 
-    // এক ল্যান্ডিং পেজের একজন মালিক থাকবে
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // এক ল্যান্ডিং পেজ একটি নির্দিষ্ট টেমপ্লেট ব্যবহার করতে পারে
     public function template()
     {
         return $this->belongsTo(Template::class);
     }
 
-    // এক ল্যান্ডিং পেজ একটি ক্যাটাগরির অন্তর্ভুক্ত হতে পারে
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    // এক ল্যান্ডিং পেজ একাধিক প্রোডাক্টের সাথে যুক্ত হতে পারে (Many-to-Many)
-    public function products()
+    public function product()
     {
-        return $this->belongsToMany(Product::class, 'landing_page_product');
+        return $this->belongsTo(Product::class);
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country_id');
     }
 }

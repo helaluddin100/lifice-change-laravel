@@ -3,85 +3,83 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\LandingPage;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class LandingPageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
-    }
+        // Validation Rules
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'template_id' => 'nullable|exists:templates,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'product_id' => 'nullable|exists:products,id',
+            'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|unique:landing_pages,slug',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'country_id' => 'nullable|exists:countries,id',
+            'delivery_charge' => 'nullable|numeric|min:0',
+            'settings' => 'nullable|json',
+            'seo_settings' => 'nullable|json',
+            'hero_setting' => 'nullable|json',
+            'social_media' => 'nullable|json',
+            'partner' => 'nullable|json',
+            'testimonial' => 'nullable|json',
+            'feature' => 'nullable|json',
+            'feature_details' => 'nullable|json',
+            'feature_details_b' => 'nullable|json',
+            'faq' => 'nullable|json',
+            'brand_logo' => 'nullable|string',
+            'video_settings' => 'nullable|json',
+            'domain' => 'nullable|string|unique:landing_pages,domain',
+            'published' => 'nullable|boolean',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\LandingPage  $landingPage
-     * @return \Illuminate\Http\Response
-     */
-    public function show(LandingPage $landingPage)
-    {
-        //
-    }
+        // Validation Failed
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\LandingPage  $landingPage
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(LandingPage $landingPage)
-    {
-        //
-    }
+        // Generate Slug if not provided
+        $slug = $request->slug ?? Str::slug($request->title) . '-' . uniqid();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\LandingPage  $landingPage
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, LandingPage $landingPage)
-    {
-        //
-    }
+        // Create Landing Page
+        $landingPage = LandingPage::create([
+            'user_id' => $request->user_id,
+            'template_id' => $request->template_id,
+            'category_id' => $request->category_id,
+            'product_id' => $request->product_id,
+            'title' => $request->title,
+            'slug' => $slug,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'country_id' => $request->country_id,
+            'delivery_charge' => $request->delivery_charge ?? 0.00,
+            'settings' => json_decode($request->settings, true),
+            'seo_settings' => json_decode($request->seo_settings, true),
+            'hero_setting' => json_decode($request->hero_setting, true),
+            'social_media' => json_decode($request->social_media, true),
+            'partner' => json_decode($request->partner, true),
+            'testimonial' => json_decode($request->testimonial, true),
+            'feature' => json_decode($request->feature, true),
+            'feature_details' => json_decode($request->feature_details, true),
+            'feature_details_b' => json_decode($request->feature_details_b, true),
+            'faq' => json_decode($request->faq, true),
+            'brand_logo' => $request->brand_logo,
+            'video_settings' => json_decode($request->video_settings, true),
+            'domain' => $request->domain,
+            'published' => $request->published ?? false,
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\LandingPage  $landingPage
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(LandingPage $landingPage)
-    {
-        //
+        return response()->json([
+            'message' => 'Landing Page Created Successfully',
+            'data' => $landingPage
+        ], 201);
     }
 }

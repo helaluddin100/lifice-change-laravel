@@ -357,3 +357,6 @@ Route::get('/contactus/email/{id}', [ContactusController::class, 'show']);
 Route::delete('/contactus/{id}', [ContactusController::class, 'destroy']);
 
 Route::get('/get-template', [TemplateController::class, 'index']);
+
+// Landing Page
+Route::post('/landing-pages', [LandingPageController::class, 'store']);

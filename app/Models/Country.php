@@ -13,4 +13,9 @@ class Country extends Model
     {
         return $this->hasMany(District::class);
     }
+
+    public function landingPages()
+    {
+        return $this->hasMany(LandingPage::class, 'country_id');
+    }
 }
