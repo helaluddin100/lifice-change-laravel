@@ -16,14 +16,16 @@ class LandingPageController extends Controller
         // Validation Rules
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
-            'template_id' => 'nullable|exists:templates,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'product_id' => 'nullable|exists:products,id',
             'title' => 'required|string|max:255',
+            'product_id' => 'required|exists:products,id',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'country_id' => 'required|exists:countries,id',
+
+            'template_id' => 'required|exists:templates,id',
+            'category_id' => 'nullable|exists:categories,id',
             'slug' => 'nullable|string|unique:landing_pages,slug',
-            'phone' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'country_id' => 'nullable|exists:countries,id',
+
             'delivery_charge' => 'nullable|numeric|min:0',
             'settings' => 'nullable|json',
             'seo_settings' => 'nullable|json',
