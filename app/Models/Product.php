@@ -84,7 +84,13 @@ class Product extends Model
     }
 
     public function reviews()
-{
-    return $this->hasMany(Review::class); // Assuming Review model is related to Product
-}
+    {
+        return $this->hasMany(Review::class); // Assuming Review model is related to Product
+    }
+
+
+    public function landingPages()
+    {
+        return $this->belongsToMany(LandingPage::class, 'landing_page_product');
+    }
 }

@@ -11,9 +11,15 @@ class Template extends Model
     protected $fillable = ['name', 'image', 'description', 'status'];
 
 
-     // A template can be used by many shops
-     public function shop()
-     {
-         return $this->belongsTo(Shop::class, 'shop_id');
-     }
+    // A template can be used by many shops
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class, 'shop_id');
+    }
+
+
+    public function landingPages()
+    {
+        return $this->hasMany(LandingPage::class);
+    }
 }

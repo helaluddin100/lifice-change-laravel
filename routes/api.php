@@ -35,6 +35,7 @@ use App\Models\Shop;
 use App\Http\Controllers\Api\ContactusController;
 
 use App\Http\Controllers\Api\TemplateController;
+use App\Http\Controllers\Api\LandingPageController;
 
 
 Route::middleware('auth:sanctum')->group(function () {
