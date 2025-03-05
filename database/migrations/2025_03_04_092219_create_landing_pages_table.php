@@ -23,10 +23,13 @@ return new class extends Migration
 
             $table->string('title');
             $table->string('slug')->unique();
+            $table->string('brand_logo');
 
             // Contact Information
-            $table->string('phone', 20)->nullable();
+            $table->string('phone', 30)->nullable();
             $table->string('email', 255)->nullable();
+            $table->string('facebook_pixel')->nullable();
+            $table->string('color')->default("#851dd7");
 
             // Delivery Charge
             $table->decimal('delivery_charge', 10, 2)->nullable();
@@ -46,7 +49,6 @@ return new class extends Migration
             $table->json('faq')->nullable();
 
             // Branding & Media
-            $table->string('brand_logo')->nullable();
             $table->json('video_settings')->nullable();
 
             // Domain & Publish
