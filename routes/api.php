@@ -64,6 +64,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
 Route::post('/auth/verify', [AuthController::class, 'verify']);
 Route::post('/auth/resend-verification', [AuthController::class, 'resendVerificationEmail']);
+Route::post('/reset-password', [AuthController::class, 'reset']);
 
 // Protected routes (authentication required)
 
@@ -361,4 +362,6 @@ Route::get('/get-template', [TemplateController::class, 'index']);
 // Landing Page
 Route::post('/landing-pages', [LandingPageController::class, 'store']);
 Route::get('/landing-pages/{id}', [LandingPageController::class, 'show']);
+
+
 Route::post('/landing-pages/update/{id}', [LandingPageController::class, 'update']);
