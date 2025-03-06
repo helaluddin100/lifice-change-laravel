@@ -231,7 +231,7 @@ class ShopController extends Controller
             $shop = Shop::findOrFail($id);
 
             // ✅ Merge the filtered data with boolean settings
-            $shop->update($filteredData);
+            $shop->update($validatedData);
 
             // Handle logo upload
             if ($request->hasFile('image')) {
