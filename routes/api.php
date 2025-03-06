@@ -361,6 +361,4 @@ Route::get('/get-template', [TemplateController::class, 'index']);
 // Landing Page
 Route::post('/landing-pages', [LandingPageController::class, 'store']);
 Route::get('/landing-pages/{id}', [LandingPageController::class, 'show']);
-
-
 Route::post('/landing-pages/update/{id}', [LandingPageController::class, 'update']);

@@ -145,24 +145,6 @@ class ShopController extends Controller
     }
 
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Shop  $shop
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Shop $shop)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Shop  $shop
-     * @return \Illuminate\Http\Response
-     */
-
 
     public function edit($id)
     {
@@ -175,13 +157,7 @@ class ShopController extends Controller
         return response()->json(['shop' => $shop]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Shop  $shop
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         try {
@@ -241,6 +217,7 @@ class ShopController extends Controller
                 'top_selling' => 'nullable|boolean',
                 'related_product' => 'nullable|boolean',
                 'top_category' => 'nullable|boolean',
+                'template_type' => 'nullable|numeric',
             ]);
 
             // Filter out null or empty fields

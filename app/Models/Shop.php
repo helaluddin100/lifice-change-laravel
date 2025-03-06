@@ -55,7 +55,8 @@ class Shop extends Model
         'top_rated',
         'top_selling',
         'top_category',
-        'related_product'
+        'related_product',
+        'template_type',
     ];
 
 
