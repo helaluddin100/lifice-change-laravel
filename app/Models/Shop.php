@@ -56,6 +56,7 @@ class Shop extends Model
         'top_selling',
         'top_category',
         'related_product',
+        'customer_benefit',
         'template_type',
     ];
 

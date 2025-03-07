@@ -217,6 +217,7 @@ class ShopController extends Controller
                 'top_selling' => 'nullable|boolean',
                 'related_product' => 'nullable|boolean',
                 'top_category' => 'nullable|boolean',
+                'customer_benefit' => 'nullable|boolean',
                 'template_type' => 'nullable|numeric',
             ]);
 
