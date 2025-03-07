@@ -63,6 +63,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
+            // Attempt to authenticate the user
             if (!Auth::attempt($request->only('email', 'password'))) {
                 return response([
                     'message' => 'Invalid credentials!'
@@ -98,15 +99,18 @@ class AuthController extends Controller
             // If the user's email is verified, generate and return a token
             $token = $user->createToken('token')->plainTextToken;
 
+            // Return response with redirect path based on shop existence
             return response([
                 'user' => $user,
                 'token' => $token,
-                'redirect' => $hasShop ? '/dashboard' : '/createshop', // ✅ Redirect based on shop existence
+                'redirect' => $hasShop ? '/dashboard' : '/createshop',
             ]);
         } catch (\Exception $e) {
+            // Catch any exceptions and return a proper response
             return response(['error' => 'Something went wrong. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 
