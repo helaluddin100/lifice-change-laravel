@@ -8,6 +8,7 @@ use App\Models\HomeSlider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 class HomeSliderController extends Controller
 {
@@ -21,7 +22,9 @@ class HomeSliderController extends Controller
         return response()->json($sliders, 200);
     }
 
-    // Create a new slider
+
+
+
     public function store(Request $request)
     {
         // Validate the incoming request data
@@ -47,8 +50,25 @@ class HomeSliderController extends Controller
             ], 400);
         }
 
-        // Upload the image
-        $imagePath = $request->file('image')->store('sliders', 'public');
+        // Handle image uploads and store in storage
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            // Generate a unique image name
+            $imageName = md5(uniqid()) . '.webp';
+
+            // Open the uploaded image
+            $img = Image::make($image);
+
+            // Convert the image to WebP format and reduce file size (80 quality)
+            $img->encode('webp', 80);
+
+            // Store the image in storage/app/public/sliders
+            $img->save(storage_path('app/public/sliders/' . $imageName));
+
+            // Set the image path to be stored in the database
+            $imagePath = 'sliders/' . $imageName;
+        }
 
         // Create the new slider
         $slider = HomeSlider::create([
@@ -93,8 +113,23 @@ class HomeSliderController extends Controller
                 Storage::disk('public')->delete($slider->image);
             }
 
-            // Store the new image and update the slider's image field
-            $slider->image = $request->file('image')->store('sliders', 'public');
+            // Handle new image upload
+            $image = $request->file('image');
+
+            // Generate a unique image name
+            $imageName = md5(uniqid()) . '.webp';
+
+            // Open the uploaded image
+            $img = Image::make($image);
+
+            // Convert the image to WebP format and reduce file size (80 quality)
+            $img->encode('webp', 80);
+
+            // Save the new image in storage/public/sliders
+            $img->save(storage_path('app/public/sliders/' . $imageName));
+
+            // Set the new image path
+            $slider->image = 'sliders/' . $imageName;
         }
 
         // Update other fields (link and status) if provided
@@ -107,7 +142,6 @@ class HomeSliderController extends Controller
         // Return a response with the updated slider
         return response()->json(['message' => 'Slider updated successfully', 'slider' => $slider], 200);
     }
-
 
     // Delete a slider
     public function destroy($id)
