@@ -23,22 +23,25 @@
             </li>
             <li class="nav-item nav-category">web apps</li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="collapse" href="#emails" role="button" aria-expanded="false"
-                    aria-controls="emails">
-                    <i class="link-icon" data-feather="mail"></i>
-                    <span class="link-title">Email</span>
+                <a class="nav-link" data-bs-toggle="collapse" href="#users" role="button" aria-expanded="false"
+                    aria-controls="users">
+                    <i class="link-icon" data-feather="users"></i>
+                    <span class="link-title">Users</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse" id="emails">
+                <div class="collapse" id="users">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
-                            <a href="pages/email/inbox.html" class="nav-link">Inbox</a>
+                            <a href="{{ route('admin.users.index') }}" class="nav-link">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/email/read.html" class="nav-link">Read</a>
+                            <a href="#" class="nav-link">Un Verified</a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/email/compose.html" class="nav-link">Compose</a>
+                            <a href="#" class="nav-link">Admin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">Block</a>
                         </li>
                     </ul>
                 </div>
