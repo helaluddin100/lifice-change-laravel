@@ -36,7 +36,7 @@ class ProductController extends Controller
         $relatedProducts = Product::where('category_id', $category_id)
             ->where('id', '!=', $exclude_product_id)
             ->where('status', 1)
-            ->with('images')
+            ->with('images', 'category')
             ->take(6)
             ->get();
 
