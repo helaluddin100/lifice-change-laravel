@@ -17,6 +17,33 @@ class ProductController extends Controller
 {
 
 
+    public function search(Request $request)
+    {
+        $shop = $request->query('shop_id');
+        $query = $request->query('query');
+
+        // Validate the query
+        if (!$query) {
+            return response()->json(['message' => 'Search query is required'], 400);
+        }
+
+        // Ensure that shop_id exists
+        if (!$shop) {
+            return response()->json(['message' => 'Shop ID is required'], 400);
+        }
+
+        $products = Product::where('shop_id', $shop)
+            ->where('name', 'like', '%' . $query . '%')
+            ->with(['images', 'category'])
+            ->get();
+
+        // Return the products
+        return response()->json($products);
+    }
+
+
+
+
     public function getProductsByCategory($category)
     {
         $products = Product::where('category_id', $category)

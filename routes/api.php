@@ -324,6 +324,7 @@ Route::get('/products/related/{category_id}/{exclude_product_id}', [ProductContr
 
 
 
+
 // product review route
 Route::get('/reviews/{product_id}', [ReviewController::class, 'getReviews']);
 Route::post('/reviews/add', [ReviewController::class, 'addReview']);
@@ -365,3 +366,4 @@ Route::get('/landing-pages/{id}', [LandingPageController::class, 'show']);
 
 
 Route::post('/landing-pages/update/{id}', [LandingPageController::class, 'update']);
+Route::get('/search/products', [ProductController::class, 'search']);
