@@ -125,7 +125,7 @@ class ShopManageController extends Controller
     public function topSellingProductByShop($shop_id)
     {
         $topselling = TopSellingProduct::where('shop_id', $shop_id)
-            ->with(['product', 'product.images'])
+            ->with(['product', 'product.images', 'product.category'])
             ->get();
 
         return response()->json([
@@ -137,7 +137,7 @@ class ShopManageController extends Controller
     public function offerProductByShop($shop_id)
     {
         $offers = OfferProduct::where('shop_id', $shop_id)
-            ->with(['product', 'product.images'])
+            ->with(['product', 'product.images', 'product.category'])
             ->get();
 
         return response()->json([
@@ -148,7 +148,7 @@ class ShopManageController extends Controller
     public function hotDealProductByShop($shop_id)
     {
         $hotDeals = HotDealProduct::where('shop_id', $shop_id)
-            ->with(['product', 'product.images'])
+            ->with(['product', 'product.images', 'product.category'])
             ->get();
 
         return response()->json([
@@ -159,7 +159,7 @@ class ShopManageController extends Controller
     public function flashDealProductByShop($shop_id)
     {
         $flashDeals = FlashDealProduct::where('shop_id', $shop_id)
-            ->with(['product', 'product.images'])
+            ->with(['product', 'product.images', 'product.category'])
             ->get();
 
         return response()->json([
@@ -170,7 +170,7 @@ class ShopManageController extends Controller
     public function topRatedProductByShop($shop_id)
     {
         $topRateds = TopRatedProduct::where('shop_id', $shop_id)
-            ->with(['product', 'product.images'])
+            ->with(['product', 'product.images', 'product.category'])
             ->get();
 
         return response()->json([
@@ -184,7 +184,7 @@ class ShopManageController extends Controller
     {
         // Fetch the new arrivals with the product and the related product images
         $newarrival = NewArrival::where('shop_id', $shop_id)
-            ->with(['product', 'product.images'])
+            ->with(['product', 'product.images', 'product.category'])
             ->get();
 
         return response()->json([
@@ -221,8 +221,10 @@ class ShopManageController extends Controller
     {
         // Fetch the new arrivals with the product and the related product images
         $todaysell = TodaySellProduct::where('shop_id', $shop_id)
-            ->with(['product', 'product.images'])
+            ->with(['product', 'product.images', 'product.category']) // Include the category relationship
             ->get();
+
+
 
         return response()->json([
             'success' => true,
