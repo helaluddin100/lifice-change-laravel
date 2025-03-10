@@ -582,7 +582,7 @@ Reset default styling for dialogs.
                             <div>
                                 @if ($shop->logo)
                                     <img src="{{ $shop->logo }}"
-                                        style="max-width: 200px; max-height: 50px; cursor: pointer; width: auto;"
+                                        style="max-width: 200px; cursor: pointer; width: auto;"
                                         alt="Shop Logo" class="h-12">
                                 @else
                                     <p><strong>Shop Logo Not Available</strong></p>
