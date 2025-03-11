@@ -37,6 +37,7 @@ use App\Http\Controllers\Api\ContactusController;
 use App\Http\Controllers\Api\TemplateController;
 use App\Http\Controllers\Api\LandingPageController;
 
+use App\Http\Controllers\Api\PackageController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -367,3 +368,7 @@ Route::get('/landing-pages/{id}', [LandingPageController::class, 'show']);
 
 Route::post('/landing-pages/update/{id}', [LandingPageController::class, 'update']);
 Route::get('/search/products', [ProductController::class, 'search']);
+
+
+// Pricing Plan
+Route::get('/pricing-plan', [PackageController::class, 'pricingPlan']);
