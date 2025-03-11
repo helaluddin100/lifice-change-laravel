@@ -59,6 +59,8 @@ Route::namespace('App\Http\Controllers')->group(
             Route::resource('templates', TemplateController::class);
 
             Route::resource('/users', 'UserController');
+
+            Route::resource('/packages', 'PackageController');
         });
     }
 );
