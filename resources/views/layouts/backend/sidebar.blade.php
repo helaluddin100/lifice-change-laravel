@@ -68,6 +68,15 @@
 
 
             <li class="nav-item">
+                <a href="{{ route('admin.packages.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Packages</span>
+                </a>
+
+            </li>
+
+
+            <li class="nav-item">
                 <a href="{{ route('admin.templates.index') }}" class="nav-link">
                     <i class="link-icon" data-feather="hexagon"></i>
                     <span class="link-title">Templates</span>

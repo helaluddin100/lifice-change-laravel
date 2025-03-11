@@ -18,4 +18,9 @@ class Country extends Model
     {
         return $this->hasMany(LandingPage::class, 'country_id');
     }
+
+    public function packages()
+    {
+        return $this->hasMany(Package::class);
+    }
 }
