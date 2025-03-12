@@ -33,6 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'country',
         'ip',
         'image',
+        'status',
     ];
     /**
      * The attributes that should be hidden for serialization.
