@@ -13,42 +13,12 @@ class PackageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function pricingPlan()
-    // {
-    //     $packages = Package::where('status', 1)->get();
-    //     return response()->json($packages);
-    // }
-
     public function pricingPlan()
     {
-        $package = Package::where('status', 1)->find(2);
-        if ($package) {
-            return response()->json($package);
-        } else {
-            return response()->json(['message' => 'Package not found'], 404);
-        }
+        $packages = Package::where('status', 1)->get();
+        return response()->json($packages);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -58,19 +28,10 @@ class PackageController extends Controller
      */
     public function show($id)
     {
-        //
+        $package = Package::find($id);
+        return response()->json($package);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.

@@ -19,7 +19,8 @@ class Package extends Model
         'offer_price',
         'features',
         'description',
-        'status'
+        'status',
+        'package_time',
     ];
 
     // Cast features to array

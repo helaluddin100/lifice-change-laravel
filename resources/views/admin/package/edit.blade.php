@@ -92,8 +92,17 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <div class="col-md-6">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="package_time" class="form-label">Package Time</label>
+                                        <input id="package_time" class="form-control" name="package_time" type="text"
+                                            value="{{ old('package_time', $package->package_time) }}">
+                                        @error('package_time')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="price" class="form-label">Price</label>
                                         <input id="price" class="form-control" name="price" type="text"
@@ -104,7 +113,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="offer_price" class="form-label">Offer Price</label>
                                         <input id="offer_price" class="form-control" name="offer_price" type="text"

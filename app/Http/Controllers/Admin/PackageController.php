@@ -50,9 +50,10 @@ class PackageController extends Controller
             'email_marketing' => 'required',
             'card' => 'required',
             'price' => 'required|numeric',
+            'package_time' => 'required',
             'offer_price' => 'nullable|numeric',
             'features' => 'required|array',
-            'features.*' => 'string', // Each feature must be a string
+            'features.*' => 'string',
             'description' => 'required|string',
             'status' => 'required',
         ]);
@@ -61,6 +62,7 @@ class PackageController extends Controller
         $package = new Package();
         $package->country_id = $request->country;
         $package->name = $request->name;
+        $package->package_time = $request->package_time;
         $package->product_limit = $request->product_limit;
         $package->page_limit = $request->page_limit;
         $package->email_marketing = $request->email_marketing;
@@ -119,6 +121,7 @@ class PackageController extends Controller
             'page_limit' => 'required',
             'email_marketing' => 'required',
             'card' => 'required',
+            'package_time' => 'required',
             'price' => 'required|numeric',
             'offer_price' => 'nullable|numeric',
             'features' => 'required|array',
@@ -133,6 +136,7 @@ class PackageController extends Controller
         // Update the package with the new data
         $package->country_id = $request->country;
         $package->name = $request->name;
+        $package->package_time = $request->package_time;
         $package->product_limit = $request->product_limit;
         $package->page_limit = $request->page_limit;
         $package->email_marketing = $request->email_marketing;

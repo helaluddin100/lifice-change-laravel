@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('page_limit')->nullable();
             $table->string('email_marketing')->nullable(); // Fixed typo
             $table->string('card')->nullable();
+            $table->string('package_time')->nullable();
             $table->decimal('price', 8, 2)->nullable();
             $table->decimal('offer_price', 8, 2)->nullable();
             $table->json('features');

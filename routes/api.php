@@ -372,3 +372,4 @@ Route::get('/search/products', [ProductController::class, 'search']);
 
 // Pricing Plan
 Route::get('/pricing-plan', [PackageController::class, 'pricingPlan']);
+Route::get('/pricing-plan-details/{id}', [PackageController::class, 'show']);
