@@ -24,6 +24,8 @@ class SubscriptionController extends Controller
             'plan' => 'required|string',
             'status' => 'required|in:pending,completed,failed',
             'package_time' => 'required|numeric',
+            'ragularPrice' => 'required|numeric',
+            'discount_amount' => 'nullable|numeric',
         ]);
 
         // Check if the user has any pending payment
@@ -52,7 +54,9 @@ class SubscriptionController extends Controller
                 'user_id' => $validatedData['user_id'],
                 'package_id' => $validatedData['package_id'],
                 'amount' => $validatedData['amount'],
+                'ragular_amount' => $validatedData['ragularPrice'],
                 'payment_method' => $validatedData['payment_method'],
+                'discount_amount' => $validatedData['discount_amount'],
                 'plan' => $validatedData['plan'],
                 'transaction_id' => $validatedData['transaction_id'],
                 'status' => $validatedData['status'],
@@ -66,6 +70,8 @@ class SubscriptionController extends Controller
                 'subscription_id' => $subscription->id,
                 'package_id' => $validatedData['package_id'],
                 'amount' => $validatedData['amount'],
+                'ragular_amount' => $validatedData['ragularPrice'],
+                'discount_amount' => $validatedData['discount_amount'],
                 'payment_method' => $validatedData['payment_method'],
                 'transaction_id' => $validatedData['transaction_id'],
                 'payment_id' => $paymentId,

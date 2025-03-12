@@ -19,6 +19,10 @@ return new class extends Migration
             $table->foreignId('package_id')->constrained('packages');
             // Removed payment_id
             $table->decimal('amount', 10, 2);
+            $table->decimal('ragular_amount', 10, 2)->nullable();
+            $table->decimal('discount_amount', 10, 2)->nullable();
+            $table->decimal('tax_amount', 10, 2)->nullable();
+            $table->decimal('total_amount', 10, 2)->nullable();
             $table->string('payment_method');
             $table->string('plan');
             $table->string('transaction_id')->nullable();

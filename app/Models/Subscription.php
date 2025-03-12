@@ -18,6 +18,10 @@ class Subscription extends Model
         'status',
         'start_date',
         'end_date',
+        'ragular_amount',
+        'discount_amount',
+        'tax_amount',
+        'total_amount',
     ];
     // A subscription belongs to a user
     public function user()

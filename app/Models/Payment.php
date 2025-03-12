@@ -19,6 +19,10 @@ class Payment extends Model
         'status',
         'payment_date',
         'payment_id',
+        'ragular_amount',
+        'discount_amount',
+        'tax_amount',
+        'total_amount',
     ];
 
 
