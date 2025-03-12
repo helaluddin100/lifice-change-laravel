@@ -35,6 +35,9 @@ class SubscriptionController extends Controller
             return response()->json(['error' => 'You have a pending payment. Please complete it before making a new subscription.'], 400);
         }
 
+        // Generate 8-digit random payment_id
+        $paymentId = str_pad(mt_rand(1, 99999999), 8, '0', STR_PAD_LEFT); // Ensures it's always 8 digits
+
         // Proceed with the subscription and payment creation if no pending payment exists
         DB::beginTransaction();
 
@@ -57,7 +60,7 @@ class SubscriptionController extends Controller
                 'end_date' => $endDate,
             ]);
 
-            // Create Payment
+            // Create Payment with generated payment_id
             Payment::create([
                 'user_id' => $validatedData['user_id'],
                 'subscription_id' => $subscription->id,
@@ -65,6 +68,7 @@ class SubscriptionController extends Controller
                 'amount' => $validatedData['amount'],
                 'payment_method' => $validatedData['payment_method'],
                 'transaction_id' => $validatedData['transaction_id'],
+                'payment_id' => $paymentId,
                 'status' => $validatedData['status'],
                 'payment_date' => Carbon::now(),
             ]);
