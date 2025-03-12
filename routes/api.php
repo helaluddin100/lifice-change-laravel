@@ -38,6 +38,8 @@ use App\Http\Controllers\Api\TemplateController;
 use App\Http\Controllers\Api\LandingPageController;
 
 use App\Http\Controllers\Api\PackageController;
+use App\Http\Controllers\Api\SubscriptionController;
+use App\Models\Subscription;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -373,3 +375,7 @@ Route::get('/search/products', [ProductController::class, 'search']);
 // Pricing Plan
 Route::get('/pricing-plan', [PackageController::class, 'pricingPlan']);
 Route::get('/pricing-plan-details/{id}', [PackageController::class, 'show']);
+
+
+// Subscription
+Route::post('/subscribe', [SubscriptionController::class, 'store']);

@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'subscription_id',
+        'package_id',
+        'amount',
+        'payment_method',
+        'transaction_id',
+        'status',
+        'payment_date',
+        'payment_id',
+    ];
+
+
     // A payment belongs to a user
     public function user()
     {
