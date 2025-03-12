@@ -4,9 +4,20 @@ namespace App\Http;
 
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Console\Scheduling\Schedule;
 
 class Kernel extends HttpKernel
 {
+
+
+    protected function schedule(Schedule $schedule)
+    {
+        // Run the subscription check command daily at midnight
+        $schedule->command('subscription:check-status')->daily();
+    }
+
+
+
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
