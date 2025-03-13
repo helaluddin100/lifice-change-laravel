@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('plan');
             $table->string('transaction_id')->nullable();
-            $table->enum('status', ['pending', 'active', 'expired']); // Status for subscriptions
+            $table->enum('status', ['pending', 'active', 'expired', 'rejected']); // Status for subscriptions
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->timestamps();
