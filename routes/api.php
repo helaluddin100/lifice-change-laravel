@@ -47,12 +47,28 @@ Route::middleware('auth:sanctum')->group(function () {
 
         $userShop = Shop::where('user_id', $user->id)->first();
 
+        $subscription = Subscription::where('user_id', $user->id)->first();
+
+        // Default subscription data
+        $subscriptionData = null;
+        $subscriptionStatus = null;
+
+        // Check if subscription exists and user status is not 2 or 0
+        if ($user->status != 2 && $user->status != 0 && $subscription) {
+            $subscriptionData = $subscription->end_date;
+            $subscriptionStatus = $subscription->status; // Assuming 'status' field exists in the Subscription model
+        }
+
         return response()->json([
             'user' => array_merge($user->toArray(), [
                 'hasShop' => $userShop ? true : false,
+                'subscription' => $subscriptionData,
+                'subscriptionStatus' => $subscriptionStatus, // Add subscription status to the response
             ]),
         ]);
     });
+
+
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
