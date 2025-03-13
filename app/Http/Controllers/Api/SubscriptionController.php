@@ -28,7 +28,6 @@ class SubscriptionController extends Controller
             'discount_amount' => 'nullable|numeric',
         ]);
 
-        // Check if the user has any pending payment
         $pendingPayment = Payment::where('user_id', $validatedData['user_id'])
             ->where('status', 'pending')
             ->exists();
@@ -37,37 +36,45 @@ class SubscriptionController extends Controller
             return response()->json(['error' => 'You have a pending payment. Please complete it before making a new subscription.'], 400);
         }
 
-        // Generate 8-digit random payment_id
-        $paymentId = str_pad(mt_rand(1, 99999999), 8, '0', STR_PAD_LEFT); // Ensures it's always 8 digits
+        $paymentId = str_pad(mt_rand(1, 99999999), 8, '0', STR_PAD_LEFT);
 
-        // Proceed with the subscription and payment creation if no pending payment exists
         DB::beginTransaction();
 
         try {
-            // Proceed to create subscription and payment as usual
-            $packageTimeInMonths = $validatedData['package_time'];
-            $startDate = Carbon::now();
-            $endDate = $startDate->copy()->addMonths($packageTimeInMonths);
+            $existingSubscription = Subscription::where('user_id', $validatedData['user_id'])->first();
 
-            // Create Subscription
-            $subscription = Subscription::create([
-                'user_id' => $validatedData['user_id'],
-                'package_id' => $validatedData['package_id'],
-                'amount' => $validatedData['amount'],
-                'ragular_amount' => $validatedData['ragularPrice'],
-                'payment_method' => $validatedData['payment_method'],
-                'discount_amount' => $validatedData['discount_amount'],
-                'plan' => $validatedData['plan'],
-                'transaction_id' => $validatedData['transaction_id'],
-                'status' => $validatedData['status'],
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-            ]);
+            if ($existingSubscription) {
+                $packageTimeInMonths = $validatedData['package_time'];
+                $startDate = Carbon::now();
+                $endDate = $startDate->copy()->addMonths($packageTimeInMonths);
+
+                $existingSubscription->update([
+                    'end_date' => $endDate,
+                    'status' => 'pending',
+                ]);
+            } else {
+                $startDate = Carbon::now();
+                $endDate = $startDate->copy()->addMonths($validatedData['package_time']);
+
+                $existingSubscription = Subscription::create([
+                    'user_id' => $validatedData['user_id'],
+                    'package_id' => $validatedData['package_id'],
+                    'amount' => $validatedData['amount'],
+                    'ragular_amount' => $validatedData['ragularPrice'],
+                    'payment_method' => $validatedData['payment_method'],
+                    'discount_amount' => $validatedData['discount_amount'],
+                    'plan' => $validatedData['plan'],
+                    'transaction_id' => $validatedData['transaction_id'],
+                    'status' => $validatedData['status'],
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                ]);
+            }
 
             // Create Payment with generated payment_id
             Payment::create([
                 'user_id' => $validatedData['user_id'],
-                'subscription_id' => $subscription->id,
+                'subscription_id' => $existingSubscription->id,
                 'package_id' => $validatedData['package_id'],
                 'amount' => $validatedData['amount'],
                 'ragular_amount' => $validatedData['ragularPrice'],
@@ -80,10 +87,10 @@ class SubscriptionController extends Controller
             ]);
 
             DB::commit();
-            return response()->json(['message' => 'Payment and Subscription successfully created.'], 200);
+            return response()->json(['message' => 'Payment and Subscription successfully created or renewed.'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Failed to create payment and subscription. ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to create or renew payment and subscription. ' . $e->getMessage()], 500);
         }
     }
 }
