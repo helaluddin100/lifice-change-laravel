@@ -62,6 +62,7 @@ Route::namespace('App\Http\Controllers')->group(
 
             Route::resource('/packages', 'PackageController');
             Route::resource('/subscription', 'SubscriptionController');
+            Route::resource('/courier', 'CourierController');
         });
     }
 );

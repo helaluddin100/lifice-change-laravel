@@ -2,25 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\CourierSetting;
+use App\Models\Courier;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use App\Models\CourierSetting;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 
 class CourierSettingController extends Controller
 {
-
-    public function show($user_id)
-    {
-        $courierSettings = CourierSetting::where('user_id', $user_id)->first();
-
-        if (!$courierSettings) {
-            return response()->json(['error' => 'Courier settings not found for the user.'], 404);
-        }
-
-        return response()->json($courierSettings);
-    }
 
 
     public function store(Request $request)
@@ -41,6 +31,28 @@ class CourierSettingController extends Controller
 
         return response()->json(['message' => 'Courier settings saved!', 'courier_setting' => $courierSetting]);
     }
+
+
+
+
+    public function index()
+    {
+        $couriers = Courier::all()->where('status', 1);
+        return response()->json($couriers);
+    }
+
+    public function show($user_id)
+    {
+        $courierSettings = CourierSetting::where('user_id', $user_id)->first();
+
+        if (!$courierSettings) {
+            return response()->json(['error' => 'Courier settings not found for the user.'], 404);
+        }
+
+        return response()->json($courierSettings);
+    }
+
+
 
 
     public function getAccessToken($user_id)

@@ -397,7 +397,8 @@ Route::get('/pricing-plan-details/{id}', [PackageController::class, 'show']);
 // Subscription
 Route::post('/subscribe', [SubscriptionController::class, 'store']);
 
-
+// Courier Get in frontend
+Route::get('/courier', [CourierSettingController::class, 'index']);
 // Courier Settings
 Route::post('/courier-settings', [CourierSettingController::class, 'store']);
 Route::get('/courier-settings/{id}', [CourierSettingController::class, 'show']);

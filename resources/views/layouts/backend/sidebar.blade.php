@@ -84,6 +84,14 @@
 
             </li>
 
+            <li class="nav-item">
+                <a href="{{ route('admin.courier.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Couriers</span>
+                </a>
+
+            </li>
+
 
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#subscriptions" role="button" aria-expanded="false"
