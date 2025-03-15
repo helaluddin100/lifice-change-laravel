@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\LandingPageController;
 use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Models\Subscription;
+use App\Http\Controllers\Api\CourierSettingController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -395,3 +396,13 @@ Route::get('/pricing-plan-details/{id}', [PackageController::class, 'show']);
 
 // Subscription
 Route::post('/subscribe', [SubscriptionController::class, 'store']);
+
+
+// Courier Settings
+Route::post('/courier-settings', [CourierSettingController::class, 'store']);
+Route::get('/courier-settings/{id}', [CourierSettingController::class, 'show']);
+
+// Pathao API
+Route::get('/get-pathao-cities/{user_id}', [CourierSettingController::class, 'getCities']);
+Route::get('/get-pathao-zones/{user_id}/{city_id}', [CourierSettingController::class, 'getZones']);
+Route::get('/get-pathao-areas/{user_id}/{zone_id}', [CourierSettingController::class, 'getAreas']);
