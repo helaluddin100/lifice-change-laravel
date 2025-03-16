@@ -41,7 +41,7 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $courier->name }}</td>
                                             <td>
-                                                <img src="{{ asset('images/couriers/' . $courier->image) }}" alt=""
+                                                <img src="{{ asset($courier->image) }}" alt=""
                                                     style="width: 50px; height: 50px;">
                                             </td>
                                             <td>

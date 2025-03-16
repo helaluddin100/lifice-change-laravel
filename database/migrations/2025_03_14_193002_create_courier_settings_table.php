@@ -16,13 +16,15 @@ return new class extends Migration
         Schema::create('courier_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('courier_id')->constrained()->onDelete('cascade');
             $table->string('base_url')->nullable();
             $table->string('courier_name');
+            $table->string('store_id');
             $table->string('client_id')->nullable();
             $table->string('client_secret')->nullable();
             $table->string('username')->nullable();
             $table->string('password')->nullable();
-            $table->string('grant_type')->nullable();
+            $table->string('grant_type')->default('password');
             $table->timestamps();
         });
     }

@@ -16,21 +16,30 @@ class CourierSettingController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'user_id' => 'required|integer',
             'courier_name' => 'required|string',
-            'client_id' => 'required|string',
-            'client_secret' => 'required|string',
-            'username' => 'required|string',
-            'password' => 'required|string',
-            'base_url' => 'required|url'
+            'courier_id' => 'required|integer',
+            'store_id' => 'required|string',
+            'client_id' => 'nullable|string',
+            'client_secret' => 'nullable|string',
+            'username' => 'nullable|string',
+            'password' => 'nullable|string',
+            'base_url' => 'nullable|url',
+            'grant_type' => 'nullable|string'
         ]);
 
         $courierSetting = CourierSetting::updateOrCreate(
-            ['user_id' => $request->user()->id],
+            ['user_id' => $request->user_id, 'courier_id' => $request->courier_id],
             $data
         );
 
-        return response()->json(['message' => 'Courier settings saved!', 'courier_setting' => $courierSetting]);
+        return response()->json([
+            'status' => 200,
+            'courier_setting' => $courierSetting,
+            'message' => 'Courier settings saved!',
+        ]);
     }
+
 
 
 

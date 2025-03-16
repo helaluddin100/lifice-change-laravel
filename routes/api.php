@@ -400,7 +400,8 @@ Route::post('/subscribe', [SubscriptionController::class, 'store']);
 // Courier Get in frontend
 Route::get('/courier', [CourierSettingController::class, 'index']);
 // Courier Settings
-Route::post('/courier-settings', [CourierSettingController::class, 'store']);
+Route::post('/courier-store', [CourierSettingController::class, 'store']);
+
 Route::get('/courier-settings/{id}', [CourierSettingController::class, 'show']);
 
 // Pathao API
