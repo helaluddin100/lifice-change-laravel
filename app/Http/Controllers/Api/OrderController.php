@@ -102,7 +102,7 @@ class OrderController extends Controller
             'city_id' => 'required',
             'zone_id' => 'required',
             'area_id' => 'required',
-            'item_box' => 'required',
+            // 'item_box' => 'required',
             'item_weight' => 'required',
             'total_price' => 'required',
         ]);
@@ -185,12 +185,12 @@ class OrderController extends Controller
                     'recipient_area' => $recipientArea,
                     'delivery_type' => 48,  // Update if necessary
                     'item_type' => 2,  // Update if necessary
-                    'special_instruction' => 'Need to deliver before 5 PM',
+                    'special_instruction' => $validated['special_instruction'] ?? "Please Delivery This product on time",
                     'item_quantity' => $order->orderItems->sum('quantity'),
                     'item_weight' => $validated['item_weight'],  // Can calculate dynamically
-                    'item_description' => $validated['item_description'] || "Please Delivery This product on time",
-                    // 'amount_to_collect' => $order->total_price + $order->delivery_charge,
-                    'amount_to_collect' => $validated['total_price'],
+                    'item_description' => $validated['item_description'] ?? "Please Delivery This product on time",
+                    'amount_to_collect' => $order->total_price + $order->delivery_charge,
+                    // 'amount_to_collect' => $validated['total_price'],
                 ];
 
                 // Log the order data being sent to Pathao API
