@@ -175,7 +175,7 @@ class OrderController extends Controller
 
                 // Prepare the data to be sent to Pathao
                 $orderData = [
-                    'store_id' => 267476,  // Get from DB
+                    'store_id' => $courierSetting->store_id,  // Get from DB
                     'merchant_order_id' => $order->order_id,
                     'recipient_name' => $order->name,
                     'recipient_phone' => $order->phone,
@@ -184,11 +184,11 @@ class OrderController extends Controller
                     'recipient_zone' => $recipientZone,
                     'recipient_area' => $recipientArea,
                     'delivery_type' => 48,  // Update if necessary
-                    'item_type' => $validated['item_box'],  // Update if necessary
+                    'item_type' => 2,  // Update if necessary
                     'special_instruction' => 'Need to deliver before 5 PM',
                     'item_quantity' => $order->orderItems->sum('quantity'),
                     'item_weight' => $validated['item_weight'],  // Can calculate dynamically
-                    'item_description' => "This is a Cloth item, price: " . $order->total_price,
+                    'item_description' => $validated['item_description'] || "Please Delivery This product on time",
                     // 'amount_to_collect' => $order->total_price + $order->delivery_charge,
                     'amount_to_collect' => $validated['total_price'],
                 ];
