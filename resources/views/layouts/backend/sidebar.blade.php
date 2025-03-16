@@ -93,6 +93,17 @@
             </li>
 
 
+
+            <li class="nav-item">
+                <a href="{{ route('admin.courierUser.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Courier Setup Users</span>
+                </a>
+
+            </li>
+
+
+
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#subscriptions" role="button" aria-expanded="false"
                     aria-controls="subscriptions">
