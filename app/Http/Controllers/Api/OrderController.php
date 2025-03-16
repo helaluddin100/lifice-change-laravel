@@ -101,19 +101,17 @@ class OrderController extends Controller
             'order_status' => 'required|string|in:pending,processing,shipped,delivered,canceled',
             'total_price' => 'required',
             'courier_type' => 'required',
+
+            // Conditional validation: Apply validation for courier_type == 1
+            'city_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'zone_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'area_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'item_weight' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'item_description' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'special_instruction' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'item_type' => 'nullable', // This field is always nullable
         ]);
 
-        if ($validated['courier_type'] == 1) {
-            $request->validate([
-                'city_id' => 'required',
-                'zone_id' => 'required',
-                'area_id' => 'required',
-                'item_weight' => 'required',
-                'item_description' => 'required',
-                'special_instruction' => 'required',
-                'item_type' => 'nullable',
-            ]);
-        }
 
         // Fetch the order and its items
         $order = Order::with('orderItems')->find($id);
@@ -123,7 +121,7 @@ class OrderController extends Controller
         }
 
         // Only proceed if the status is 'shipped'
-        if ($validated['courier_type'] === 1 && $validated['order_status'] === 'shipped') {
+        if ($validated['courier_type'] == 1 && $validated['order_status'] == 'shipped') {
             // Fetch courier credentials from the database
             $courierSetting = CourierSetting::where('user_id', $order->user_id)->first();
 
