@@ -67,7 +67,10 @@ class CourierSettingController extends Controller
     public function getAccessToken($user_id)
     {
         // CourierSetting মডেল থেকে ইউজারের credential নিয়ে আসা
-        $credentials = CourierSetting::where('user_id', $user_id)->first();
+        // $credentials = CourierSetting::where('user_id', $user_id )->first();
+        $credentials = CourierSetting::where('user_id', $user_id)
+            ->where('courier_id', 1)
+            ->first();
 
         if (!$credentials) {
             return response()->json(['error' => 'User credentials not found'], 404);

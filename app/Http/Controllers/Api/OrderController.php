@@ -57,20 +57,85 @@ class OrderController extends Controller
 
         return $pdf->download('invoice.pdf');
     }
+    // public function updateStatus(Request $request, $id)
+    // {
+    //     $validated = $request->validate([
+    //         'order_status' => 'required|string|in:pending,processing,shipped,delivered,canceled',
+    //         'courier_type' => 'required',
+
+    //     ]);
+
+    //     $order = Order::with('orderItems')->find($id);
+    //     $courierSetting = CourierSetting::where('user_id', $order->user_id)
+    //         ->where('courier_id', $validated['courier_type'])
+    //         ->first();
+    //     if (!$order) {
+    //         return response()->json(['message' => 'Order not found'], 404);
+    //     }
+
+    //     // Handle product stock when order is delivered
+    //     if ($order->order_status !== 'delivered' && $validated['order_status'] === 'delivered') {
+    //         foreach ($order->orderItems as $item) {
+    //             $product = Product::find($item->product_id);
+    //             if ($product) {
+    //                 $product->quantity = max(0, $product->quantity - $item->quantity);
+    //                 $product->sold_count = $product->sold_count + $item->quantity;
+    //                 $product->save();
+    //             }
+    //         }
+    //     }
+
+    //     // If the courier type is 2 (Steadfast), send the request to Steadfast API
+    //     if ($validated['courier_type'] == 2) {
+    //         $response = $this->sendOrderToSteadfast($order, $request, $courierSetting);
+    //         if ($response['status'] !== 200) {
+    //             return response()->json(['message' => 'Failed to place order with Steadfast'], 500);
+    //         }
+    //     }
+
+    //     // Update order status
+    //     $order->order_status = $validated['order_status'];
+    //     $order->save();
+
+    //     // Send email notification about the status update
+    //     Mail::to($order->email)->send(new OrderStatusUpdated($order));
+
+    //     return response()->json([
+    //         'message' => 'Order status updated successfully',
+    //         'order' => $order
+    //     ], 200);
+    // }
+
+
+
+
     public function updateStatus(Request $request, $id)
     {
+        // Validate the order status
         $validated = $request->validate([
             'order_status' => 'required|string|in:pending,processing,shipped,delivered,canceled',
+            'total_price' => 'required',
             'courier_type' => 'required',
-
+            'city_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'zone_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'area_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'item_weight' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'item_description' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'special_instruction' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'item_type' => 'nullable', // This field is always nullable
         ]);
 
         $order = Order::with('orderItems')->find($id);
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
         $courierSetting = CourierSetting::where('user_id', $order->user_id)
             ->where('courier_id', $validated['courier_type'])
             ->first();
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
+
+        if (!$courierSetting) {
+            return response()->json(['message' => 'Courier settings not found'], 404);
         }
 
         // Handle product stock when order is delivered
@@ -86,18 +151,24 @@ class OrderController extends Controller
         }
 
         // If the courier type is 2 (Steadfast), send the request to Steadfast API
-        if ($validated['courier_type'] == 2) {
+        if ($validated['courier_type'] == 2 && $validated['order_status'] == 'shipped') {
             $response = $this->sendOrderToSteadfast($order, $request, $courierSetting);
             if ($response['status'] !== 200) {
                 return response()->json(['message' => 'Failed to place order with Steadfast'], 500);
             }
+        } elseif ($validated['courier_type'] == 1 && $validated['order_status'] == 'shipped') {
+            // Handle Pathao API logic for courier_type == 1
+            $response = $this->sendOrderToPathao($order, $request, $courierSetting);
+            if ($response['status'] !== 200) {
+                return response()->json(['message' => 'Failed to place order with Pathao'], 500);
+            }
+        } else {
+            // For other order status updates, just update the order status
+            $order->order_status = $validated['order_status'];
+            $order->save();
         }
 
-        // Update order status
-        $order->order_status = $validated['order_status'];
-        $order->save();
-
-        // Send email notification about the status update
+        // Send the updated order status via email
         Mail::to($order->email)->send(new OrderStatusUpdated($order));
 
         return response()->json([
@@ -105,7 +176,6 @@ class OrderController extends Controller
             'order' => $order
         ], 200);
     }
-
 
     public function sendOrderToSteadfast($order, $request, $courierSetting)
     {
@@ -126,185 +196,116 @@ class OrderController extends Controller
             'item_description' => "Order ID: {$order->order_id}, Total Price: {$order->total_price}",
         ];
 
-        // Make the POST request to Steadfast API
-        $client = new \GuzzleHttp\Client();
+        // Make the POST request to Steadfast API using Guzzle or Http Client
         try {
-            $response = $client->post($apiUrl, [
-                'headers' => [
-                    'Api-Key' => $apiKey,
-                    'Secret-Key' => $secretKey,
-                    'Content-Type' => 'application/json',
-                ],
-                'json' => $data,
-            ]);
+            $response = Http::withHeaders([
+                'Api-Key' => $apiKey,
+                'Secret-Key' => $secretKey,
+                'Content-Type' => 'application/json',
+            ])->post($apiUrl, $data);
 
-            // Parse the response
-            $responseData = json_decode($response->getBody()->getContents(), true);
-            return $responseData;
+            $responseData = $response->json();
+
+            // Check if the response is successful
+            if ($response->successful()) {
+                return ['status' => 200, 'message' => 'Order placed successfully'];
+            } else {
+                Log::error('Failed to place order with Steadfast', $responseData);
+                return ['status' => 500, 'message' => 'Failed to place order with Steadfast'];
+            }
         } catch (\Exception $e) {
-            // If there's an error, return the error message
+            // If there's an error, log the error and return the error message
+            Log::error('Exception occurred while placing order with Steadfast', ['error' => $e->getMessage()]);
             return ['status' => 500, 'message' => $e->getMessage()];
         }
     }
 
-    // public function updateStatus(Request $request, $id)
-    // {
-    //     // Validate the order status
-    //     $validated = $request->validate([
-    //         'order_status' => 'required|string|in:pending,processing,shipped,delivered,canceled',
-    //         'total_price' => 'required',
-    //         'courier_type' => 'required',
+    public function sendOrderToPathao($order, $request, $courierSetting)
+    {
+        // Pathao API URL for token and orders
+        $baseUrl = 'https://api-hermes.pathao.com/aladdin/api/v1/';
+        $apiUrl = $baseUrl . 'orders';  // Adjust API URL if needed
 
-    //         // Conditional validation: Apply validation for courier_type == 1
-    //         'city_id' => $request->courier_type == 1 ? 'required' : 'nullable',
-    //         'zone_id' => $request->courier_type == 1 ? 'required' : 'nullable',
-    //         'area_id' => $request->courier_type == 1 ? 'required' : 'nullable',
-    //         'item_weight' => $request->courier_type == 1 ? 'required' : 'nullable',
-    //         'item_description' => $request->courier_type == 1 ? 'required' : 'nullable',
-    //         'special_instruction' => $request->courier_type == 1 ? 'required' : 'nullable',
-    //         'item_type' => 'nullable', // This field is always nullable
-    //     ]);
+        // Prepare the data to get access token
+        $tokenData = [
+            'client_id' => $courierSetting->client_id,
+            'client_secret' => $courierSetting->client_secret,
+            'grant_type' => 'password',
+            'username' => $courierSetting->username,
+            'password' => $courierSetting->password,
+        ];
 
+        // Request to get access token
+        $client = new \GuzzleHttp\Client();
+        try {
+            // Fetch the access token
+            $tokenResponse = $client->post($baseUrl . 'issue-token', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $tokenData,
+            ]);
 
-    //     // Fetch the order and its items
-    //     $order = Order::with('orderItems')->find($id);
+            // Get the response body and decode the JSON
+            $tokenResponseData = json_decode($tokenResponse->getBody()->getContents(), true);
 
-    //     if (!$order) {
-    //         return response()->json(['message' => 'Order not found'], 404);
-    //     }
+            if (!isset($tokenResponseData['access_token'])) {
+                Log::error('Failed to get access token from Pathao', $tokenResponseData);
+                return ['status' => 500, 'message' => 'Failed to get access token from Pathao'];
+            }
 
-    //     // Only proceed if the status is 'shipped'
-    //     if ($validated['courier_type'] == 1 && $validated['order_status'] == 'shipped') {
-    //         // Fetch courier credentials from the database
-    //         $courierSetting = CourierSetting::where('user_id', $order->user_id)->first();
-    //         $base_url = 'https://api-hermes.pathao.com';
-    //         if ($courierSetting) {
-    //             // Step 1: Issue an access token using cURL
-    //             $curl = curl_init();
-    //             curl_setopt_array($curl, [
-    //                 CURLOPT_URL => $base_url . '/aladdin/api/v1/issue-token',
-    //                 CURLOPT_RETURNTRANSFER => true,
-    //                 CURLOPT_ENCODING => "",
-    //                 CURLOPT_MAXREDIRS => 10,
-    //                 CURLOPT_TIMEOUT => 30,
-    //                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    //                 CURLOPT_CUSTOMREQUEST => "POST",
-    //                 CURLOPT_POSTFIELDS => json_encode([
-    //                     'client_id' => $courierSetting->client_id,
-    //                     'client_secret' => $courierSetting->client_secret,
-    //                     'grant_type' => 'password',
-    //                     'username' => $courierSetting->username,
-    //                     'password' => $courierSetting->password,
-    //                 ]),
-    //                 CURLOPT_HTTPHEADER => [
-    //                     "Content-Type: application/json"
-    //                 ],
-    //             ]);
+            // Access token
+            $accessToken = $tokenResponseData['access_token'];
 
-    //             $response = curl_exec($curl);
-    //             $err = curl_error($curl);
-    //             curl_close($curl);
+            // Prepare the data for placing the order with Pathao
+            $orderData = [
+                'store_id' => $courierSetting->store_id,
+                'merchant_order_id' => $order->order_id,
+                'recipient_name' => $order->name,
+                'recipient_phone' => $order->phone,
+                'recipient_address' => $order->address,
+                'recipient_city' => $request->city_id,  // From request
+                'recipient_zone' => $request->zone_id,  // From request
+                'recipient_area' => $request->area_id,  // From request
+                'delivery_type' => 48,  // You can adjust this
+                'item_type' => $request->item_type ?? 2,  // Default item type if not set
+                'special_instruction' => $request->special_instruction ?? "Please deliver this product on time",
+                'item_quantity' => $order->orderItems->sum('quantity'),
+                'item_weight' => $request->item_weight,  // From request
+                'item_description' => $request->item_description ?? "Please deliver this product on time",
+                'amount_to_collect' => (int) $order->total_price,
+            ];
 
-    //             // Log cURL errors if any
-    //             if ($err) {
-    //                 Log::error('cURL Error:', ['error' => $err]);
-    //                 return response()->json([
-    //                     'error' => 'cURL Error #: ' . $err,
-    //                 ], 500);
-    //             }
+            // Make the POST request to Pathao API
+            $response = $client->post($apiUrl, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $orderData,
+            ]);
 
-    //             $tokenResponse = json_decode($response, true);
+            // Parse the response
+            $responseData = json_decode($response->getBody()->getContents(), true);
 
-    //             // Log the access token response
-    //             Log::info('Access Token Response:', ['response' => $tokenResponse]);
+            // Log the Pathao API response
+            Log::info('Pathao API Response:', ['response' => $responseData]);
 
-    //             if (isset($tokenResponse['access_token'])) {
-    //                 $accessToken = $tokenResponse['access_token'];
-    //             } else {
-    //                 return response()->json([
-    //                     'error' => 'Failed to get access token',
-    //                     'response' => $response,
-    //                 ], 500);
-    //             }
-
-    //             $recipientCity = $validated['city_id'];
-    //             $recipientZone = $validated['zone_id'];
-    //             $recipientArea = $validated['area_id'];
-
-    //             // Prepare the data to be sent to Pathao
-    //             $orderData = [
-    //                 'store_id' => $courierSetting->store_id,
-    //                 'merchant_order_id' => $order->order_id,
-    //                 'recipient_name' => $order->name,
-    //                 'recipient_phone' => $order->phone,
-    //                 'recipient_address' => $order->address,
-    //                 'recipient_city' => $recipientCity,
-    //                 'recipient_zone' => $recipientZone,
-    //                 'recipient_area' => $recipientArea,
-    //                 'delivery_type' => 48,
-    //                 'item_type' => $validated['item_type'] ?? 2,
-    //                 'special_instruction' => $validated['special_instruction'] ?? "Please Delivery This product on time",
-    //                 'item_quantity' => $order->orderItems->sum('quantity'),
-    //                 'item_weight' => $validated['item_weight'],
-    //                 'item_description' => $validated['item_description'] ?? "Please Delivery This product on time",
-    //                 'amount_to_collect' => (int) $order->total_price,
-    //                 // 'amount_to_collect' => (int) $validated['total_price'],
-    //             ];
-
-    //             // Log the order data being sent to Pathao API
-    //             Log::info('Courier Order Data:', $orderData);
-
-    //             $orderResponse = Http::withHeaders([
-    //                 'Authorization' => 'Bearer ' . $accessToken,
-    //             ])->post($base_url . '/aladdin/api/v1/orders', $orderData);
-
-    //             // Log the response from the courier API
-    //             Log::info('Courier API Response:', ['response' => $orderResponse->body()]);
-
-    //             if ($orderResponse->successful()) {
-    //                 // Update order status to "Shipped" if courier API call is successful
-    //                 $order->update(['order_status' => 'shipped']);
-    //             } else {
-    //                 // Log the error response from the courier API
-    //                 Log::error('Courier API Error:', ['response' => $orderResponse->body()]);
-    //                 return response()->json([
-    //                     'error' => 'Courier API failed. Please try again later.',
-    //                     'response' => $orderResponse->body(),
-    //                     'status_code' => $orderResponse->status(),
-    //                 ], 500);
-    //             }
-    //         } else {
-    //             return response()->json([
-    //                 'error' => 'Courier settings not found for the user.',
-    //             ], 404);
-    //         }
-    //     } else {
-    //         // For other order status updates, just update the order status
-    //         $order->order_status = $validated['order_status'];
-    //         $order->save();
-    //     }
-
-    //     // Handle the 'delivered' status for product inventory
-    //     if ($order->order_status !== 'delivered' && $validated['order_status'] === 'delivered') {
-    //         foreach ($order->orderItems as $item) {
-    //             $product = Product::find($item->product_id);
-    //             if ($product) {
-    //                 $product->quantity = max(0, $product->quantity - $item->quantity);
-    //                 $product->sold_count = $product->sold_count + $item->quantity;
-    //                 $product->save();
-    //             }
-    //         }
-    //     }
-
-    //     // Send the updated order status via email
-    //     Mail::to($order->email)->send(new OrderStatusUpdated($order));
-
-    //     return response()->json([
-    //         'message' => 'Order status updated successfully',
-    //         'order' => $order
-    //     ], 200);
-    // }
-
+            // Check if the response is successful
+            if (isset($responseData['code']) && $responseData['code'] === 200) {
+                // Successful order creation response
+                return ['status' => 200, 'message' => 'Order placed successfully'];
+            } else {
+                // Log the error response for troubleshooting
+                Log::error('Failed to place order with Pathao', $responseData);
+                return ['status' => 500, 'message' => 'Failed to place order with Pathao', 'response' => $responseData];
+            }
+        } catch (\Exception $e) {
+            // If there's an error, log the error and return the error message
+            Log::error('Exception occurred while placing order with Pathao', ['error' => $e->getMessage()]);
+            return ['status' => 500, 'message' => $e->getMessage()];
+        }
+    }
 
 
 
