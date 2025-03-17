@@ -85,8 +85,8 @@ class OrderController extends Controller
             }
         }
 
-        // If the courier type is 1 (Steadfast), send the request to Steadfast API
-        if ($validated['courier_type'] == 1) {
+        // If the courier type is 2 (Steadfast), send the request to Steadfast API
+        if ($validated['courier_type'] == 2) {
             $response = $this->sendOrderToSteadfast($order, $request, $courierSetting);
             if ($response['status'] !== 200) {
                 return response()->json(['message' => 'Failed to place order with Steadfast'], 500);
