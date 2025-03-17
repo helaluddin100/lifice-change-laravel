@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('courier_id')->constrained()->onDelete('cascade');
-            $table->string('base_url')->nullable();
+            // $table->string('base_url')->nullable();
             $table->string('courier_name');
-            $table->string('store_id');
+            $table->string('store_id')->nullable();
             $table->string('client_id')->nullable();
             $table->string('client_secret')->nullable();
             $table->string('username')->nullable();

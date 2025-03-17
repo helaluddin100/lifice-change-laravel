@@ -17,14 +17,14 @@ class CourierSettingController extends Controller
     {
         $data = $request->validate([
             'user_id' => 'required|integer',
-            'courier_name' => 'required|string',
             'courier_id' => 'required|integer',
-            'store_id' => 'required|string',
-            'client_id' => 'nullable|string',
-            'client_secret' => 'nullable|string',
-            'username' => 'nullable|string',
-            'password' => 'nullable|string',
-            'base_url' => 'nullable|url',
+            'courier_name' => 'required|string',
+            'client_id' => 'required|string',
+            'client_secret' => 'required|string',
+
+            'store_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'username' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'password' => $request->courier_type == 1 ? 'required' : 'nullable',
             'grant_type' => 'nullable|string'
         ]);
 
