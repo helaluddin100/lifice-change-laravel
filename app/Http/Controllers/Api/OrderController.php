@@ -57,55 +57,6 @@ class OrderController extends Controller
 
         return $pdf->download('invoice.pdf');
     }
-    // public function updateStatus(Request $request, $id)
-    // {
-    //     $validated = $request->validate([
-    //         'order_status' => 'required|string|in:pending,processing,shipped,delivered,canceled',
-    //         'courier_type' => 'required',
-
-    //     ]);
-
-    //     $order = Order::with('orderItems')->find($id);
-    //     $courierSetting = CourierSetting::where('user_id', $order->user_id)
-    //         ->where('courier_id', $validated['courier_type'])
-    //         ->first();
-    //     if (!$order) {
-    //         return response()->json(['message' => 'Order not found'], 404);
-    //     }
-
-    //     // Handle product stock when order is delivered
-    //     if ($order->order_status !== 'delivered' && $validated['order_status'] === 'delivered') {
-    //         foreach ($order->orderItems as $item) {
-    //             $product = Product::find($item->product_id);
-    //             if ($product) {
-    //                 $product->quantity = max(0, $product->quantity - $item->quantity);
-    //                 $product->sold_count = $product->sold_count + $item->quantity;
-    //                 $product->save();
-    //             }
-    //         }
-    //     }
-
-    //     // If the courier type is 2 (Steadfast), send the request to Steadfast API
-    //     if ($validated['courier_type'] == 2) {
-    //         $response = $this->sendOrderToSteadfast($order, $request, $courierSetting);
-    //         if ($response['status'] !== 200) {
-    //             return response()->json(['message' => 'Failed to place order with Steadfast'], 500);
-    //         }
-    //     }
-
-    //     // Update order status
-    //     $order->order_status = $validated['order_status'];
-    //     $order->save();
-
-    //     // Send email notification about the status update
-    //     Mail::to($order->email)->send(new OrderStatusUpdated($order));
-
-    //     return response()->json([
-    //         'message' => 'Order status updated successfully',
-    //         'order' => $order
-    //     ], 200);
-    // }
-
 
 
 
@@ -130,12 +81,15 @@ class OrderController extends Controller
             return response()->json(['message' => 'Order not found'], 404);
         }
 
-        $courierSetting = CourierSetting::where('user_id', $order->user_id)
-            ->where('courier_id', $validated['courier_type'])
-            ->first();
+        if ($validated['order_status'] == 'shipped' && in_array($validated['courier_type'], [1, 2])) {
+            $courierSetting = CourierSetting::where([
+                ['user_id', $order->user_id],
+                ['courier_id', $validated['courier_type']]
+            ])->first();
 
-        if (!$courierSetting) {
-            return response()->json(['message' => 'Courier settings not found'], 404);
+            if (!$courierSetting) {
+                return response()->json(['message' => 'Courier settings not found'], 404);
+            }
         }
 
         // Handle product stock when order is delivered
@@ -162,15 +116,15 @@ class OrderController extends Controller
             if ($response['status'] !== 200) {
                 return response()->json(['message' => 'Failed to place order with Pathao'], 500);
             }
-        } else {
-            // For other order status updates, just update the order status
-            $order->order_status = $validated['order_status'];
-            $order->save();
         }
+        // For other order status updates, just update the order status
+        $order->order_status = $validated['order_status'];
+        $order->save();
 
-        // Send the updated order status via email
-        Mail::to($order->email)->send(new OrderStatusUpdated($order));
-
+        if ($order->order_status == 'shipped') {
+            // Send the updated order status via email
+            Mail::to($order->email)->send(new OrderStatusUpdated($order));
+        }
         return response()->json([
             'message' => 'Order status updated successfully',
             'order' => $order
@@ -191,9 +145,9 @@ class OrderController extends Controller
             'recipient_phone' => $order->phone,
             'recipient_address' => $order->address,
             'cod_amount' => $order->total_price,
-            'note' => 'Delivery within 3 PM',
-            'item_weight' => '2',  // Assuming item weight is fixed, you can modify it
-            'item_description' => "Order ID: {$order->order_id}, Total Price: {$order->total_price}",
+            'note' => $request->special_instruction ?? "Please deliver this product on time",
+            'item_weight' => $request->item_weight,
+            'item_description' => $request->item_description ?? "Please deliver this product on time",
         ];
 
         // Make the POST request to Steadfast API using Guzzle or Http Client
