@@ -21,18 +21,23 @@ class CourierSettingController extends Controller
 
 
 
-    public function editData($user_id, $courier_id)
+    public function editData($id)
     {
+        // Fix: Correct the spelling of "find"
+        $courier = CourierSetting::find($id);
 
-        $courier = CourierSetting::where('user_id', $user_id)
-            ->where('courier_id', $courier_id)
-            ->first();
-
-
-        return response()->json([
-            'status' => 200,
-            'data' => $courier,
-        ]);
+        // Check if courier exists
+        if ($courier) {
+            return response()->json([
+                'status' => 200,
+                'data' => $courier,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Courier not found',
+            ], 404);
+        }
     }
 
 
@@ -62,6 +67,40 @@ class CourierSettingController extends Controller
             'message' => 'Courier settings saved!',
         ]);
     }
+
+    public function update(Request $request, $id)
+    {
+        // Validate incoming data
+        $data = $request->validate([
+            'client_id' => 'required|string',
+            'client_secret' => 'required|string',
+            'store_id' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'username' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'password' => $request->courier_type == 1 ? 'required' : 'nullable',
+            'grant_type' => 'nullable|string'
+        ]);
+
+        // Find the existing courier setting by its ID
+        $courierSetting = CourierSetting::find($id);
+
+        if (!$courierSetting) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Courier setting not found!',
+            ], 404);
+        }
+
+        // Update the courier setting with the validated data
+        $courierSetting->update($data);
+
+        // Return a response indicating success
+        return response()->json([
+            'status' => 200,
+            'courier_setting' => $courierSetting,
+            'message' => 'Courier settings updated successfully!',
+        ]);
+    }
+
 
     public function index()
     {
