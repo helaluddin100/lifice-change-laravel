@@ -162,6 +162,7 @@ class OrderController extends Controller
 
             // Check if the response is successful
             if ($response->successful()) {
+
                 return ['status' => 200, 'message' => 'Order placed successfully'];
             } else {
                 Log::error('Failed to place order with Steadfast', $responseData);
@@ -248,6 +249,9 @@ class OrderController extends Controller
             // Check if the response is successful
             if (isset($responseData['code']) && $responseData['code'] === 200) {
                 // Successful order creation response
+                $order->consignment_id = $responseData['data']['consignment_id'];
+                $order->delivery_by = $request->courier_type == 1 ? 'pathao' : 'steadfast';
+                $order->save();
                 return ['status' => 200, 'message' => 'Order placed successfully'];
             } else {
                 // Log the error response for troubleshooting
