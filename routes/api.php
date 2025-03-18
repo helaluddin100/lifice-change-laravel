@@ -404,7 +404,9 @@ Route::post('/courier-store', [CourierSettingController::class, 'store']);
 
 Route::get('/courier-settings/{id}', [CourierSettingController::class, 'show']);
 
+Route::get('/get-couriers/{id}', [CourierSettingController::class, 'getCourierByUser']);
 // Pathao API
 Route::get('/get-pathao-cities/{user_id}', [CourierSettingController::class, 'getCities']);
 Route::get('/get-pathao-zones/{user_id}/{city_id}', [CourierSettingController::class, 'getZones']);
 Route::get('/get-pathao-areas/{user_id}/{zone_id}', [CourierSettingController::class, 'getAreas']);
+Route::get('/courier-edit/{user_id}/{courier_id}', [CourierSettingController::class, 'editData']);

@@ -12,6 +12,29 @@ use Illuminate\Support\Facades\Http;
 class CourierSettingController extends Controller
 {
 
+    public function getCourierByUser($id)
+    {
+        $couriers = CourierSetting::where('user_id', $id)->get();
+
+        return response()->json($couriers);
+    }
+
+
+
+    public function editData($user_id, $courier_id)
+    {
+
+        $courier = CourierSetting::where('user_id', $user_id)
+            ->where('courier_id', $courier_id)
+            ->first();
+
+
+        return response()->json([
+            'status' => 200,
+            'data' => $courier,
+        ]);
+    }
+
 
     public function store(Request $request)
     {
@@ -39,10 +62,6 @@ class CourierSettingController extends Controller
             'message' => 'Courier settings saved!',
         ]);
     }
-
-
-
-
 
     public function index()
     {
