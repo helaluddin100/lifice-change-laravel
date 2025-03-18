@@ -108,13 +108,13 @@ class OrderController extends Controller
         if ($validated['courier_type'] == 2 && $validated['order_status'] == 'shipped') {
             $response = $this->sendOrderToSteadfast($order, $request, $courierSetting);
             if ($response['status'] !== 200) {
-                return response()->json(['message' => 'Failed to place order with Steadfast'], 500);
+                return response()->json(['message' => $response['message']], 500);
             }
         } elseif ($validated['courier_type'] == 1 && $validated['order_status'] == 'shipped') {
             // Handle Pathao API logic for courier_type == 1
             $response = $this->sendOrderToPathao($order, $request, $courierSetting);
             if ($response['status'] !== 200) {
-                return response()->json(['message' => 'Failed to place order with Pathao'], 500);
+                return response()->json(['message' => $response['message']], 500);
             }
         }
         // For other order status updates, just update the order status
@@ -162,15 +162,17 @@ class OrderController extends Controller
 
             // Check if the response is successful
             if ($response->successful()) {
-
+                $order->consignment_id = $responseData['consignment']['tracking_code'] ?? null;
+                $order->delivery_by = 'steadfast';
+                $order->save();
                 return ['status' => 200, 'message' => 'Order placed successfully'];
             } else {
-                Log::error('Failed to place order with Steadfast', $responseData);
+                // Log::error('Failed to place order with Steadfast', $responseData);
                 return ['status' => 500, 'message' => 'Failed to place order with Steadfast'];
             }
         } catch (\Exception $e) {
             // If there's an error, log the error and return the error message
-            Log::error('Exception occurred while placing order with Steadfast', ['error' => $e->getMessage()]);
+            // Log::error('Exception occurred while placing order with Steadfast', ['error' => $e->getMessage()]);
             return ['status' => 500, 'message' => $e->getMessage()];
         }
     }
@@ -205,7 +207,7 @@ class OrderController extends Controller
             $tokenResponseData = json_decode($tokenResponse->getBody()->getContents(), true);
 
             if (!isset($tokenResponseData['access_token'])) {
-                Log::error('Failed to get access token from Pathao', $tokenResponseData);
+                // Log::error('Failed to get access token from Pathao', $tokenResponseData);
                 return ['status' => 500, 'message' => 'Failed to get access token from Pathao'];
             }
 
@@ -250,17 +252,17 @@ class OrderController extends Controller
             if (isset($responseData['code']) && $responseData['code'] === 200) {
                 // Successful order creation response
                 $order->consignment_id = $responseData['data']['consignment_id'];
-                $order->delivery_by = $request->courier_type == 1 ? 'pathao' : 'steadfast';
+                $order->delivery_by = 'pathao';
                 $order->save();
                 return ['status' => 200, 'message' => 'Order placed successfully'];
             } else {
                 // Log the error response for troubleshooting
-                Log::error('Failed to place order with Pathao', $responseData);
+                // Log::error('Failed to place order with Pathao', $responseData);
                 return ['status' => 500, 'message' => 'Failed to place order with Pathao', 'response' => $responseData];
             }
         } catch (\Exception $e) {
             // If there's an error, log the error and return the error message
-            Log::error('Exception occurred while placing order with Pathao', ['error' => $e->getMessage()]);
+            // Log::error('Exception occurred while placing order with Pathao', ['error' => $e->getMessage()]);
             return ['status' => 500, 'message' => $e->getMessage()];
         }
     }
