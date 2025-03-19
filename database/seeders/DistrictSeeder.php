@@ -28,12 +28,19 @@ class DistrictSeeder extends Seeder
         // Districts grouped by division
         $districts = [
             'Dhaka' => ['Dhaka', 'Faridpur', 'Gazipur', 'Gopalganj', 'Kishoreganj', 'Madaripur', 'Manikganj', 'Munshiganj', 'Narayanganj', 'Narsingdi', 'Rajbari', 'Shariatpur', 'Tangail'],
-            'Chattogram' => ['Bandarban', 'Brahmanbaria', 'Chandpur', 'Chattogram', 'Coxsbazar', 'Cumilla', 'Feni', 'Khagrachari', 'Lakshmipur', 'Noakhali', 'Rangamati'],
+
+            'Chattogram' => ['Bandarban', 'Brahmanbaria', 'Chandpur', 'Khagrachhari', 'Chattogram', 'Coxsbazar', 'Comilla', 'Lakshmipur', 'Feni', 'Rangamati', 'Noakhali'],
+
             'Rajshahi' => ['Bogura', 'Joypurhat', 'Naogaon', 'Natore', 'Chapainawabganj', 'Pabna', 'Rajshahi', 'Sirajganj'],
+
             'Khulna' => ['Bagerhat', 'Chuadanga', 'Jashore', 'Jhenaidah', 'Khulna', 'Kushtia', 'Magura', 'Meherpur', 'Narail', 'Satkhira'],
+
             'Barishal' => ['Barguna', 'Barishal', 'Bhola', 'Jhalakathi', 'Patuakhali', 'Pirojpur'],
+
             'Sylhet' => ['Habiganj', 'Moulvibazar', 'Sunamganj', 'Sylhet'],
+
             'Rangpur' => ['Dinajpur', 'Gaibandha', 'Kurigram', 'Lalmonirhat', 'Nilphamari', 'Panchagarh', 'Rangpur', 'Thakurgaon'],
+
             'Mymensingh' => ['Jamalpur', 'Mymensingh', 'Netrokona', 'Sherpur'],
         ];
 
