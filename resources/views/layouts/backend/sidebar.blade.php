@@ -109,6 +109,13 @@
                 </a>
 
             </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.contact.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Contact Us</span>
+                </a>
+
+            </li>
 
 
 

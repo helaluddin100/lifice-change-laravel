@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AboutUsController;
+use App\Http\Controllers\Api\AdminContactUsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -416,3 +417,6 @@ Route::get('/get-pathao-areas/{user_id}/{zone_id}', [CourierSettingController::c
 
 // =========== Client Review =========
 Route::get('/get-clients', [ClientReviewController::class, 'index']);
+
+// ============= Contact Us to Admin =====
+Route::post('/admin-contact', [AdminContactUsController::class, 'store']);
