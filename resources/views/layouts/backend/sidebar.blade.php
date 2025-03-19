@@ -102,6 +102,14 @@
 
             </li>
 
+            <li class="nav-item">
+                <a href="{{ route('admin.client-review.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Client Review</span>
+                </a>
+
+            </li>
+
 
 
             <li class="nav-item">

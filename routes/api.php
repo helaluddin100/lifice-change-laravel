@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\VisitorController;
 use App\Http\Controllers\Api\OfferProductController;
 use App\Http\Controllers\Api\TopRatedProductController;
+use App\Http\Controllers\Api\ClientReviewController;
 use App\Models\User;
 use App\Models\Shop;
 use App\Http\Controllers\Api\ContactusController;
@@ -411,3 +412,7 @@ Route::get('/get-couriers/{id}', [CourierSettingController::class, 'getCourierBy
 Route::get('/get-pathao-cities/{user_id}', [CourierSettingController::class, 'getCities']);
 Route::get('/get-pathao-zones/{user_id}/{city_id}', [CourierSettingController::class, 'getZones']);
 Route::get('/get-pathao-areas/{user_id}/{zone_id}', [CourierSettingController::class, 'getAreas']);
+
+
+// =========== Client Review =========
+Route::get('/get-clients', [ClientReviewController::class, 'index']);
