@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -582,8 +580,7 @@ Reset default styling for dialogs.
                             <div>
                                 @if ($shop->logo)
                                     <img src="{{ $shop->logo }}"
-                                        style="max-width: 200px; cursor: pointer; width: auto;"
-                                        alt="Shop Logo" class="h-12">
+                                        style="max-width: 200px; cursor: pointer; width: auto;" alt="Shop Logo">
                                 @else
                                     <p><strong>Shop Logo Not Available</strong></p>
                                 @endif
@@ -786,8 +783,7 @@ Reset default styling for dialogs.
             </p>
         </div>
 
-        <footer
-            class="fixed bottom-0 left-0 bg-slate-100 w-full text-neutral-600 text-center text-xs py-3">
+        <footer class="fixed bottom-0 left-0 bg-slate-100 w-full text-neutral-600 text-center text-xs py-3">
             <a href="https://buytiq.com" target="_blank" rel="noopener noreferrer">BuyTiq</a>
             <span class="text-slate-300 px-2">|</span>
             buytiq1@gmail.com
