@@ -420,3 +420,6 @@ Route::get('/get-clients', [ClientReviewController::class, 'index']);
 
 // ============= Contact Us to Admin =====
 Route::post('/admin-contact', [AdminContactUsController::class, 'store']);
+
+
+Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDomain']);

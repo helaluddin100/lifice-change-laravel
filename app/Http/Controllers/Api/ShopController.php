@@ -25,6 +25,25 @@ class ShopController extends Controller
      */
 
 
+    public function viewshopByDomain($shop_url)
+    {
+        $shop = Shop::where('shop_domain', $shop_url)->with('template')->first();
+        if (!$shop) {
+            return response()->json(['error' => 'Shop not found'], 404);
+        }
+
+        return response()->json([
+            'shop' => $shop,
+            'template' => $shop->template ? $shop->template : null,
+        ]);
+    }
+
+
+
+
+
+
+
 
     public function showShopWithTemplate($shop_url)
     {
