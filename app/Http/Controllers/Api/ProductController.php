@@ -275,10 +275,12 @@ class ProductController extends Controller
             'product_colors' => 'sometimes|required|array',
             'product_colors.*.color' => 'nullable|string|max:255',
             'product_colors.*.price' => 'nullable|numeric',
+            'product_colors.*.quantity' => 'nullable|numeric',
 
             'product_sizes' => 'sometimes|required|array',
             'product_sizes.*.size' => 'nullable|string|max:255',
             'product_sizes.*.price' => 'nullable|numeric',
+            'product_sizes.*.quantity' => 'nullable|numeric',
 
 
 
@@ -306,12 +308,11 @@ class ProductController extends Controller
         $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         // Generate the product slug
-        $slug = Str::slug($validated['name']); // Generate a slug from the product name
+        $slug = Str::slug($validated['name']);
 
-        // Check if the slug already exists, and if so, append a number to make it unique
         $slugCount = Product::where('slug', $slug)->count();
         if ($slugCount > 0) {
-            $slug = $slug . '-' . ($slugCount + 1); // Append a number to make it unique
+            $slug = $slug . '-' . ($slugCount + 1);
         }
 
 
@@ -464,10 +465,12 @@ class ProductController extends Controller
             'product_colors' => 'nullable|array',
             'product_colors.*.color' => 'required|string|max:255',
             'product_colors.*.price' => 'required|numeric',
+            'product_colors.*.quantity' => 'required|numeric',
 
             'product_sizes' => 'nullable|array',
             'product_sizes.*.size' => 'required|string|max:255',
             'product_sizes.*.price' => 'required|numeric',
+            'product_sizes.*.quantity' => 'required|numeric',
 
 
             'product_details' => 'nullable|array',
