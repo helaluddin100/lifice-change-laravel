@@ -429,4 +429,3 @@ Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDo
 
 // =========== customer report =========
 Route::post('/report-order', [CustomerReportController::class, 'reportOrder']);
-Route::get('/view-reports/{orderId}', [CustomerReportController::class, 'viewReports']);

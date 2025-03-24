@@ -9,13 +9,14 @@ use App\Models\Product;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Models\CourierSetting;
+use App\Models\CustomerReport;
 use App\Mail\OrderStatusUpdated;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -272,20 +273,22 @@ class OrderController extends Controller
 
     public function getSingleOrder($orderId)
     {
+        // Order এর তথ্য খুঁজুন
         $order = Order::find($orderId);
 
         if (!$order) {
             return response()->json(['error' => 'Order not found'], 404);
         }
 
+        // OrderItem এর তথ্য সংগ্রহ করুন
         $orderItems = OrderItem::where('order_id', $orderId)->get();
 
+        // OrderItems সহ প্রোডাক্ট ডিটেইলস যোগ করুন
         $orderItemsWithProductDetails = $orderItems->map(function ($item) {
             $product = Product::with('images')->find($item->product_id);
 
             if ($product) {
                 $item->product_details = $product;
-
                 $item->product_image = $product->images && $product->images->isNotEmpty()
                     ? asset('storage/' . $product->images->first()->image_path)
                     : null;
@@ -297,11 +300,29 @@ class OrderController extends Controller
             return $item;
         });
 
+        // CustomerReports এর তথ্য নেওয়া এবং রেটিং ক্যালকুলেট করা
+        $customerReports = CustomerReport::where('email', $order->email)
+            ->orWhere('phone', $order->phone) // Match either email or phone
+            ->get();
+
+        if ($customerReports->isEmpty()) {
+            return response()->json(['error' => 'No customer reports found for this order'], 404);
+        }
+
+        // রেটিং গড় হিসাব করা
+        $averageRating = $customerReports->avg('rating'); // Calculate the average rating
+
+        $totalReports = $customerReports->count(); // Total number of reports
+
         return response()->json([
             'order' => $order,
             'order_items' => $orderItemsWithProductDetails,
+            // 'customer_reports' => $customerReports,
+            'average_rating' => $averageRating, // Return the average rating
+            'total_reports' => $totalReports, // Return the total number of reports
         ]);
     }
+
 
 
 
