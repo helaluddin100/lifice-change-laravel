@@ -13,4 +13,11 @@ class PackageController extends Controller
         $packages = Package::where('status', 1)->get();
         return response()->json($packages);
     }
+
+
+    public function show($id)
+    {
+        $package = Package::find($id);
+        return response()->json($package);
+    }
 }
