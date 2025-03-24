@@ -44,6 +44,8 @@ use App\Http\Controllers\Api\SubscriptionController;
 use App\Models\Subscription;
 use App\Http\Controllers\Api\CourierSettingController;
 
+use App\Http\Controllers\Api\CustomerReportController;
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         $user = $request->user();
@@ -423,3 +425,8 @@ Route::post('/admin-contact', [AdminContactUsController::class, 'store']);
 
 
 Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDomain']);
+
+
+// =========== customer report =========
+Route::post('/report-order', [CustomerReportController::class, 'reportOrder']);
+Route::get('/view-reports/{orderId}', [CustomerReportController::class, 'viewReports']);
