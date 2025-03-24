@@ -273,17 +273,14 @@ class OrderController extends Controller
 
     public function getSingleOrder($orderId)
     {
-        // Order এর তথ্য খুঁজুন
         $order = Order::find($orderId);
 
         if (!$order) {
             return response()->json(['error' => 'Order not found'], 404);
         }
 
-        // OrderItem এর তথ্য সংগ্রহ করুন
         $orderItems = OrderItem::where('order_id', $orderId)->get();
 
-        // OrderItems সহ প্রোডাক্ট ডিটেইলস যোগ করুন
         $orderItemsWithProductDetails = $orderItems->map(function ($item) {
             $product = Product::with('images')->find($item->product_id);
 
@@ -300,16 +297,19 @@ class OrderController extends Controller
             return $item;
         });
 
-        // CustomerReports এর তথ্য নেওয়া এবং রেটিং ক্যালকুলেট করা
         $customerReports = CustomerReport::where('email', $order->email)
             ->orWhere('phone', $order->phone) // Match either email or phone
             ->get();
 
         if ($customerReports->isEmpty()) {
-            return response()->json(['error' => 'No customer reports found for this order'], 404);
+            return response()->json([
+                'order' => $order,
+                'order_items' => $orderItemsWithProductDetails,
+                'average_rating' => 0, // No reports, so set average rating as 0
+                'total_reports' => 0,  // No reports, so total reports is 0
+            ]);
         }
 
-        // রেটিং গড় হিসাব করা
         $averageRating = $customerReports->avg('rating'); // Calculate the average rating
 
         $totalReports = $customerReports->count(); // Total number of reports
@@ -317,14 +317,10 @@ class OrderController extends Controller
         return response()->json([
             'order' => $order,
             'order_items' => $orderItemsWithProductDetails,
-            // 'customer_reports' => $customerReports,
             'average_rating' => $averageRating, // Return the average rating
             'total_reports' => $totalReports, // Return the total number of reports
         ]);
     }
-
-
-
 
 
 
