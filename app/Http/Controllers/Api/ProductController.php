@@ -270,6 +270,7 @@ class ProductController extends Controller
             'buy_price' => 'nullable|numeric',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
+            'sold_count' => 'nullable|integer',
 
 
             'product_colors' => 'sometimes|required|array',
@@ -346,6 +347,8 @@ class ProductController extends Controller
             'has_details' => filter_var($validated['has_details'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'variant_name' => $validated['variant_name'] ?? null,
             'description' => $validated['description'],
+
+            'sold_count' => $validated['sold_count'] ?? null,
         ]);
 
 
@@ -461,6 +464,7 @@ class ProductController extends Controller
             'buy_price' => 'nullable|numeric',
             'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
+            'sold_count' => 'nullable|integer',
 
             'product_colors' => 'nullable|array',
             'product_colors.*.color' => 'required|string|max:255',
@@ -525,6 +529,7 @@ class ProductController extends Controller
             'has_details' => filter_var($validated['has_details'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'variant_name' => $validated['variant_name'] ?? null,
             'description' => $validated['description'] ?? null,
+            'sold_count' => $validated['sold_count'] ?? null,
         ]);
 
         // Step 1: Remove images
