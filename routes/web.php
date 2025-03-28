@@ -47,8 +47,7 @@ Route::get('/clear-cache', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::
-        namespace('App\Http\Controllers')->group(
+Route::namespace('App\Http\Controllers')->group(
         function () {
             Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']], function () {
                 Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
@@ -60,6 +59,7 @@ Route::
                 Route::resource('templates', TemplateController::class);
 
                 Route::resource('/users', 'UserController');
+                Route::resource('/shop', 'ShopController');
 
                 Route::resource('/packages', 'PackageController');
                 Route::resource('/subscription', 'SubscriptionController');

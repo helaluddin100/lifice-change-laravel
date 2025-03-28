@@ -47,11 +47,23 @@
                 </div>
             </li>
             <li class="nav-item">
+                <a href="{{ route('admin.shop.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="message-square"></i>
+                    <span class="link-title">Shops</span>
+                </a>
+            </li>
+
+
+
+            <li class="nav-item">
                 <a href="{{ route('admin.business.index') }}" class="nav-link">
                     <i class="link-icon" data-feather="message-square"></i>
                     <span class="link-title">Business Type</span>
                 </a>
             </li>
+
+
+
             <li class="nav-item">
                 <a href="{{ route('admin.country.index') }}" class="nav-link">
                     <i class="link-icon" data-feather="flag"></i>
@@ -120,8 +132,8 @@
 
 
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="collapse" href="#subscriptions" role="button" aria-expanded="false"
-                    aria-controls="subscriptions">
+                <a class="nav-link" data-bs-toggle="collapse" href="#subscriptions" role="button"
+                    aria-expanded="false" aria-controls="subscriptions">
                     <i class="link-icon" data-feather="subscriptions"></i>
                     <span class="link-title">Subscriptions</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
