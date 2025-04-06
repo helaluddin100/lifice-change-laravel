@@ -78,6 +78,16 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         return $this->belongsTo(User::class, 'referred_by');
     }
 
+    public function commissionsReceived()
+    {
+        return $this->hasMany(CommissionLog::class, 'referrer_id');
+    }
+
+    public function commissionsGiven()
+    {
+        return $this->hasMany(CommissionLog::class, 'referred_user_id');
+    }
+
 
     /**
      * The attributes that should be cast.

@@ -8,6 +8,7 @@ use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\CommissionLog;
 
 class SubscriptionController extends Controller
 {
@@ -142,18 +143,22 @@ class SubscriptionController extends Controller
                 if ($status == 'active' && $user->referred_by) {
                     $referrer = User::find($user->referred_by);
                     if ($referrer) {
-                        // ধরো 75% কমিশন দিচ্ছো
                         $commissionPercent = 75;
-
-                        // Subscription amount ধরলাম
                         $amount = $lastPayment ? $lastPayment->amount : 0;
                         $commission = ($amount * $commissionPercent) / 100;
 
-                        // রেফারারের commission বাড়িয়ে দাও
+                        // Update referrer's commission balance
                         $referrer->commission += $commission;
                         $referrer->save();
 
-                        // রেফারারকে মেইল / নোটিফিকেশন পাঠাও
+                        // ✅ Create commission log
+                        CommissionLog::create([
+                            'referrer_id' => $referrer->id,
+                            'referred_user_id' => $user->id,
+                            'amount' => $commission,
+                        ]);
+
+                        // Send notification to referrer
                         $referrer->notify(new \App\Notifications\ReferralCommissionEarned($user->name, $commission));
                     }
                 }
