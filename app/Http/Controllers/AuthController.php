@@ -42,22 +42,30 @@ class AuthController extends Controller
 
         $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-
-        $user = User::create([
+        $userData = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
-            'verification_code' => $verificationCode, // Do not hash the verification code here
-        ]);
+            'verification_code' => $verificationCode,
+        ];
+
+        // ✅ Handle referral code before user creation
+        if ($request->filled('referral_code')) {
+            $referrer = User::where('affiliate_code', $request->referral_code)->first();
+            if ($referrer) {
+                $userData['referred_by'] = $referrer->id;
+            }
+        }
+
+        $user = User::create($userData);
 
         $user->notify(new VerifyEmail($verificationCode));
 
         return response()->json([
             'message' => 'Registration successful. Check your email for verification code.',
-            'email' => $user->email,
-            'verification_code' => $verificationCode,
         ]);
     }
+
 
 
     public function login(Request $request)

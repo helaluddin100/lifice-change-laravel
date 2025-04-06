@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 {
@@ -34,6 +35,9 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'ip',
         'image',
         'status',
+        'referred_by',
+        'affiliate_code',
+        'commission',
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -44,6 +48,36 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'password',
         'remember_token',
     ];
+
+
+
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            $user->affiliate_code = self::generateUniqueCode();
+        });
+    }
+
+    public static function generateUniqueCode()
+    {
+        do {
+            $code = strtoupper(Str::random(8)); // eg: 8-letter random uppercase
+        } while (self::where('affiliate_code', $code)->exists());
+
+        return $code;
+    }
+
+
+    public function referredUsers()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
 
     /**
      * The attributes that should be cast.
