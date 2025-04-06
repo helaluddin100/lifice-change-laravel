@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\Payment;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
@@ -94,29 +95,23 @@ class SubscriptionController extends Controller
         DB::beginTransaction();
 
         try {
-            // Find the subscription
             $subscription = Subscription::find($id);
 
-            // Check if subscription exists
             if (!$subscription) {
                 return redirect()->back()->with('error', 'Subscription not found.');
             }
 
-            // Determine the subscription status and update accordingly
             $status = $request->subscription_status;
             $validStatuses = ['pending', 'active', 'rejected'];
 
-            // Check if the status is valid
             if (!in_array($status, $validStatuses)) {
                 return redirect()->back()->with('error', 'Invalid status.');
             }
 
-            // Update the subscription status
             $subscription->status = $status;
             $subscription->save();
 
-            // Handle the payment status update
-            $lastPayment = $subscription->payments->last(); // Get the last payment
+            $lastPayment = $subscription->payments->last();
             if ($lastPayment) {
                 if ($status == 'pending') {
                     $lastPayment->status = 'pending';
@@ -128,24 +123,39 @@ class SubscriptionController extends Controller
                 $lastPayment->save();
             }
 
-            // Update the user status based on the subscription status
             $user = $subscription->user;
             if ($user) {
                 if ($status == 'pending' || $status == 'rejected') {
-                    $user->status = 2; // rejected
+                    $user->status = 2;
                 } elseif ($status == 'active') {
-                    $user->status = 1; // active
+                    $user->status = 1;
                 }
                 $user->save();
 
-                // Update the status of all shops related to the user
+                // Shop status update
                 foreach ($user->shops as $shop) {
-                    if ($status == 'pending' || $status == 'rejected') {
-                        $shop->status = 2; // rejected shop
-                    } elseif ($status == 'active') {
-                        $shop->status = 1; // active shop (change as per your logic)
-                    }
+                    $shop->status = ($status == 'active') ? 1 : 2;
                     $shop->save();
+                }
+
+                // ✅ Commission System
+                if ($status == 'active' && $user->referred_by) {
+                    $referrer = User::find($user->referred_by);
+                    if ($referrer) {
+                        // ধরো 75% কমিশন দিচ্ছো
+                        $commissionPercent = 75;
+
+                        // Subscription amount ধরলাম
+                        $amount = $lastPayment ? $lastPayment->amount : 0;
+                        $commission = ($amount * $commissionPercent) / 100;
+
+                        // রেফারারের commission বাড়িয়ে দাও
+                        $referrer->commission += $commission;
+                        $referrer->save();
+
+                        // রেফারারকে মেইল / নোটিফিকেশন পাঠাও
+                        $referrer->notify(new \App\Notifications\ReferralCommissionEarned($user->name, $commission));
+                    }
                 }
             }
 
@@ -156,6 +166,7 @@ class SubscriptionController extends Controller
             return redirect()->back()->with('error', 'Failed to update subscription. ' . $e->getMessage());
         }
     }
+
 
 
 
