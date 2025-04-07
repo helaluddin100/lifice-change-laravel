@@ -48,26 +48,26 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::namespace('App\Http\Controllers')->group(
-        function () {
-            Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']], function () {
-                Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
+    function () {
+        Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']], function () {
+            Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
-                Route::resource('/business', 'BusinessTypeController');
-                Route::resource('/country', 'CountryController');
-                Route::resource('/district', 'DistrictController');
+            Route::resource('/business', 'BusinessTypeController');
+            Route::resource('/country', 'CountryController');
+            Route::resource('/district', 'DistrictController');
 
-                Route::resource('templates', TemplateController::class);
+            Route::resource('templates', TemplateController::class);
 
-                Route::resource('/users', 'UserController');
-                Route::resource('/shop', 'ShopController');
+            Route::resource('/users', 'UserController');
+            Route::resource('/shop', 'ShopController');
 
-                Route::resource('/packages', 'PackageController');
-                Route::resource('/subscription', 'SubscriptionController');
-                Route::resource('/courier', 'CourierController');
-                Route::resource('/client-review', 'ClientReviewController');
-                Route::resource('/contact', 'AdminContactUsController');
+            Route::resource('/packages', 'PackageController');
+            Route::resource('/subscription', 'SubscriptionController');
+            Route::resource('/courier', 'CourierController');
+            Route::resource('/client-review', 'ClientReviewController');
+            Route::resource('/contact', 'AdminContactUsController');
 
-                Route::resource('/courierUser', 'CourierUserController');
-            });
-        }
-    );
+            Route::resource('/courierUser', 'CourierUserController');
+        });
+    }
+);

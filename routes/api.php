@@ -45,6 +45,7 @@ use App\Models\Subscription;
 use App\Http\Controllers\Api\CourierSettingController;
 
 use App\Http\Controllers\Api\CustomerReportController;
+use App\Http\Controllers\Api\AffiliateController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -429,3 +430,7 @@ Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDo
 
 // =========== customer report =========
 Route::post('/report-order', [CustomerReportController::class, 'reportOrder']);
+
+
+// Affiliate Dashboard
+Route::get('/affiliate/dashboard/{id}', [AffiliateController::class, 'affiliateDashboard']);
