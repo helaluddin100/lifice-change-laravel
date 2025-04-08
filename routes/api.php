@@ -410,6 +410,8 @@ Route::put('/update-courier/{id}', [CourierSettingController::class, 'update']);
 Route::get('/courier-edit/{id}', [CourierSettingController::class, 'editData']);
 
 Route::get('/courier-settings/{id}', [CourierSettingController::class, 'show']);
+Route::delete('/courier-settings/delete/{id}', [CourierSettingController::class, 'destroy']);
+
 
 Route::get('/get-couriers/{id}', [CourierSettingController::class, 'getCourierByUser']);
 // Pathao API

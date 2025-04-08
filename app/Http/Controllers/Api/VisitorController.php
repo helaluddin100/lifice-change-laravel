@@ -71,7 +71,7 @@ class VisitorController extends Controller
             });
         }
 
-        $visitors = $query->paginate(25);
+        $visitors = $query->paginate(15);
 
         return response()->json([
             'success' => true,

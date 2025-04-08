@@ -234,4 +234,24 @@ class CourierSettingController extends Controller
 
         return response()->json(['error' => 'Failed to fetch area list'], 500);
     }
+
+    public function destroy($id)
+    {
+        $courierSetting = CourierSetting::find($id);
+
+        if (!$courierSetting) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Courier setting not found!',
+            ], 404);
+        }
+
+        $courierSetting->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Courier setting deleted successfully!',
+        ]);
+    }
+
 }
