@@ -2,85 +2,61 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Subscription;
+use Illuminate\Http\Request;
+use App\Models\CommissionLog;
+use App\Http\Controllers\Controller;
 
 class AffiliateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function stats($user_id)
     {
-        //
-    }
+        // 1. Get all users invited by this referrer
+        $invitedUsers = User::where('referred_by', $user_id)->get();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        // 2. Total invited users
+        $totalInvited = $invitedUsers->count();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+        // 3. Monthly invited users (this month)
+        $monthlyInvited = User::where('referred_by', $user_id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+        // 4. Get all sales from the commission_logs table where the user is invited by the referrer
+        $sales = CommissionLog::where('referrer_id', $user_id)
+            ->with('referredUser') // Eager load referred user
+            ->get();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        // 5. Count total sales
+        $totalSales = $sales->count();
+
+        return response()->json([
+            'total_invited' => $totalInvited,
+            'monthly_invited' => $monthlyInvited,
+            'total_sales' => $totalSales,
+            'invited_users' => $invitedUsers->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'created_at' => $user->created_at->toDateTimeString(),
+                ];
+            }),
+            'sales' => $sales->map(function ($sale) {
+                return [
+                    'id' => $sale->id,
+                    'referrer_id' => $sale->referrer_id,
+                    'referred_user_name' => $sale->referredUser->name, // Include referred user name
+                    'referred_user_email' => $sale->referredUser->email, // Include referred user email
+                    'amount' => $sale->amount,
+                    'created_at' => $sale->created_at->toDateTimeString(),
+                ];
+            }),
+        ]);
     }
 }

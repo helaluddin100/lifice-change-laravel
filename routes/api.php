@@ -435,4 +435,4 @@ Route::post('/report-order', [CustomerReportController::class, 'reportOrder']);
 
 
 // Affiliate Dashboard
-Route::get('/affiliate/dashboard/{id}', [AffiliateController::class, 'affiliateDashboard']);
+Route::get('/referral/stats/{user_id}', [AffiliateController::class, 'stats']);

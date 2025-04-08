@@ -14,4 +14,9 @@ class CommissionLog extends Model
         'referred_user_id',
         'amount',
     ];
+
+    public function referredUser()
+    {
+        return $this->belongsTo(User::class, 'referred_user_id');
+    }
 }
