@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
@@ -82,8 +83,13 @@ class CancellationController extends Controller
             'cancellation' => 'nullable',
             'status' => 'required|boolean',
         ]);
-
-        $cancellation = Cancellation::findOrFail($id);
+        $cancellation = Cancellation::find($id);
+        if (!$cancellation) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Cancellation not found.',
+            ], 404);
+        }
         $cancellation->cancellation = $request->cancellation;
         $cancellation->status = $request->status;
         $cancellation->save();
@@ -94,7 +100,6 @@ class CancellationController extends Controller
             'cancellation' => $cancellation, // Use "about" instead of "aboutUs"
         ]);
     }
-
 
     public function destroy($id)
     {

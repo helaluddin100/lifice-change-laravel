@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class PrivacyPolicyController extends Controller
         ]);
     }
 
-    public function getAboutsByUser($id)
+    public function getPrivacyByUser($id)
     {
         $privacy = PrivacyPolicy::where('user_id', $id)
             ->where('status', 1)
@@ -83,18 +84,25 @@ class PrivacyPolicyController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $privacy = PrivacyPolicy::findOrFail($id);
+        $privacy = PrivacyPolicy::find($id);
+        if (!$privacy) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'About Us not found.',
+            ], 404);
+        }
+
         $privacy->privacy_policy = $request->privacy_policy;
         $privacy->status = $request->status;
         $privacy->save();
 
+
         return response()->json([
             'status' => 200,
             'message' => 'Privacy Policy updated successfully!',
-            'privacy' => $privacy, // Use "about" instead of "aboutUs"
+            'privacy' => $privacy,
         ]);
     }
-
 
     public function destroy($id)
     {

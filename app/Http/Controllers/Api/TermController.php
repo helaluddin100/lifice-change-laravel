@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
@@ -83,17 +84,23 @@ class TermController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $term = Term::findOrFail($id);
+        $term = Term::find($id);
+        if (!$term) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'term not found.',
+            ], 404);
+        }
         $term->terms_con = $request->terms_con;
         $term->status = $request->status;
         $term->save();
-
         return response()->json([
             'status' => 200,
             'message' => 'Terms and Conditions updated successfully!',
             'term' => $term, // Use "about" instead of "aboutUs"
         ]);
     }
+
 
 
     public function destroy($id)
