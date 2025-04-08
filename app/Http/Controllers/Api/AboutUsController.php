@@ -88,7 +88,15 @@ class AboutUsController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $aboutUs = AboutUs::findOrFail($id);
+        $aboutUs = AboutUs::find($id);
+
+        if (!$aboutUs) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'About Us not found.',
+            ], 404);
+        }
+
         $aboutUs->about_us = $request->about_us;
         $aboutUs->status = $request->status;
         $aboutUs->save();
@@ -96,10 +104,9 @@ class AboutUsController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'About Us updated successfully!',
-            'about' => $aboutUs, // Use "about" instead of "aboutUs"
+            'about' => $aboutUs,
         ]);
     }
-
 
     public function destroy($id)
     {
