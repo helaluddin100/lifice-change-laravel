@@ -68,6 +68,11 @@ Route::namespace('App\Http\Controllers')->group(
             Route::resource('/contact', 'AdminContactUsController');
 
             Route::resource('/courierUser', 'CourierUserController');
+
+            Route::resource('/category', 'CategoryController');
+            Route::resource('/color', 'ColorController');
+            Route::resource('/size', 'SizeController');
+            Route::resource('/product', 'ProductController');
         });
     }
 );

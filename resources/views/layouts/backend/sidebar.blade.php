@@ -47,6 +47,30 @@
                 </div>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#products" role="button" aria-expanded="false"
+                    aria-controls="products">
+                    <i class="link-icon" data-feather="shopping-bag"></i>
+                    <span class="link-title">Products</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="products">
+                    <ul class="nav sub-menu">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.category.index') }}" class="nav-link">Category</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.color.index') }}" class="nav-link">Color</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.size.index') }}" class="nav-link">Size</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.product.index') }}" class="nav-link">Product</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('admin.shop.index') }}" class="nav-link">
                     <i class="link-icon" data-feather="message-square"></i>
                     <span class="link-title">Shops</span>
