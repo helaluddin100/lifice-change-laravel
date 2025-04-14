@@ -21,4 +21,12 @@ class BusinessType extends Model
     {
         return $this->hasMany(DemoCategory::class);
     }
+    public function demoColors()
+    {
+        return $this->hasMany(DemoColor::class);
+    }
+    public function demoSizes()
+    {
+        return $this->hasMany(DemoColor::class);
+    }
 }

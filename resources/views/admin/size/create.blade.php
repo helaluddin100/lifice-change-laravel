@@ -19,15 +19,31 @@
                         <form action="{{ route('admin.size.store') }}" method="Post" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input id="name" class="form-control" name="name" type="text">
+                                <label for="size" class="form-label">Size Name</label>
+                                <input id="size" class="form-control" name="size" type="text">
+                            </div>
+                            <div class="mb-3">
+                                <label for="business_type_id" class="form-label">Business Type</label>
+                                <select class="form-control @error('business_type_id') is-invalid @enderror"
+                                    name="business_type_id" required>
+                                    @foreach (App\Models\BusinessType::all() as $business)
+                                        <option value="{{ $business->id }}"
+                                            {{ old('business_type_id') == $business->id ? 'selected' : '' }}>
+                                            {{ $business->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('business_type_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <div class="form-check">
                                     <label class="form-check-label" for="termsCheck">
                                         Active
                                     </label>
-                                    <input type="checkbox" class="form-check-input" checked name="status" id="termsCheck">
+                                    <input type="checkbox" class="form-check-input" value="1" checked name="status"
+                                        id="termsCheck">
                                 </div>
                             </div>
                             <input class="btn btn-primary" type="submit" value="Submit">

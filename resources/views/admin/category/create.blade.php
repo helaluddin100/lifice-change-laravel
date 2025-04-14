@@ -43,7 +43,14 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <input id="description" class="form-control @error('description') is-invalid @enderror"
+                                    name="description" type="text" value="{{ old('description') }}">
+                                @error('description')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <!-- Image Field -->
                             <div class="mb-3">
                                 <label for="image" class="form-label">Image</label>
@@ -57,9 +64,11 @@
                             <!-- Status Checkbox -->
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="status" id="termsCheck"
-                                        {{ old('status', 1) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="termsCheck">Active</label>
+                                    <label class="form-check-label" for="termsCheck">
+                                        Active
+                                    </label>
+                                    <input type="checkbox" class="form-check-input" value="1" checked name="status"
+                                        id="termsCheck">
                                 </div>
                             </div>
 

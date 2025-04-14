@@ -1,41 +1,42 @@
 <?php
 
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
 use App\Models\DemoColor;
 use Illuminate\Http\Request;
 
 class DemoColorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $colors = DemoColor::all();
+        return view('admin.color.index', compact('colors'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        return view('admin.color.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            $validated = $request->validate([
+                'business_type_id' => 'required|exists:business_types,id',
+                'color' => 'required|string|max:255',
+                'status' => 'nullable|boolean',
+            ]);
+            DemoColor::create([
+                'business_type_id' => $validated['business_type_id'],
+                'color' => $validated['color'],
+                'status' => $validated['status'] ?? true,
+            ]);
+
+            return redirect()->route('admin.color.index')->with('success', 'Color created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
     /**

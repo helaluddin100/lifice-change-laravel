@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\DemoCategory;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 class DemoCategoryController extends Controller
 {
     public function index()
@@ -19,58 +19,38 @@ class DemoCategoryController extends Controller
     }
     public function store(Request $request)
     {
-        // dd($request);
-        $validatedData = $request->validate([
-            'business_type_id' => 'required',
-            'name' => 'required|string|max:255',
-            'image' => 'required|image',
-            'description' => 'nullable|string',
-            'status' => 'nullable|boolean',
-        ]);
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('demo_category'), $imageName);
-            $imagePath = 'demo_category/' . $imageName;
+        try {
+            $validated = $request->validate([
+                'business_type_id' => 'required|exists:business_types,id',
+                'name' => 'required|string|max:255',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'description' => 'nullable|string',
+                'status' => 'nullable|boolean',
+            ]);
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $imagePath = $image->storeAs('demo_category', $imageName, 'public');
+            }
+            DemoCategory::create([
+                'business_type_id' => $validated['business_type_id'],
+                'name' => $validated['name'],
+                'image' => $imagePath,
+                'description' => $validated['description'] ?? null,
+                'status' => $validated['status'] ?? true,
+            ]);
+
+            return redirect()->route('admin.category.index')->with('success', 'Category created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
-
-        // Status check
-        $status = $request->has('status') ? 1 : 0;
-
-        // Create and save the category
-        $category = new DemoCategory();
-        $category->name = $validatedData['name'];
-        $category->image = $imagePath;
-        $category->description = $validatedData['description'] ?? '';
-        $category->status = $status;
-        $category->business_type_id = $validatedData['business_type_id'];
-        $category->save();
-
-        // Redirect to the index page with success message
-        return redirect()->route('admin.category.index')->with('success', 'Category created successfully.');
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\DemoCategory  $demoCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function show(DemoCategory $demoCategory)
+    public function edit(DemoCategory $category)
     {
-        //
+        return view('admin.category.edit', compact('category'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\DemoCategory  $demoCategory
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DemoCategory $demoCategory)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -81,17 +61,57 @@ class DemoCategoryController extends Controller
      */
     public function update(Request $request, DemoCategory $demoCategory)
     {
-        //
+        try {
+            $validated = $request->validate([
+                'business_type_id' => 'required|exists:business_types,id',
+                'name' => 'required|string|max:255',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'description' => 'nullable|string',
+                'status' => 'nullable|boolean',
+            ]);
+
+            $data = [
+                'business_type_id' => $validated['business_type_id'],
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+                'status' => $validated['status'] ?? false,
+            ];
+
+            // Handle image
+            if ($request->hasFile('image')) {
+                if ($demoCategory->image && Storage::disk('public')->exists($demoCategory->image)) {
+                    Storage::disk('public')->delete($demoCategory->image);
+                }
+
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $imagePath = $image->storeAs('demo_category', $imageName, 'public');
+
+                $data['image'] = $imagePath;
+            }
+
+            $demoCategory->update($data);
+
+            return redirect()->route('admin.category.index')->with('success', 'Category updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DemoCategory  $demoCategory
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(DemoCategory $demoCategory)
     {
-        //
+        try {
+            if ($demoCategory->image && Storage::disk('public')->exists($demoCategory->image)) {
+                Storage::disk('public')->delete($demoCategory->image);
+            }
+
+            $demoCategory->delete();
+
+            return redirect()->route('admin.category.index')->with('success', 'Category deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
+
 }

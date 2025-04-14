@@ -1,41 +1,41 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\DemoSize;
 use Illuminate\Http\Request;
 
 class DemoSizeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $sizes = DemoSize::all();
+        return view('admin.size.index', compact('sizes'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        return view('admin.size.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            $validated = $request->validate([
+                'business_type_id' => 'required|exists:business_types,id',
+                'size' => 'required|string|max:255',
+                'status' => 'nullable|boolean',
+            ]);
+            DemoSize::create([
+                'business_type_id' => $validated['business_type_id'],
+                'size' => $validated['size'],
+                'status' => $validated['status'] ?? true,
+            ]);
+
+            return redirect()->route('admin.size.index')->with('success', 'Size created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
     /**
