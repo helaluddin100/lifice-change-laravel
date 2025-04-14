@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Models\DemoSize;
 use App\Models\DemoColor;
 use App\Models\DemoProduct;
+use Illuminate\Support\Str;
+use App\Models\BusinessType;
 use App\Models\DemoCategory;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\BusinessType;
+use Intervention\Image\Facades\Image;
 
 class DemoProductController extends Controller
 {
@@ -60,121 +63,235 @@ class DemoProductController extends Controller
         ]);
     }
 
-
-
-
-
-
     public function store(Request $request)
     {
-        // Validate the incoming request data
-        $request->validate([
+        // Validate incoming request data
+        $validated = $request->validate([
             'business_type' => 'required|exists:business_types,id',
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            // 'item_name' => 'nullable|string|max:255',
             'current_price' => 'required|numeric',
-            'old_price' => 'nullable|numeric|gt:current_price',
+            'old_price' => 'nullable|numeric',
             'buy_price' => 'nullable|numeric',
-            'product_code' => 'required|string|unique:demo_products,product_code',
-            'quantity' => 'required|integer|min:0',
+            'quantity' => 'required|integer',
             'warranty' => 'nullable|string|max:255',
-            'sold_count' => 'nullable|integer|min:0',
-            'color' => 'nullable|array',
-            'color_price' => 'nullable|array', // পরিবর্তিত: দামের জন্য আলাদা ইনপুট নাম
-            'size' => 'nullable|array',
-            'size_price' => 'nullable|array', // পরিবর্তিত: দামের জন্য আলাদা ইনপুট নাম
-            'detail_type' => 'nullable|array',
-            'detail_description' => 'nullable|array',
-            'variant_name' => 'nullable|string|max:255',
-            'variant_option' => 'nullable|array',
-            'variant_cost' => 'nullable|array',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust max size as needed
-            'product_video' => 'nullable|url|max:255',
-            'description' => 'nullable|string', // longText removed
+            'sold_count' => 'nullable|integer',
+
+
+            'product_colors' => 'sometimes|required|array',
+            'product_colors.*.color' => 'nullable|string|max:255',
+            'product_colors.*.price' => 'nullable|numeric',
+            'product_colors.*.quantity' => 'nullable|numeric',
+
+            'product_sizes' => 'sometimes|required|array',
+            'product_sizes.*.size' => 'nullable|string|max:255',
+            'product_sizes.*.price' => 'nullable|numeric',
+            'product_sizes.*.quantity' => 'nullable|numeric',
+
+
+
+            'product_details' => 'nullable|array',
+            'product_details.*.detail_type' => 'nullable|string|max:255',
+            'product_details.*.detail_description' => 'nullable|string',
+            'product_variant' => 'nullable|array',
+            'product_variant.*.option' => 'nullable|string|max:255',
+            'product_variant.*.cost' => 'nullable|numeric',
+            'images' => 'nullable|array',
+            'images.*' => 'file|mimes:jpeg,png,jpg,gif,webp|max:6000',
+            'video' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
-            'meta_keywords' => 'nullable|string|max:255',
-            'status' => 'nullable|boolean',
+            'meta_keywords' => 'nullable|string',
+            'status' => 'required',
+            'has_variant' => 'nullable',
+            'has_details' => 'nullable',
+            'variant_name' => 'nullable|string|max:255',
+            'description' => 'required',
         ]);
 
-        // Process product colors and prices
-        $productColors = [];
-        if ($request->has('color') && is_array($request->color) && $request->has('color_price') && is_array($request->color_price)) {
-            foreach ($request->color as $key => $colorId) {
-                if (isset($request->color_price[$key])) {
-                    $productColors[] = ['color_id' => $colorId, 'price' => $request->color_price[$key]];
-                }
-            }
+        // Ensure 'status' and 'has_variant' are treated as booleans
+        $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        // Generate the product slug
+        $slug = Str::slug($validated['name']);
+
+        $slugCount = DemoProduct::where('slug', $slug)->count();
+        if ($slugCount > 0) {
+            $slug = $slug . '-' . ($slugCount + 1);
         }
 
-        // Process product sizes and prices
-        $productSizes = [];
-        if ($request->has('size') && is_array($request->size) && $request->has('size_price') && is_array($request->size_price)) {
-            foreach ($request->size as $key => $sizeId) {
-                if (isset($request->size_price[$key])) {
-                    $productSizes[] = ['size_id' => $sizeId, 'price' => $request->size_price[$key]];
-                }
-            }
-        }
 
-        // Process product details
-        $productDetails = [];
-        if ($request->has('detail_type') && is_array($request->detail_type) && $request->has('detail_description') && is_array($request->detail_description)) {
-            foreach ($request->detail_type as $key => $type) {
-                if (isset($request->detail_description[$key])) {
-                    $productDetails[] = ['type' => $type, 'description' => $request->detail_description[$key]];
-                }
-            }
-        }
+        do {
+            $randomNumber = rand(100000, 999999);
+            $existingProduct = DemoProduct::where('product_code', $randomNumber)->first();
+        } while ($existingProduct);
+        // Create the product
+        $product = DemoProduct::create([
+            'business_types' => $validated['business_type'],
+            'category_id' => $validated['category_id'],
+            'name' => $validated['name'],
+            'slug' => $slug,
+            'current_price' => $validated['current_price'],
+            'old_price' => $validated['old_price'] ?? null,
+            'buy_price' => $validated['buy_price'] ?? null,
+            'product_code' => $randomNumber,
+            'quantity' => $validated['quantity'],
+            'warranty' => $validated['warranty'] ?? null,
+            'product_details' => !empty($validated['product_details']) ? $validated['product_details'] : null, // ✅ Fix for empty array
+            'product_variant' => !empty($validated['product_variant']) ? $validated['product_variant'] : null, // ✅ Fix for empty array
+            'product_colors' => !empty($validated['product_colors']) ? $validated['product_colors'] : null, // ✅ Fix for empty array
+            'product_sizes' => !empty($validated['product_sizes']) ? $validated['product_sizes'] : null, // ✅ Fix for empty array
+            'video' => $validated['video'] ?? null,
+            'meta_title' => $validated['meta_title'] ?? null,
+            'meta_description' => $validated['meta_description'] ?? null,
+            'meta_keywords' => $validated['meta_keywords'] ?? null,
+            'status' => $status,
+            'has_variant' => $has_variant,
+            'has_details' => filter_var($validated['has_details'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'variant_name' => $validated['variant_name'] ?? null,
+            'description' => $validated['description'],
 
-        // Process product variants
-        $productVariant = [];
-        if ($request->has('variant_option') && is_array($request->variant_option) && $request->has('variant_cost') && is_array($request->variant_cost)) {
-            foreach ($request->variant_option as $key => $option) {
-                if (isset($request->variant_cost[$key])) {
-                    $productVariant[] = ['option' => $option, 'cost' => $request->variant_cost[$key]];
-                }
-            }
-        }
+            'sold_count' => $validated['sold_count'] ?? null,
+        ]);
 
-        // Handle image uploads
-        $imagePaths = [];
+
+        // Handle image uploads and store in product_images table
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('products', 'public'); // Store in storage/app/public/products
-                $imagePaths[] = $path;
+                // Generate a unique image name
+                $imageName = md5(uniqid()) . '.webp';
+
+                // Open the uploaded image
+                $img = Image::make($image);
+
+                // Convert the image to WebP format and reduce file size
+                $img->encode('webp', 80);
+
+                // Save the image in the public directory
+                $img->save(public_path('product_images/' . $imageName));
+
+                // Store the image in the product_images table
+                ProductImage::create([
+                    'product_id' => $product->id, // Ensure 'product_id' matches your foreign key in ProductImage
+                    'image_path' => 'product_images/' . $imageName
+                ]);
             }
         }
 
-        // Create the DemoProduct
-        $product = new DemoProduct();
-        $product->business_types = $request->business_type;
-        $product->category_id = $request->category_id;
-        $product->name = $request->name;
-        $product->current_price = $request->current_price;
-        $product->old_price = $request->old_price;
-        $product->buy_price = $request->buy_price;
-        $product->product_code = $request->product_code;
-        $product->quantity = $request->quantity;
-        $product->warranty = $request->warranty;
-        $product->sold_count = $request->sold_count ?? 0;
-        $product->has_details = !empty($productDetails);
-        $product->product_details = !empty($productDetails) ? json_encode($productDetails) : null;
-        $product->product_colors = !empty($productColors) ? json_encode($productColors) : null;
-        $product->product_sizes = !empty($productSizes) ? json_encode($productSizes) : null;
-        $product->has_variant = $request->has('variant_name') && !empty($request->variant_name);
-        $product->variant_name = $request->variant_name;
-        $product->product_variant = !empty($productVariant) ? json_encode($productVariant) : null;
-        $product->images = !empty($imagePaths) ? json_encode($imagePaths) : null;
-        $product->video = $request->product_video;
-        $product->description = $request->description;
-        $product->meta_title = $request->meta_title;
-        $product->meta_description = $request->meta_description;
-        $product->meta_keywords = $request->meta_keywords;
-        $product->status = $request->status ?? true;
-        $product->save();
 
-        // Redirect the user after successful creation
+        // Return response indicating the product was created successfully
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
     }
+
+
+
+
+    // public function store(Request $request)
+    // {
+    //     // 1. Validate Incoming Request Data
+    //     $validated = $request->validate([
+    //         'category_id' => 'required|exists:categories,id',
+    //         'name' => 'required|string|max:255',
+    //         'business_type' => 'required|exists:business_types,id',
+    //         'current_price' => 'required|numeric',
+    //         'old_price' => 'nullable|numeric',
+    //         'buy_price' => 'nullable|numeric',
+    //         'quantity' => 'required|integer',
+    //         'warranty' => 'nullable|string|max:255',
+    //         'sold_count' => 'nullable|integer',
+
+    //         'product_colors' => 'sometimes|array',
+    //         'product_colors.*.color' => 'nullable|string|max:255',
+    //         'product_colors.*.price' => 'nullable|numeric',
+    //         'product_colors.*.quantity' => 'nullable|numeric',
+
+    //         'product_sizes' => 'sometimes|array',
+    //         'product_sizes.*.size' => 'nullable|string|max:255',
+    //         'product_sizes.*.price' => 'nullable|numeric',
+    //         'product_sizes.*.quantity' => 'nullable|numeric',
+
+    //         'product_details' => 'nullable|array',
+    //         'product_details.*.detail_type' => 'nullable|string|max:255',
+    //         'product_details.*.detail_description' => 'nullable|string',
+
+    //         'product_variant' => 'nullable|array',
+    //         'product_variant.*.option' => 'nullable|string|max:255',
+    //         'product_variant.*.cost' => 'nullable|numeric',
+
+    //         'images' => 'nullable|array',
+    //         'images.*' => 'file|mimes:jpeg,png,jpg,gif,webp|max:6000',
+    //         'video' => 'nullable|string|max:255',
+    //         'meta_title' => 'nullable|string|max:255',
+    //         'meta_description' => 'nullable|string',
+    //         'meta_keywords' => 'nullable|string',
+    //         'status' => 'required|boolean',
+    //         'has_variant' => 'nullable|boolean',
+    //         'has_details' => 'nullable|boolean',
+    //         'variant_name' => 'nullable|string|max:255',
+    //         'description' => 'required|string',
+    //     ]);
+
+    //     // 2. Generate the Product Slug
+    //     $slug = Str::slug($validated['name']);
+    //     $slugCount = DemoProduct::where('slug', $slug)->count();
+    //     if ($slugCount > 0) {
+    //         $slug = $slug . '-' . ($slugCount + 1);
+    //     }
+
+    //     // 3. Generate Unique Product Code
+    //     do {
+    //         $productCode = rand(100000, 999999);
+    //         $existingProduct = DemoProduct::where('product_code', $productCode)->first();
+    //     } while ($existingProduct);
+
+    //     // 4. Create the Product
+    //     $product = DemoProduct::create([
+    //         'business_types' => $validated['business_type'],
+    //         'category_id' => $validated['category_id'],
+    //         'name' => $validated['name'],
+    //         'slug' => $slug,
+    //         'current_price' => $validated['current_price'],
+    //         'old_price' => $validated['old_price'] ?? null,
+    //         'buy_price' => $validated['buy_price'] ?? null,
+    //         'product_code' => $productCode,
+    //         'quantity' => $validated['quantity'],
+    //         'warranty' => $validated['warranty'] ?? null,
+    //         'description' => $validated['description'],
+    //         'video' => $validated['video'] ?? null,
+    //         'meta_title' => $validated['meta_title'] ?? null,
+    //         'meta_description' => $validated['meta_description'] ?? null,
+    //         'status' => $validated['status'],
+    //         'has_variant' => $validated['has_variant'] ?? false,
+    //         'has_details' => $validated['has_details'] ?? false,
+    //         'variant_name' => $validated['variant_name'] ?? null,
+    //         'sold_count' => $validated['sold_count'] ?? null,
+    //         'product_details' => $validated['product_details'] ?? null,
+    //         'product_variant' => $validated['product_variant'] ?? null,
+    //         'product_colors' => $validated['product_colors'] ?? null,
+    //         'product_sizes' => $validated['product_sizes'] ?? null,
+    //     ]);
+
+
+
+    //     // 6. Handle Image Uploads
+    //     if ($request->hasFile('images')) {
+    //         foreach ($request->file('images') as $image) {
+    //             $imageName = md5(uniqid()) . '.webp';
+    //             $img = Image::make($image);
+    //             $img->encode('webp', 80);
+    //             $img->save(public_path('product_images/' . $imageName));
+
+    //             ProductImage::create([
+    //                 'product_id' => $product->id,
+    //                 'image_path' => 'product_images/' . $imageName,
+    //             ]);
+    //         }
+    //     }
+
+    //     // 7. Redirect
+    //     return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
+    // }
+
 }

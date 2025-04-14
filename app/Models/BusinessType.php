@@ -18,7 +18,10 @@ class BusinessType extends Model
         return $this->belongsTo(User::class, 'creator');
     }
 
-
+    public function products()
+    {
+        return $this->hasMany(DemoProduct::class);
+    }
 
     public function categories()
     {

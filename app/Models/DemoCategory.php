@@ -20,4 +20,9 @@ class DemoCategory extends Model
     {
         return $this->belongsTo(BusinessType::class, 'business_type_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(DemoProduct::class);
+    }
 }

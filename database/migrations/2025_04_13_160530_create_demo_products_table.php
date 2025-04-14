@@ -18,8 +18,9 @@ return new class extends Migration
 
             $table->foreignId('business_types')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
-
             $table->string('name');
+            $table->string('slug')->unique();
+
             $table->string('category')->nullable();
             $table->string('current_price');
             $table->string('old_price')->nullable();
