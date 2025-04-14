@@ -16,9 +16,24 @@
                     <div class="card-body">
                         <h4 class="card-title">Create Product</h4>
 
-                        <form action="{{ route('admin.color.store') }}" method="Post" enctype="multipart/form-data">
+                        <form action="{{ route('admin.product.store') }}" method="Post" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Business Type</label>
+                                        <select class="js-example-basic-single form-select" id="business_type"
+                                            name="business_type" data-width="100%">
+                                            @foreach ($businessTypes as $businessType)
+                                                <option value="{{ $businessType->id }}">{{ $businessType->name }}
+                                                </option>
+                                            @endforeach
+
+                                        </select>
+                                    </div>
+                                </div>
+
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Name</label>
@@ -31,9 +46,10 @@
                                         <label class="form-label">Category</label>
                                         <select class="js-example-basic-single form-select" id="country" name="country"
                                             data-width="100%">
-                                            <option value="one">One</option>
-                                            <option value="one">One</option>
-                                            <option value="one">One</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+
                                         </select>
                                     </div>
                                 </div>
@@ -95,9 +111,10 @@
                                                         <label class="form-label">Color</label>
                                                         <select class="js-example-basic-single form-select" name="color[]"
                                                             data-width="100%">
-                                                            <option value="red">Red</option>
-                                                            <option value="green">Green</option>
-                                                            <option value="yellow">Yellow</option>
+                                                            @foreach ($colors as $key => $color)
+                                                                <option value="{{ $color->id }}">{{ $color->color }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -130,9 +147,11 @@
                                                         <label class="form-label">Size</label>
                                                         <select class="js-example-basic-single form-select" name="size[]"
                                                             data-width="100%">
-                                                            <option value="small">Small</option>
-                                                            <option value="medium">Medium</option>
-                                                            <option value="large">Large</option>
+                                                            @foreach ($sizes as $key => $size)
+                                                                <option value="{{ $size->id }}">{{ $size->size }}
+                                                                </option>
+                                                            @endforeach
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -288,9 +307,9 @@
                         <div class="mb-3">
                             <label class="form-label">Color</label>
                             <select class="js-example-basic-single form-select" name="color[]" data-width="100%">
-                                <option value="red">Red</option>
-                                <option value="green">Green</option>
-                                <option value="yellow">Yellow</option>
+                               @foreach ($colors as $key => $color)
+                                <option value="{{ $color->id }}">{{ $color->color }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -325,9 +344,11 @@
                         <div class="mb-3">
                             <label class="form-label">Size</label>
                             <select class="js-example-basic-single form-select" name="size[]" data-width="100%">
-                                <option value="small">Small</option>
-                                <option value="medium">Medium</option>
-                                <option value="large">Large</option>
+                                @foreach ($sizes as $key => $size)
+                                    <option value="{{ $size->id }}">{{ $size->size }}</option>
+
+
+                                @endforeach
                             </select>
                         </div>
                     </div>
