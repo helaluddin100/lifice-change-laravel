@@ -25,15 +25,11 @@
                                         <select class="js-example-basic-single form-select" id="business_type"
                                             name="business_type" data-width="100%">
                                             @foreach ($businessTypes as $businessType)
-                                                <option value="{{ $businessType->id }}">{{ $businessType->name }}
-                                                </option>
+                                                <option value="{{ $businessType->id }}">{{ $businessType->name }}</option>
                                             @endforeach
-
                                         </select>
                                     </div>
                                 </div>
-
-
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Name</label>
@@ -44,12 +40,9 @@
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Category</label>
-                                        <select class="js-example-basic-single form-select" id="country" name="country"
-                                            data-width="100%">
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
-
+                                        <select class="js-example-basic-single form-select category-select" id="category"
+                                            name="category_id" data-width="100%">
+                                            <option value="">Select Category</option>
                                         </select>
                                     </div>
                                 </div>
@@ -88,13 +81,7 @@
                                             placeholder="Quantity (Stock)">
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Quantity (Stock) *</label>
-                                        <input type="number" class="form-control" name="quantity"
-                                            placeholder="Quantity (Stock)">
-                                    </div>
-                                </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Warranty</label>
@@ -109,19 +96,16 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Color</label>
-                                                        <select class="js-example-basic-single form-select" name="color[]"
-                                                            data-width="100%">
-                                                            @foreach ($colors as $key => $color)
-                                                                <option value="{{ $color->id }}">{{ $color->color }}
-                                                                </option>
-                                                            @endforeach
+                                                        <select class="js-example-basic-single form-select color-select"
+                                                            name="color[]" data-width="100%">
+                                                            <option value="">Select Color</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-5">
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
-                                                        <input type="number" class="form-control" name="price[]"
+                                                        <input type="number" class="form-control" name="color_price[]"
                                                             placeholder="Price">
                                                     </div>
                                                 </div>
@@ -145,20 +129,16 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Size</label>
-                                                        <select class="js-example-basic-single form-select" name="size[]"
-                                                            data-width="100%">
-                                                            @foreach ($sizes as $key => $size)
-                                                                <option value="{{ $size->id }}">{{ $size->size }}
-                                                                </option>
-                                                            @endforeach
-
+                                                        <select class="js-example-basic-single form-select size-select"
+                                                            name="size[]" data-width="100%">
+                                                            <option value="">Select Size</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-5">
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
-                                                        <input type="number" class="form-control" name="price[]"
+                                                        <input type="number" class="form-control" name="size_price[]"
                                                             placeholder="Price">
                                                     </div>
                                                 </div>
@@ -180,6 +160,7 @@
                                         <textarea class="form-control" name="description" id="easyMdeExample" rows="5"></textarea>
                                     </div>
                                 </div>
+                                <!-- Add Product Details and Variant -->
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <h4 class="mb-1">Product Details</h4>
@@ -215,6 +196,7 @@
                                             Detail</button>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <h4 class="mb-1">Product Variant</h4>
@@ -257,6 +239,7 @@
                                     </div>
                                 </div>
 
+                                <!-- Images and Video -->
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="images" class="form-label">Product Images</label>
@@ -274,12 +257,10 @@
                                     </div>
                                 </div>
 
-
                             </div>
 
                             <div class="mb-3">
                                 <div class="form-check">
-
                                     <label class="form-check-label" for="termsCheck">
                                         Active
                                     </label>
@@ -300,172 +281,249 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            $('#add-color-btn').on('click', function() {
-                const html = `
-                <div class="row color-price-group">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label class="form-label">Color</label>
-                            <select class="js-example-basic-single form-select" name="color[]" data-width="100%">
-                               @foreach ($colors as $key => $color)
-                                <option value="{{ $color->id }}">{{ $color->color }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="mb-3">
-                            <label class="form-label">Price</label>
-                            <input type="number" class="form-control" name="price[]" placeholder="Price">
-                        </div>
-                    </div>
-                    <div class="col-lg-1 d-flex align-items-end">
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-danger remove-color">×</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-                $('#color-price-container').append(html);
-                $('.js-example-basic-single').select2(); // reinitialize select2 if you're using it
+            // Function to populate select options and initialize Select2
+            function populateSelectOptions(selectElement, options, valueKey, labelKey) {
+                selectElement.empty().append('<option value="">Select Option</option>');
+                $.each(options, function(key, option) {
+                    selectElement.append('<option value="' + option[valueKey] + '">' + option[labelKey] +
+                        '</option>');
+                });
+                selectElement.select2(); // Initialize select2 for this element
+            }
+
+            // Handle the business type change and make an AJAX request
+            $('#business_type').on('change', function() {
+                var businessTypeId = $(this).val();
+
+                if (businessTypeId) {
+                    $.ajax({
+                        url: '{{ route('admin.product.getOptions', ':business_type_id') }}'.replace(
+                            ':business_type_id', businessTypeId),
+                        method: 'GET',
+                        success: function(response) {
+                            // Clear existing options in the initial select elements
+                            $('.category-select').empty().append(
+                                '<option value="">Select Category</option>');
+                            $('.color-select').first()
+                                .empty(); // Clear only the first color select initially
+                            $('.size-select').first()
+                                .empty(); // Clear only the first size select initially
+
+                            // Populate categories
+                            $.each(response.categories, function(key, category) {
+                                $('.category-select').append('<option value="' +
+                                    category.id + '">' + category.name + '</option>'
+                                );
+                            });
+
+                            // Populate colors for the initial color select
+                            populateSelectOptions($('.color-select').first(), response.colors,
+                                'id', 'color');
+
+                            // Populate sizes for the initial size select
+                            populateSelectOptions($('.size-select').first(), response.sizes,
+                                'id', 'size');
+
+                            // Reinitialize select2 for the initial selects
+                            $('.js-example-basic-single').select2();
+                        },
+                        error: function() {
+                            alert('Error fetching options.');
+                        }
+                    });
+                }
             });
 
-            // Remove color-price group
+            // Add Color Button - Adding new color field group
+            $('#add-color-btn').on('click', function() {
+                const businessTypeId = $('#business_type').val();
+                if (!businessTypeId) {
+                    alert('Please select a Business Type first.');
+                    return;
+                }
+                const html = `
+                    <div class="row color-price-group">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Color</label>
+                                <select class="js-example-basic-single form-select color-select" name="color[]" data-width="100%">
+                                    <option value="">Select Color</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="mb-3">
+                                <label class="form-label">Price</label>
+                                <input type="number" class="form-control" name="price[]" placeholder="Price">
+                            </div>
+                        </div>
+                        <div class="col-lg-1 d-flex align-items-end">
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-danger remove-color">×</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#color-price-container').append(html);
+
+                // Fetch and populate colors for the newly added select element
+                $.get('{{ route('admin.product.getOptions', ':business_type_id') }}'.replace(
+                    ':business_type_id',
+                    businessTypeId), function(response) {
+                    populateSelectOptions($('select[name="color[]"]').last(), response.colors, 'id',
+                        'color');
+                });
+            });
+
+            // Remove Color Button
             $(document).on('click', '.remove-color', function() {
                 $(this).closest('.color-price-group').remove();
             });
-        });
 
-        $(document).ready(function() {
+            // Add Size Button - Adding new size field group
             $('#add-size-btn').on('click', function() {
+                const businessTypeId = $('#business_type').val();
+                if (!businessTypeId) {
+                    alert('Please select a Business Type first.');
+                    return;
+                }
                 const html = `
-                <div class="row size-price-group">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label class="form-label">Size</label>
-                            <select class="js-example-basic-single form-select" name="size[]" data-width="100%">
-                                @foreach ($sizes as $key => $size)
-                                    <option value="{{ $size->id }}">{{ $size->size }}</option>
-
-
-                                @endforeach
-                            </select>
+                    <div class="row size-price-group">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Size</label>
+                                <select class="js-example-basic-single form-select size-select" name="size[]" data-width="100%">
+                                    <option value="">Select Size</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="mb-3">
+                                <label class="form-label">Price</label>
+                                <input type="number" class="form-control" name="price[]" placeholder="Price">
+                            </div>
+                        </div>
+                        <div class="col-lg-1 d-flex align-items-end">
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-danger remove-size">×</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-5">
-                        <div class="mb-3">
-                            <label class="form-label">Price</label>
-                            <input type="number" class="form-control" name="price[]" placeholder="Price">
-                        </div>
-                    </div>
-                    <div class="col-lg-1 d-flex align-items-end">
-                        <div class="mb-3">
-                            <button type="button"
-                                class="btn btn-danger remove-size">×</button>
-                             </div>
-                    </div>
-                </div>
-            `;
+                `;
                 $('#size-price-container').append(html);
-                $('.js-example-basic-single').select2(); // Reinitialize if you're using select2
+
+                // Fetch and populate sizes for the newly added select element
+                $.get('{{ route('admin.product.getOptions', ':business_type_id') }}'.replace(
+                    ':business_type_id',
+                    businessTypeId), function(response) {
+                    populateSelectOptions($('select[name="size[]"]').last(), response.sizes, 'id',
+                        'size');
+                });
             });
 
+            // Remove Size Button
             $(document).on('click', '.remove-size', function() {
                 $(this).closest('.size-price-group').remove();
             });
-        });
 
-        $(document).ready(function() {
+
+
+
+
+            // Add Product Detail Button
             $('#add-detail-btn').on('click', function() {
                 const html = `
-                <div class="row product-detail-group">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label class="form-label">Detail Type</label>
-                            <input type="text" class="form-control" name="detail_type[]" placeholder="e.g., Brand, Model">
+                    <div class="row product-detail-group">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Detail Type</label>
+                                <input type="text" class="form-control" name="detail_type[]" placeholder="e.g., Brand, Model">
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="mb-3">
+                                <label class="form-label">Detail Description</label>
+                                <input type="text" class="form-control" name="detail_description[]" placeholder="e.g., Samsung, Cotton">
+                            </div>
+                        </div>
+                        <div class="col-lg-1 d-flex align-items-end">
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-danger remove-detail">×</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-5">
-                        <div class="mb-3">
-                            <label class="form-label">Detail Description</label>
-                            <input type="text" class="form-control" name="detail_description[]" placeholder="e.g., Samsung, Cotton">
-                        </div>
-                    </div>
-                    <div class="col-lg-1 d-flex align-items-end">
-                      <div class="mb-3">
-                        <button type="button" class="btn btn-danger remove-detail">×</button>
-                      </div>
-                    </div>
-                </div>
-            `;
+                `;
                 $('#product-detail-container').append(html);
             });
 
+            // Remove Product Detail Button
             $(document).on('click', '.remove-detail', function() {
                 $(this).closest('.product-detail-group').remove();
             });
-        });
-        $(document).ready(function() {
+
+            // Add Variant Option Button
             $('#add-variant-btn').on('click', function() {
                 const variantHtml = `
-                <div class="row product-variant-group">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label class="form-label">Variant Option</label>
-                            <input type="text" class="form-control" name="variant_option[]" placeholder="e.g., Red, Large">
+                    <div class="row product-variant-group">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Variant Option</label>
+                                <input type="text" class="form-control" name="variant_option[]" placeholder="e.g., Red, Large">
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="mb-3">
+                                <label class="form-label">Additional Cost</label>
+                                <input type="text" class="form-control" name="variant_cost[]" placeholder="e.g., 10, 15">
+                            </div>
+                        </div>
+                        <div class="col-lg-1 d-flex align-items-end">
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-danger remove-variant">×</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-5">
-                        <div class="mb-3">
-                            <label class="form-label">Additional Cost</label>
-                            <input type="text" class="form-control" name="variant_cost[]" placeholder="e.g., 10, 15">
-                        </div>
-                    </div>
-                    <div class="col-lg-1 d-flex align-items-end">
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-danger remove-variant">×</button>
-                        </div>
-                    </div>
-                </div>
-            `;
+                `;
                 $('#product-variant-container').append(variantHtml);
             });
 
+            // Remove Variant Button
             $(document).on('click', '.remove-variant', function() {
                 $(this).closest('.product-variant-group').remove();
             });
-        });
 
-        let selectedFiles = [];
+            // Image preview functionality
+            let selectedFiles = [];
 
-        $('#images').on('change', function() {
-            selectedFiles = Array.from(this.files); // Reset selected files
-            displayImages();
-        });
-
-        function displayImages() {
-            $('#image-preview').empty();
-            selectedFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imageHtml = `
-                <div class="col-md-3 mb-2 preview-image" data-index="${index}">
-                    <div class="position-relative">
-                        <img src="${e.target.result}" class="img-fluid rounded shadow-sm" alt="Image Preview">
-                        <button type="button" class="btn btn-sm btn-danger remove-image-btn" style="position:absolute;top:5px;right:5px;">×</button>
-                    </div>
-                </div>
-            `;
-                    $('#image-preview').append(imageHtml);
-                };
-                reader.readAsDataURL(file);
+            $('#images').on('change', function() {
+                selectedFiles = Array.from(this.files); // Reset selected files
+                displayImages();
             });
-        }
 
-        $(document).on('click', '.remove-image-btn', function() {
-            const index = $(this).closest('.preview-image').data('index');
-            selectedFiles.splice(index, 1);
-            displayImages();
+            function displayImages() {
+                $('#image-preview').empty();
+                selectedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageHtml = `
+                            <div class="col-md-3 mb-2 preview-image" data-index="${index}">
+                                <div class="position-relative">
+                                    <img src="${e.target.result}" class="img-fluid rounded shadow-sm" alt="Image Preview">
+                                    <button type="button" class="btn btn-sm btn-danger remove-image-btn" style="position:absolute;top:5px;right:5px;">×</button>
+                                </div>
+                            </div>
+                        `;
+                        $('#image-preview').append(imageHtml);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            $(document).on('click', '.remove-image-btn', function() {
+                const index = $(this).closest('.preview-image').data('index');
+                selectedFiles.splice(index, 1);
+                displayImages();
+            });
         });
     </script>
 @endsection

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Api\ShopController;
 
 use App\Http\Controllers\Admin\TemplateController;
+use App\Http\Controllers\Admin\DemoProductController;
 
 
 /*
@@ -73,6 +74,7 @@ Route::namespace('App\Http\Controllers')->group(
             Route::resource('/color', 'DemoColorController');
             Route::resource('/size', 'DemoSizeController');
             Route::resource('/product', 'DemoProductController');
+            Route::get('/product/get-options/{business_type_id}', [DemoProductController::class, 'getOptions'])->name('product.getOptions');
         });
     }
 );

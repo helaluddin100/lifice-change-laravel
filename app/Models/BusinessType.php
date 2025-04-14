@@ -17,16 +17,21 @@ class BusinessType extends Model
     {
         return $this->belongsTo(User::class, 'creator');
     }
-    public function demoCategories()
+
+
+
+    public function categories()
     {
         return $this->hasMany(DemoCategory::class);
     }
-    public function demoColors()
+
+    public function colors()
     {
         return $this->hasMany(DemoColor::class);
     }
-    public function demoSizes()
+
+    public function sizes()
     {
-        return $this->hasMany(DemoColor::class);
+        return $this->hasMany(DemoSize::class);
     }
 }
