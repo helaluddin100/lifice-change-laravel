@@ -190,15 +190,18 @@ class DemoProductController extends Controller
     public function edit($id)
     {
         // Get the product and related data
-        $product = DemoProduct::with('images')->findOrFail($id);
+        $product = DemoProduct::with('images')->find($id); // Find instead of findOrFail to debug
+
 
         // Get related data based on the product's business type
         $businessTypes = BusinessType::all();
         $categories = DemoCategory::where('business_type_id', $product->business_types)->get();
         $colors = DemoColor::where('business_type_id', $product->business_types)->get();
         $sizes = DemoSize::where('business_type_id', $product->business_types)->get();
+        $productImages = ProductImage::where('demo_product_id', $product->id)->get();
+
 
         // Pass all the data to the view
-        return view('admin.product.edit', compact('product', 'businessTypes', 'categories', 'colors', 'sizes'));
+        return view('admin.product.edit', compact('product', 'productImages', 'businessTypes', 'categories', 'colors', 'sizes'));
     }
 }

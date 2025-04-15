@@ -20,6 +20,6 @@ class ProductImage extends Model
 
     public function demoProduct()
     {
-        return $this->belongsTo(DemoProduct::class);
+        return $this->belongsTo(DemoProduct::class, 'demo_product_id');  // Assuming 'demo_product_id' is the foreign key
     }
 }

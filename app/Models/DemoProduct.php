@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DemoProduct extends Model
@@ -55,15 +55,15 @@ class DemoProduct extends Model
     ];
 
     // Relationship with ProductImage
-    public function images(): HasMany
+    public function images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'demo_product_id'); // Assuming 'demo_product_id' is the foreign key in the ProductImage model
     }
 
     // Relationship with Category
     public function category(): BelongsTo
     {
-        return $this->belongsTo(DemoCategory::class);
+        return $this->belongsTo(DemoCategory::class, 'category_id');
     }
 
     // Relationship with BusinessType
@@ -72,5 +72,17 @@ class DemoProduct extends Model
         return $this->belongsTo(BusinessType::class, 'business_types');
     }
 
-    // Additional methods for specific functionality can be added here, e.g., for handling image uploads or custom logic
+    // Colors relationship
+    public function colors(): BelongsToMany
+    {
+        return $this->belongsToMany(DemoColor::class, 'product_color', 'product_id', 'color_id')
+            ->withPivot('price', 'quantity');
+    }
+
+    // Sizes relationship
+    public function sizes(): BelongsToMany
+    {
+        return $this->belongsToMany(DemoSize::class, 'product_size', 'product_id', 'size_id')
+            ->withPivot('price', 'quantity');
+    }
 }
