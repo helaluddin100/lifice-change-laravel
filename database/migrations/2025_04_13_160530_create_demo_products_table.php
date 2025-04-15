@@ -50,7 +50,7 @@ return new class extends Migration
             $table->string('delivery_charge')->nullable();
 
             //product images
-            $table->json('images')->nullable();
+            // $table->json('images')->nullable();
 
             //product video
             $table->string('video')->nullable();
