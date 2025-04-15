@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\CustomResetPassword;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -67,7 +68,10 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         return $code;
     }
 
-
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPassword($token, $this->email));
+    }
     public function referredUsers()
     {
         return $this->hasMany(User::class, 'referred_by');
