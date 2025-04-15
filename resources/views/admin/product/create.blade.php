@@ -93,7 +93,7 @@
                                         <label class="form-label">Select Color and Price</label>
                                         <div id="color-price-container">
                                             <div class="row color-price-group">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         <label class="form-label">Color</label>
                                                         <select class="js-example-basic-single form-select color-select"
@@ -102,14 +102,14 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-5">
+                                                <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
                                                         <input type="number" class="form-control"
                                                             name="product_colors[0][price]" placeholder="Price">
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-5">
+                                                <div class="col-lg-3">
                                                     <div class="mb-3">
                                                         <label class="form-label">Quantity</label>
                                                         <input type="number" class="form-control"
@@ -131,7 +131,7 @@
                                         <label class="form-label">Select Size and Price</label>
                                         <div id="size-price-container">
                                             <div class="row size-price-group">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         <label class="form-label">Size</label>
                                                         <select class="js-example-basic-single form-select size-select"
@@ -140,14 +140,14 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-5">
+                                                <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
                                                         <input type="number" class="form-control"
                                                             name="product_sizes[0][price]" placeholder="Price">
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-5">
+                                                <div class="col-lg-3">
                                                     <div class="mb-3">
                                                         <label class="form-label">Quantity</label>
                                                         <input type="number" class="form-control"
@@ -288,265 +288,112 @@
 
     </div>
 @endsection
-
 @section('js')
     <script>
         $(document).ready(function() {
-            // Function to populate select options and initialize Select2
             function populateSelectOptions(selectElement, options, valueKey, labelKey) {
                 selectElement.empty().append('<option value="">Select Option</option>');
-                $.each(options, function(key, option) {
-                    selectElement.append('<option value="' + option[valueKey] + '">' + option[labelKey] +
-                        '</option>');
-                });
-                selectElement.select2(); // Initialize select2 for this element
+                $.each(options, (key, option) => selectElement.append(
+                    `<option value="${option[valueKey]}">${option[labelKey]}</option>`));
+                selectElement.select2();
             }
 
-            // Handle the business type change and make an AJAX request
+            function fetchOptions(businessTypeId, callback) {
+                if (!businessTypeId) return;
+                $.ajax({
+                    url: '{{ route('admin.product.getOptions', ':business_type_id') }}'.replace(
+                        ':business_type_id', businessTypeId),
+                    method: 'GET',
+                    success: callback,
+                    error: () => alert('Error fetching options.')
+                });
+            }
+
             $('#business_type').on('change', function() {
-                var businessTypeId = $(this).val();
-
-                if (businessTypeId) {
-                    $.ajax({
-                        url: '{{ route('admin.product.getOptions', ':business_type_id') }}'.replace(
-                            ':business_type_id', businessTypeId),
-                        method: 'GET',
-                        success: function(response) {
-                            // Clear existing options in the initial select elements
-                            $('.category-select').empty().append(
-                                '<option value="">Select Category</option>');
-                            $('.color-select').first()
-                                .empty(); // Clear only the first color select initially
-                            $('.size-select').first()
-                                .empty(); // Clear only the first size select initially
-
-                            // Populate categories
-                            $.each(response.categories, function(key, category) {
-                                $('.category-select').append('<option value="' +
-                                    category.id + '">' + category.name + '</option>'
-                                );
-                            });
-
-                            // Populate colors for the initial color select
-                            populateSelectOptions($('.color-select').first(), response.colors,
-                                'id', 'color');
-
-                            // Populate sizes for the initial size select
-                            populateSelectOptions($('.size-select').first(), response.sizes,
-                                'id', 'size');
-
-                            // Reinitialize select2 for the initial selects
-                            $('.js-example-basic-single').select2();
-                        },
-                        error: function() {
-                            alert('Error fetching options.');
-                        }
-                    });
-                }
+                const businessTypeId = $(this).val();
+                fetchOptions(businessTypeId, (response) => {
+                    populateSelectOptions($('.category-select'), response.categories, 'id', 'name');
+                    populateSelectOptions($('.color-select').first(), response.colors, 'id',
+                        'color');
+                    populateSelectOptions($('.size-select').first(), response.sizes, 'id', 'size');
+                });
             });
 
-            // Add Color Button - Adding new color field group
+            function addFieldGroup(container, template, index, fetchCallback) {
+                const html = template(index);
+                container.append(html);
+                const newSelect = container.find(`[name*="[${index}]"]`).filter('.form-select');
+                fetchCallback(newSelect);
+            }
+
+            function removeFieldGroup(button, groupClass) {
+                $(document).on('click', button, function() {
+                    $(this).closest(groupClass).remove();
+                });
+            }
+
             $('#add-color-btn').on('click', function() {
                 const businessTypeId = $('#business_type').val();
-                if (!businessTypeId) {
-                    alert('Please select a Business Type first.');
-                    return;
-                }
+                if (!businessTypeId) return alert('Please select a Business Type first.');
                 const index = $('#color-price-container .color-price-group').length;
-                const html = `
+                addFieldGroup($('#color-price-container'), (i) => `
                     <div class="row color-price-group">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Color</label>
-                                <select class="js-example-basic-single form-select color-select" name="product_colors[${index}][color]" data-width="100%">
-                                    <option value="">Select Color</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="mb-3">
-                                <label class="form-label">Price</label>
-                                <input type="number" class="form-control" name="product_colors[${index}][price]" placeholder="Price">
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="mb-3">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" class="form-control" name="product_colors[${index}][quantity]" placeholder="Quantity">
-                            </div>
-                        </div>
-                        <div class="col-lg-1 d-flex align-items-end">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-danger remove-color">×</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                $('#color-price-container').append(html);
-                const newColorSelect = $(`[name="product_colors[${index}][color]"]`);
-                $.ajax({
-                    url: '{{ route('admin.product.getOptions', ':business_type_id') }}'.replace(
-                        ':business_type_id', businessTypeId),
-                    method: 'GET',
-                    success: function(response) {
-                        populateSelectOptions(newColorSelect, response.colors, 'id', 'color');
-                        newColorSelect.select2();
-                    },
-                    error: function() {
-                        alert('Error fetching colors.');
-                    }
-                });
+                        <div class="col-lg-4"><select class="js-example-basic-single form-select color-select" name="product_colors[${i}][color]" data-width="100%"></select></div>
+                        <div class="col-lg-4"><input type="number" class="form-control" name="product_colors[${i}][price]" placeholder="Price"></div>
+                        <div class="col-lg-3"><input type="number" class="form-control" name="product_colors[${i}][quantity]" placeholder="Quantity"></div>
+                        <div class="col-lg-1"><button type="button" class="btn btn-danger remove-color">×</button></div>
+                    </div>`, index, (select) => fetchOptions(businessTypeId, (response) => populateSelectOptions(
+                    select, response.colors, 'id', 'color')));
             });
 
-            // Remove Color Button - Remove color field group
-            $(document).on('click', '.remove-color', function() {
-                $(this).closest('.color-price-group').remove();
-            });
-
-            // Add Size Button - Adding new size field group
             $('#add-size-btn').on('click', function() {
                 const businessTypeId = $('#business_type').val();
-                if (!businessTypeId) {
-                    alert('Please select a Business Type first.');
-                    return;
-                }
+                if (!businessTypeId) return alert('Please select a Business Type first.');
                 const index = $('#size-price-container .size-price-group').length;
-                const html = `
+                addFieldGroup($('#size-price-container'), (i) => `
                     <div class="row size-price-group">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Size</label>
-                                <select class="js-example-basic-single form-select size-select" name="product_sizes[${index}][size]" data-width="100%">
-                                    <option value="">Select Size</option>
-                                </select>
-                            </div>
-                        </div>
-                         <div class="col-lg-5">
-                            <div class="mb-3">
-                                <label class="form-label">Price</label>
-                                <input type="number" class="form-control" name="product_sizes[${index}][price]"
-                                    placeholder="Price">
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="mb-3">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" class="form-control" name="product_sizes[${index}][quantity]"
-                                    placeholder="Quantity">
-                            </div>
-                        </div>
-                        <div class="col-lg-1 d-flex align-items-end">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-danger remove-size">×</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                $('#size-price-container').append(html);
-
-                const newSizeSelect = $(`[name="product_sizes[${index}][size]"]`);
-                $.ajax({
-                    url: '{{ route('admin.product.getOptions', ':business_type_id') }}'.replace(
-                        ':business_type_id', businessTypeId),
-                    method: 'GET',
-                    success: function(response) {
-                        populateSelectOptions(newSizeSelect, response.sizes, 'id', 'size');
-                        newSizeSelect.select2();
-                    },
-                    error: function() {
-                        alert('Error fetching sizes.');
-                    }
-                });
+                        <div class="col-lg-4"><select class="js-example-basic-single form-select size-select" name="product_sizes[${i}][size]" data-width="100%"></select></div>
+                        <div class="col-lg-4"><input type="number" class="form-control" name="product_sizes[${i}][price]" placeholder="Price"></div>
+                        <div class="col-lg-3"><input type="number" class="form-control" name="product_sizes[${i}][quantity]" placeholder="Quantity"></div>
+                        <div class="col-lg-1"><button type="button" class="btn btn-danger remove-size">×</button></div>
+                    </div>`, index, (select) => fetchOptions(businessTypeId, (response) => populateSelectOptions(
+                    select, response.sizes, 'id', 'size')));
             });
 
-            // Remove Size Button
-            $(document).on('click', '.remove-size', function() {
-                $(this).closest('.size-price-group').remove();
-            });
-
-            // Add Detail Button
             $('#add-detail-btn').on('click', function() {
                 const index = $('#product-detail-container .product-detail-group').length;
-                const html = `
+                addFieldGroup($('#product-detail-container'), (i) => `
                     <div class="row product-detail-group">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Detail Type</label>
-                                <input type="text" class="form-control" name="product_details[${index}][detail_type]"
-                                    placeholder="e.g., Brand, Model">
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="mb-3">
-                                <label class="form-label">Detail Description</label>
-                                <input type="text" class="form-control"
-                                    name="product_details[${index}][detail_description]"
-                                    placeholder="e.g., Samsung, Cotton">
-                            </div>
-                        </div>
-                        <div class="col-lg-1 d-flex align-items-end">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-danger remove-detail">×</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                $('#product-detail-container').append(html);
+                        <div class="col-lg-6"><input type="text" class="form-control" name="product_details[${i}][detail_type]" placeholder="e.g., Brand, Model"></div>
+                        <div class="col-lg-5"><input type="text" class="form-control" name="product_details[${i}][detail_description]" placeholder="e.g., Samsung, Cotton"></div>
+                        <div class="col-lg-1"><button type="button" class="btn btn-danger remove-detail">×</button></div>
+                    </div>`, index, () => {});
             });
 
-            // Remove Detail Button
-            $(document).on('click', '.remove-detail', function() {
-                $(this).closest('.product-detail-group').remove();
-            });
-
-            // Add Variant Button
             $('#add-variant-btn').on('click', function() {
                 const index = $('#product-variant-container .product-variant-group').length;
-                const html = `
+                addFieldGroup($('#product-variant-container'), (i) => `
                     <div class="row product-variant-group">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label class="form-label">Variant Option</label>
-                                <input type="text" class="form-control"
-                                    name="product_variant[${index}][option]" placeholder="e.g., Red, Large">
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="mb-3">
-                                <label class="form-label">Additional Cost</label>
-                                <input type="text" class="form-control"
-                                    name="product_variant[${index}][cost]" placeholder="e.g., 10, 15">
-                            </div>
-                        </div>
-                        <div class="col-lg-1 d-flex align-items-end">
-                            <div class="mb-3">
-                                 <button type="button" class="btn btn-danger remove-variant">×</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                $('#product-variant-container').append(html);
+                        <div class="col-lg-6"><input type="text" class="form-control" name="product_variant[${i}][option]" placeholder="e.g., Red, Large"></div>
+                        <div class="col-lg-5"><input type="text" class="form-control" name="product_variant[${i}][cost]" placeholder="e.g., 10, 15"></div>
+                        <div class="col-lg-1"><button type="button" class="btn btn-danger remove-variant">×</button></div>
+                    </div>`, index, () => {});
             });
 
-            // Remove Variant Button
-            $(document).on('click', '.remove-variant', function() {
-                $(this).closest('.product-variant-group').remove();
-            });
+            removeFieldGroup('.remove-color', '.color-price-group');
+            removeFieldGroup('.remove-size', '.size-price-group');
+            removeFieldGroup('.remove-detail', '.product-detail-group');
+            removeFieldGroup('.remove-variant', '.product-variant-group');
 
-            // Image Preview
             $('#images').on('change', function() {
-                $('#image-preview').empty(); // Clear previous previews
-                if (this.files && this.files.length > 0) {
-                    for (let i = 0; i < this.files.length; i++) {
-                        let reader = new FileReader();
-                        reader.onload = function(e) {
-                            $('#image-preview').append(
-                                `<div class="col-md-3 mt-2"><img src="${e.target.result}" alt="Product Image" style="max-width: 100%; height: auto;"></div>`
-                            );
-                        }
-                        reader.readAsDataURL(this.files[i]);
-                    }
-                }
+                $('#image-preview').empty();
+                Array.from(this.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => $('#image-preview').append(
+                        `<div class="col-md-3 mt-2"><img src="${e.target.result}" alt="Product Image" style="max-width: 100%; height: auto;"></div>`
+                    );
+                    reader.readAsDataURL(file);
+                });
             });
         });
     </script>

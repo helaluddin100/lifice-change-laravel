@@ -187,19 +187,18 @@ class DemoProductController extends Controller
         return redirect()->route('admin.product.index')->with('success', 'Demo Product created successfully!');
     }
 
-
-    public function eidt($id)
+    public function edit($id)
     {
-        $product = DemoProduct::find($id);
-        if (!$product) {
-            return redirect()->route('admin.product.index')->with('error', 'Product not found');
-        }
+        // Get the product and related data
+        $product = DemoProduct::with('images')->findOrFail($id);
 
+        // Get related data based on the product's business type
         $businessTypes = BusinessType::all();
         $categories = DemoCategory::where('business_type_id', $product->business_types)->get();
         $colors = DemoColor::where('business_type_id', $product->business_types)->get();
         $sizes = DemoSize::where('business_type_id', $product->business_types)->get();
 
+        // Pass all the data to the view
         return view('admin.product.edit', compact('product', 'businessTypes', 'categories', 'colors', 'sizes'));
     }
 }
