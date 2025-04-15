@@ -74,6 +74,9 @@ Route::namespace('App\Http\Controllers')->group(
             Route::resource('/color', 'DemoColorController');
             Route::resource('/size', 'DemoSizeController');
             Route::resource('/product', 'DemoProductController');
+
+            Route::post('/product/remove-image', [DemoProductController::class, 'removeImage']);
+
             Route::get('/product/get-options/{business_type_id}', [DemoProductController::class, 'getOptions'])->name('product.getOptions');
         });
     }

@@ -281,12 +281,14 @@
                                     </div>
                                     <div id="image-preview" class="row mt-3">
                                         @foreach ($productImages as $image)
-                                            <div class="col-md-3 mt-2">
+                                            <div class="col-md-3 mt-2 image-container"
+                                                data-image-id="{{ $image->id }}">
                                                 <img src="{{ asset($image->image_path) }}" alt="Product Image"
                                                     style="max-width: 100%; height: auto;">
+                                                <button type="button" class="btn btn-danger remove-image"
+                                                    data-image-id="{{ $image->id }}">Remove</button>
                                             </div>
                                         @endforeach
-
                                     </div>
                                 </div>
 
@@ -419,14 +421,38 @@
             removeFieldGroup('.remove-detail', '.product-detail-group');
             removeFieldGroup('.remove-variant', '.product-variant-group');
 
+            // New image preview
             $('#images').on('change', function() {
-                $('#image-preview').empty();
                 Array.from(this.files).forEach(file => {
                     const reader = new FileReader();
                     reader.onload = (e) => $('#image-preview').append(
                         `<div class="col-md-3 mt-2"><img src="${e.target.result}" alt="Product Image" style="max-width: 100%; height: auto;"></div>`
                     );
                     reader.readAsDataURL(file);
+                });
+            });
+
+            // Remove Image
+            $(document).on('click', '.remove-image', function() {
+                const imageId = $(this).data('image-id'); // Get image ID to remove
+
+                // Optionally, you can send an AJAX request to remove the image from the server
+                $.ajax({
+                    url: '/admin/product/remove-image', // Define the route for image removal
+                    method: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        image_id: imageId,
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Remove the image from DOM if deletion is successful
+                            $(this).closest('.image-container').remove();
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error removing image:', error);
+                    }
                 });
             });
         });

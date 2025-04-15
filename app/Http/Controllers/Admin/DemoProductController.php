@@ -12,6 +12,7 @@ use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class DemoProductController extends Controller
 {
@@ -203,5 +204,22 @@ class DemoProductController extends Controller
 
         // Pass all the data to the view
         return view('admin.product.edit', compact('product', 'productImages', 'businessTypes', 'categories', 'colors', 'sizes'));
+    }
+
+
+    public function removeImage(Request $request)
+    {
+        // Find the image by ID
+        $image = ProductImage::findOrFail($request->image_id);
+
+        // Delete the image from storage
+        if (Storage::exists('public/' . $image->image_path)) {
+            Storage::delete('public/' . $image->image_path);
+        }
+
+        // Delete the image record from the database
+        $image->delete();
+
+        return response()->json(['success' => true]);
     }
 }
