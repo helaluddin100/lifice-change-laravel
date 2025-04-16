@@ -355,17 +355,41 @@ class ShopController extends Controller
                 Log::debug('Cloning product images for product_id:', ['new_product_id' => $newProductId]);
 
                 // Clone product images by linking demo_product_id to new product_id
-                // Fetch demo images for the product using the relationship
-                $demoImages = DemoProduct::find($product->id)->demoimages;
+                $demoImages = DemoProduct::find($product->id)->demoimages; // Using the relationship to get demo product images
 
                 if ($demoImages) {
                     foreach ($demoImages as $image) {
                         Log::debug('Cloning Image:', ['image' => $image]);  // Debug log for images
 
-                        // Insert the image and replace demo_product_id with the new product_id
+                        // Get the original image path (Fix double 'product_images/')
+                        $imagePath = $image->image_path;
+
+                        // Generate a new unique name for the image file
+                        $newImageName = time() . '-' . uniqid() . '.' . pathinfo($imagePath, PATHINFO_EXTENSION);
+
+                        // **Fix: Ensure we are using the correct path here**: Check if file exists in correct folder
+                        $oldImagePath = public_path('product_images/' . $imagePath); // Correcting the path
+                        $copyImage = public_path($imagePath); // Correcting the path
+
+                        // Define the new path for the image in the same folder
+                        $newImagePath = 'product_images/' . $newImageName;
+
+                        // Define the new image path (destination)
+                        $newImageFullPath = public_path($newImagePath);
+
+                        if (file_exists($copyImage)) {
+                            // Copy the image to the new directory
+                            if (!copy($copyImage, $newImageFullPath)) {
+                                Log::error('Failed to copy image', ['image_path' => $copyImage, 'new_image_path' => $newImageFullPath]);
+                            }
+                        } else {
+                            Log::error('Image not found for copy', ['image_path' => $copyImage]);
+                        }
+
+                        // Insert the image with the new product_id and updated image path
                         DB::table('product_images')->insert([
                             'product_id' => $newProductId,  // Newly inserted product ID
-                            'image_path' => $image->image_path,  // Assuming image_path is part of the image object
+                            'image_path' => $newImagePath,  // New image path after renaming and copying
                         ]);
                     }
                 }
