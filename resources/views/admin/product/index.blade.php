@@ -64,7 +64,7 @@
 
                                             <!-- Business Type -->
                                             <td>
-                                                {{ \App\Models\BusinessType::find($product->business_types)->name }}
+                                                {{ \App\Models\BusinessType::find($product->business_type_id)->name }}
                                             </td>
 
                                             <!-- Category -->

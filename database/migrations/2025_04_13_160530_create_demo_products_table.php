@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('demo_products', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('business_types')->constrained()->onDelete('cascade');
+            $table->foreignId('business_type_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('slug')->unique();
