@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Shop;
-use App\Models\BusinessType;
-use App\Models\Country;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Image;
+use App\Models\Shop;
+use App\Models\Country;
+use App\Models\VisitorData;
+use Illuminate\Support\Str;
+use App\Models\BusinessType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use App\Models\VisitorData;
+use Illuminate\Validation\ValidationException;
 
 class ShopController extends Controller
 {
@@ -115,13 +116,61 @@ class ShopController extends Controller
      */
 
 
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         // Validate the request data
+    //         $validatedData = $request->validate([
+    //             'name' => 'required|string',
+    //             'shop_type' => 'required|string', // it's means business type
+    //             'email' => 'required|email',
+    //             'address' => 'required|string',
+    //             'country' => 'required|string',
+    //             'number' => 'required|numeric',
+    //             'details' => 'required|string',
+    //             'user_id' => 'required', // Assuming user_id is provided in the request
+    //         ]);
+    //         $shop_url = Str::slug($validatedData['name']);
+
+    //         $count = Shop::where('shop_url', $shop_url)->count();
+    //         if ($count > 0) {
+    //             $shop_url = $shop_url . '-' . ($count + 1);
+    //         }
+    //         $userId = $request->input('user_id');
+
+
+    //         $shop = new Shop($validatedData);
+    //         $shop->user_id = $userId;
+    //         $shop->shop_url = $shop_url;
+    //         $shop->template_type = 1;
+    //         $shop->vat_tax = 0;
+    //         $shop->save();
+
+    //         // Log the success message
+    //         Log::info('Shop created successfully', ['id' => $shop->id]);
+
+    //         // Return a success response
+    //         return response()->json([
+    //             'status' => 200,
+    //             'message' => 'Shop created successfully',
+    //         ]);
+    //     } catch (ValidationException $e) {
+    //         // Return validation errors
+    //         return response()->json(['status' => 422, 'errors' => $e->errors()]);
+    //     } catch (\Throwable $e) {
+    //         // Log and return an error response
+    //         Log::error('Error creating Shop', ['error' => $e->getMessage()]);
+    //         return response()->json(['status' => 500, 'error' => $e->getMessage()]);
+    //     }
+    // }
+
     public function store(Request $request)
     {
         try {
             // Validate the request data
             $validatedData = $request->validate([
                 'name' => 'required|string',
-                'shop_type' => 'required|string', // Include shop_type in the validation rules
+                'shop_type' => 'required|string', // business type
                 'email' => 'required|email',
                 'address' => 'required|string',
                 'country' => 'required|string',
@@ -129,21 +178,26 @@ class ShopController extends Controller
                 'details' => 'required|string',
                 'user_id' => 'required', // Assuming user_id is provided in the request
             ]);
-            $shop_url = Str::slug($validatedData['name']);
 
+            $shop_url = Str::slug($validatedData['name']);
             $count = Shop::where('shop_url', $shop_url)->count();
             if ($count > 0) {
                 $shop_url = $shop_url . '-' . ($count + 1);
             }
+
             $userId = $request->input('user_id');
+            $shopType = $validatedData['shop_type']; // Get the business_type from the request
 
-
+            // Create the shop
             $shop = new Shop($validatedData);
             $shop->user_id = $userId;
             $shop->shop_url = $shop_url;
             $shop->template_type = 1;
             $shop->vat_tax = 0;
             $shop->save();
+
+            // Clone demo data based on the selected business type
+            $this->cloneDemoData($shopType, $userId, $shop->id); // Pass the business type and shop id to clone demo data
 
             // Log the success message
             Log::info('Shop created successfully', ['id' => $shop->id]);
@@ -160,6 +214,71 @@ class ShopController extends Controller
             // Log and return an error response
             Log::error('Error creating Shop', ['error' => $e->getMessage()]);
             return response()->json(['status' => 500, 'error' => $e->getMessage()]);
+        }
+    }
+
+    private function cloneDemoData($shopType, $userId, $shopId)
+    {
+        // Clone Products (Assuming 'demo_products' table contains 'shop_id' and 'user_id' columns)
+        // $demoProducts = DB::table('demo_products')
+        //     ->where('business_type_id', $shopType)
+        //     ->get();
+
+        // foreach ($demoProducts as $product) {
+        //     DB::table('products')->insert([
+        //         'name' => $product->name,
+        //         'category_id' => $product->category_id,
+        //         'price' => $product->price,
+        //         'size_id' => $product->size_id,
+        //         'color_id' => $product->color_id,
+        //         'shop_id' => $shopId,  // Associating with the created shop
+        //         'user_id' => $userId,  // Associating with the user who created the shop
+        //         'business_type_id' => $shopType,
+        //         'status' => true,  // Assuming status is required
+        //     ]);
+        // }
+
+        // Clone Categories
+        $demoCategories = DB::table('demo_categories')
+            ->where('business_type_id', $shopType)
+            ->get();
+
+        foreach ($demoCategories as $category) {
+            DB::table('categories')->insert([
+                'name' => $category->name,
+                'image' => $category->image, // Assuming image is stored in demo_categories
+                'description' => $category->description, // Nullable field
+                'user_id' => $userId,  // Associating with the user who created the shop
+                'status' => true,  // Default status
+            ]);
+        }
+
+        // Clone Sizes
+        $demoSizes = DB::table('demo_sizes')
+            ->where('business_type_id', $shopType)
+            ->get();
+
+        foreach ($demoSizes as $size) {
+            DB::table('sizes')->insert([
+                'size' => $size->size,
+                'shop_id' => $shopId,  // Associating with the created shop
+                'user_id' => $userId,  // Associating with the user who created the shop
+                'status' => true,  // Default status
+            ]);
+        }
+
+        // Clone Colors
+        $demoColors = DB::table('demo_colors')
+            ->where('business_type_id', $shopType)
+            ->get();
+
+        foreach ($demoColors as $color) {
+            DB::table('colors')->insert([
+                'color' => $color->color,
+                'shop_id' => $shopId,  // Associating with the created shop
+                'user_id' => $userId,  // Associating with the user who created the shop
+                'status' => true,  // Default status
+            ]);
         }
     }
 
