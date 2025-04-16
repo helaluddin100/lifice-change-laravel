@@ -222,20 +222,26 @@ class ShopController extends Controller
         DB::beginTransaction();  // Start a transaction
 
         try {
-            // Clone Categories
+            // Clone Categories and create a map for the category ids
+            $categoryMap = []; // Initialize category map
             $demoCategories = DB::table('demo_categories')
                 ->where('business_type_id', $shopType)
                 ->get();
 
             foreach ($demoCategories as $category) {
                 Log::debug('Inserting Category:', ['category' => $category]);  // Debug log
-                DB::table('categories')->insert([
+
+                // Insert the category into the 'categories' table
+                $newCategoryId = DB::table('categories')->insertGetId([
                     'name' => $category->name,
                     'image' => $category->image, // Assuming image is stored in demo_categories
                     'description' => $category->description, // Nullable field
                     'user_id' => $userId,  // Associating with the user who created the shop
                     'status' => true,  // Default status
                 ]);
+
+                // Map original category ID to the new category ID
+                $categoryMap[$category->id] = $newCategoryId;
             }
 
             // Create color map to maintain original IDs
@@ -317,13 +323,16 @@ class ShopController extends Controller
                     }
                 }
 
+                // Get the new category ID from the map and insert the product
+                $newCategoryId = isset($categoryMap[$product->category_id]) ? $categoryMap[$product->category_id] : null;
+
                 // Insert the product into the 'products' table
                 $insertData = [
                     'user_id' => $userId,
                     'shop_id' => $shopId,
                     'name' => $product->name,
                     'slug' => $product->slug,
-                    'category_id' => $product->category_id,
+                    'category_id' => $newCategoryId,  // Use the new category ID
                     'current_price' => $product->current_price,
                     'old_price' => $product->old_price,
                     'buy_price' => $product->buy_price,
