@@ -33,6 +33,9 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
+            'phone' => 'nullable',
+            'string',
+            'max:20',
             'password' => 'required|string|min:6',
         ]);
 
@@ -45,6 +48,7 @@ class AuthController extends Controller
         $userData = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
             'password' => bcrypt($request->input('password')),
             'verification_code' => $verificationCode,
         ];
