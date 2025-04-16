@@ -56,6 +56,19 @@
                                         </select>
                                     </div>
                                 </div>
+
+
+
+
+
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Initial Sold Count</label>
+                                        <input type="number" class="form-control" name="sold_count"
+                                            value="{{ old('sold_count', $product->sold_count) }}"
+                                            placeholder="Initial Sold Count">
+                                    </div>
+                                </div>
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Sell/Current Price *</label>
@@ -74,10 +87,27 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-3">
+                                        <label class="form-label">Buying Price (Optional)</label>
+                                        <input type="number" class="form-control" name="buy_price"
+                                            value="{{ old('buy_price', $product->buy_price) }}"
+                                            placeholder="Buying Price (Optional)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
                                         <label class="form-label">Quantity (Stock) *</label>
                                         <input type="number" class="form-control" name="quantity"
                                             value="{{ old('quantity', $product->quantity) }}"
                                             placeholder="Quantity (Stock)">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Warranty</label>
+                                        <input type="text"
+                                            class="form-control"value="{{ old('warranty', $product->warranty) }}"
+                                            name="warranty" placeholder="Warranty">
                                     </div>
                                 </div>
 
@@ -123,7 +153,8 @@
                                                 </div>
                                             @endforeach
                                         </div>
-                                        <button type="button" id="add-color-btn" class="btn btn-primary">Add Color</button>
+                                        <button type="button" id="add-color-btn" class="btn btn-primary">Add
+                                            Color</button>
                                     </div>
                                 </div>
 
@@ -293,9 +324,6 @@
                                 </div>
 
 
-
-
-
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="product_video" class="form-label">Product Video (YouTube Link)</label>
@@ -421,15 +449,26 @@
             removeFieldGroup('.remove-detail', '.product-detail-group');
             removeFieldGroup('.remove-variant', '.product-variant-group');
 
-            // New image preview
             $('#images').on('change', function() {
                 Array.from(this.files).forEach(file => {
                     const reader = new FileReader();
-                    reader.onload = (e) => $('#image-preview').append(
-                        `<div class="col-md-3 mt-2"><img src="${e.target.result}" alt="Product Image" style="max-width: 100%; height: auto;"></div>`
-                    );
+                    reader.onload = (e) => {
+                        // Append new image preview in DOM
+                        $('#image-preview').append(
+                            `<div class="col-md-3 mt-2 image-container">
+                        <img src="${e.target.result}" alt="Product Image" style="max-width: 100%; height: auto;">
+                        <button type="button" class="btn btn-danger remove-image">Remove</button>
+                    </div>`
+                        );
+                    };
                     reader.readAsDataURL(file);
                 });
+            });
+
+            // Remove Image when 'Remove' button is clicked
+            $(document).on('click', '.remove-image', function() {
+                // Remove the image container from the DOM
+                $(this).closest('.image-container').remove();
             });
 
             // Remove Image
@@ -438,7 +477,7 @@
 
                 // Optionally, you can send an AJAX request to remove the image from the server
                 $.ajax({
-                    url: '/admin/product/remove-image', // Define the route for image removal
+                    url: '{{ route('admin.product.removeImage') }}', // Define the route for image removal
                     method: 'POST',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),

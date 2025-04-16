@@ -212,14 +212,122 @@ class DemoProductController extends Controller
         // Find the image by ID
         $image = ProductImage::findOrFail($request->image_id);
 
-        // Delete the image from storage
-        if (Storage::exists('public/' . $image->image_path)) {
-            Storage::delete('public/' . $image->image_path);
+        // Delete the image file from the public directory
+        if (file_exists(public_path($image->image_path))) {
+            unlink(public_path($image->image_path));
         }
 
         // Delete the image record from the database
         $image->delete();
 
         return response()->json(['success' => true]);
+    }
+
+
+
+    public function update(Request $request, $id)
+    {
+        // Validate incoming request data
+        $validated = $request->validate([
+            'business_type' => 'required|exists:business_types,id',
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string|max:255',
+            'current_price' => 'required|numeric',
+            'old_price' => 'nullable|numeric',
+            'buy_price' => 'nullable|numeric',
+            'quantity' => 'required|integer',
+            'warranty' => 'nullable|string|max:255',
+            'sold_count' => 'nullable|integer',
+
+            'product_colors' => 'sometimes|required|array',
+            'product_colors.*.color' => 'nullable|string|max:255',
+            'product_colors.*.price' => 'nullable|numeric',
+            'product_colors.*.quantity' => 'nullable|numeric',
+
+            'product_sizes' => 'sometimes|required|array',
+            'product_sizes.*.size' => 'nullable|string|max:255',
+            'product_sizes.*.price' => 'nullable|numeric',
+            'product_sizes.*.quantity' => 'nullable|numeric',
+
+            'product_details' => 'nullable|array',
+            'product_details.*.detail_type' => 'nullable|string|max:255',
+            'product_details.*.detail_description' => 'nullable|string',
+            'product_variant' => 'nullable|array',
+            'product_variant.*.option' => 'nullable|string|max:255',
+            'product_variant.*.cost' => 'nullable|numeric',
+            'images' => 'nullable|array',
+            'images.*' => 'file|mimes:jpeg,png,jpg,gif,webp|max:6000',
+            'video' => 'nullable|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'status' => 'required',
+            'has_variant' => 'nullable',
+            'has_details' => 'nullable',
+            'variant_name' => 'nullable|string|max:255',
+            'description' => 'required',
+        ]);
+
+        // Ensure 'status' and 'has_variant' are treated as booleans
+        $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+
+        // Find the existing product
+        $product = DemoProduct::findOrFail($id);
+
+        // Update product details
+        $product->update([
+            'business_types' => $validated['business_type'],
+            'category_id' => $validated['category_id'],
+            'name' => $validated['name'],
+            'current_price' => $validated['current_price'],
+            'old_price' => $validated['old_price'] ?? null,
+            'buy_price' => $validated['buy_price'] ?? null,
+            'quantity' => $validated['quantity'],
+            'warranty' => $validated['warranty'] ?? null,
+            'product_details' => !empty($validated['product_details']) ? $validated['product_details'] : null,
+            'product_variant' => !empty($validated['product_variant']) ? $validated['product_variant'] : null,
+            'product_colors' => !empty($validated['product_colors']) ? $validated['product_colors'] : null,
+            'product_sizes' => !empty($validated['product_sizes']) ? $validated['product_sizes'] : null,
+            'video' => $validated['video'] ?? null,
+            'meta_title' => $validated['meta_title'] ?? null,
+            'meta_description' => $validated['meta_description'] ?? null,
+            'meta_keywords' => $validated['meta_keywords'] ?? null,
+            'status' => $status,
+            'has_variant' => $has_variant,
+            'has_details' => filter_var($validated['has_details'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'variant_name' => $validated['variant_name'] ?? null,
+            'description' => $validated['description'],
+            'sold_count' => $validated['sold_count'] ?? null,
+        ]);
+
+        // Handle image uploads and store in product_images table
+        if ($request->hasFile('images')) {
+
+            // Upload new images
+            foreach ($request->file('images') as $image) {
+                // Generate a unique image name
+                $imageName = md5(uniqid()) . '.webp';
+
+                // Open the uploaded image
+                $img = Image::make($image);
+
+                // Convert the image to WebP format and reduce file size
+                $img->encode('webp', 80);
+
+                // Save the image in the public directory
+                $img->save(public_path('product_images/' . $imageName));
+
+                // Store the image in the product_images table
+                ProductImage::create([
+                    'demo_product_id' => $product->id, // If you are storing data from 'demo_products'
+                    'image_path' => 'product_images/' . $imageName
+                ]);
+            }
+        }
+
+        // Return response indicating the product was updated successfully
+        return redirect()->route('admin.product.index')->with('success', 'Demo Product updated successfully!');
     }
 }
