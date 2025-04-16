@@ -195,7 +195,7 @@ class ProductController extends Controller
 
         // Start querying the Product model with eager loading for images
         $query = Product::where('shop_id', $shop_id)
-            ->where('status', 1)  // Filter products by status (only active products with status 1)
+            ->where('status', 1)
             ->with(['images', 'category']);
 
         // Apply category filter if provided

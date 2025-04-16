@@ -55,7 +55,7 @@ class DemoProduct extends Model
     ];
 
     // Relationship with ProductImage
-    public function images()
+    public function demoimages()
     {
         return $this->hasMany(ProductImage::class, 'demo_product_id'); // Assuming 'demo_product_id' is the foreign key in the ProductImage model
     }

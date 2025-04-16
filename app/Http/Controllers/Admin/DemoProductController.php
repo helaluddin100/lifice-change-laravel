@@ -23,7 +23,13 @@ class DemoProductController extends Controller
      */
     public function index()
     {
-        $products = DemoProduct::all();
+
+        $products = DemoProduct::with(['demoimages'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+
+
         return view('admin.product.index', compact('products'));
     }
 
@@ -191,7 +197,7 @@ class DemoProductController extends Controller
     public function edit($id)
     {
         // Get the product and related data
-        $product = DemoProduct::with('images')->find($id); // Find instead of findOrFail to debug
+        $product = DemoProduct::with('demoimages')->find($id); // Find instead of findOrFail to debug
 
 
         // Get related data based on the product's business type
