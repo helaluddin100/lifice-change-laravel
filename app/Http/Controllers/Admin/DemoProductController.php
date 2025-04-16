@@ -336,4 +336,23 @@ class DemoProductController extends Controller
         // Return response indicating the product was updated successfully
         return redirect()->route('admin.product.index')->with('success', 'Demo Product updated successfully!');
     }
+
+    public function destroy($id)
+    {
+        // Find the product
+        $product = DemoProduct::findOrFail($id);
+
+        // Delete associated images
+        foreach ($product->demoimages as $image) {
+            if (file_exists(public_path($image->image_path))) {
+                unlink(public_path($image->image_path));
+            }
+            $image->delete();
+        }
+
+        // Delete the product
+        $product->delete();
+
+        return redirect()->route('admin.product.index')->with('success', 'Demo Product deleted successfully!');
+    }
 }
