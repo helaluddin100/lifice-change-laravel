@@ -219,68 +219,153 @@ class ShopController extends Controller
 
     private function cloneDemoData($shopType, $userId, $shopId)
     {
-        // Clone Products (Assuming 'demo_products' table contains 'shop_id' and 'user_id' columns)
-        // $demoProducts = DB::table('demo_products')
-        //     ->where('business_type_id', $shopType)
-        //     ->get();
+        DB::beginTransaction();  // Start a transaction
 
-        // foreach ($demoProducts as $product) {
-        //     DB::table('products')->insert([
-        //         'name' => $product->name,
-        //         'category_id' => $product->category_id,
-        //         'price' => $product->price,
-        //         'size_id' => $product->size_id,
-        //         'color_id' => $product->color_id,
-        //         'shop_id' => $shopId,  // Associating with the created shop
-        //         'user_id' => $userId,  // Associating with the user who created the shop
-        //         'business_type_id' => $shopType,
-        //         'status' => true,  // Assuming status is required
-        //     ]);
-        // }
+        try {
+            // Clone Categories
+            $demoCategories = DB::table('demo_categories')
+                ->where('business_type_id', $shopType)
+                ->get();
 
-        // Clone Categories
-        $demoCategories = DB::table('demo_categories')
-            ->where('business_type_id', $shopType)
-            ->get();
+            foreach ($demoCategories as $category) {
+                Log::debug('Inserting Category:', ['category' => $category]);  // Debug log
+                DB::table('categories')->insert([
+                    'name' => $category->name,
+                    'image' => $category->image, // Assuming image is stored in demo_categories
+                    'description' => $category->description, // Nullable field
+                    'user_id' => $userId,  // Associating with the user who created the shop
+                    'status' => true,  // Default status
+                ]);
+            }
 
-        foreach ($demoCategories as $category) {
-            DB::table('categories')->insert([
-                'name' => $category->name,
-                'image' => $category->image, // Assuming image is stored in demo_categories
-                'description' => $category->description, // Nullable field
-                'user_id' => $userId,  // Associating with the user who created the shop
-                'status' => true,  // Default status
-            ]);
-        }
+            // Create color map to maintain original IDs
+            $colorMap = [];
+            $demoColors = DB::table('demo_colors')
+                ->where('business_type_id', $shopType)
+                ->get();
 
-        // Clone Sizes
-        $demoSizes = DB::table('demo_sizes')
-            ->where('business_type_id', $shopType)
-            ->get();
+            foreach ($demoColors as $color) {
+                Log::debug('Inserting Color:', ['color' => $color]);  // Debug log
+                // Insert the color into the 'colors' table and map the original ID to the new ID
+                $newColorId = DB::table('colors')->insertGetId([
+                    'color' => $color->color,
+                    'shop_id' => $shopId,
+                    'user_id' => $userId,
+                    'status' => true,  // Default status
+                ]);
 
-        foreach ($demoSizes as $size) {
-            DB::table('sizes')->insert([
-                'size' => $size->size,
-                'shop_id' => $shopId,  // Associating with the created shop
-                'user_id' => $userId,  // Associating with the user who created the shop
-                'status' => true,  // Default status
-            ]);
-        }
+                // Map original color ID to new ID
+                $colorMap[$color->id] = $newColorId;
+            }
 
-        // Clone Colors
-        $demoColors = DB::table('demo_colors')
-            ->where('business_type_id', $shopType)
-            ->get();
+            // Create size map to maintain original IDs
+            $sizeMap = [];
+            $demoSizes = DB::table('demo_sizes')
+                ->where('business_type_id', $shopType)
+                ->get();
 
-        foreach ($demoColors as $color) {
-            DB::table('colors')->insert([
-                'color' => $color->color,
-                'shop_id' => $shopId,  // Associating with the created shop
-                'user_id' => $userId,  // Associating with the user who created the shop
-                'status' => true,  // Default status
-            ]);
+            foreach ($demoSizes as $size) {
+                Log::debug('Inserting Size:', ['size' => $size]);  // Debug log
+                // Insert the size into the 'sizes' table and map the original ID to the new ID
+                $newSizeId = DB::table('sizes')->insertGetId([
+                    'size' => $size->size,
+                    'shop_id' => $shopId,
+                    'user_id' => $userId,
+                    'status' => true,  // Default status
+                ]);
+
+                // Map original size ID to new ID
+                $sizeMap[$size->id] = $newSizeId;
+            }
+
+            // Clone Products and update product_colors and product_sizes JSON with new IDs
+            $demoProducts = DB::table('demo_products')
+                ->where('business_type_id', $shopType)
+                ->get();
+
+            foreach ($demoProducts as $product) {
+                Log::debug('Inserting Product:', ['product' => $product]);  // Debug log
+
+                // Map product colors and sizes with new IDs and proper structure
+                $productColors = [];
+                if (isset($product->product_colors)) {
+                    foreach (json_decode($product->product_colors) as $color) {
+                        // Handle color if it's a stdClass object and replace with new ID
+                        if (isset($colorMap[$color->color])) {
+                            // Construct color objects with price and quantity
+                            $productColors[] = [
+                                'color' => $colorMap[$color->color],
+                                'price' => $color->price,
+                                'quantity' => $color->quantity,
+                            ];
+                        }
+                    }
+                }
+
+                $productSizes = [];
+                if (isset($product->product_sizes)) {
+                    foreach (json_decode($product->product_sizes) as $size) {
+                        // Handle size if it's a stdClass object and replace with new ID
+                        if (isset($sizeMap[$size->size])) {
+                            // Construct size objects with price and quantity
+                            $productSizes[] = [
+                                'size' => $sizeMap[$size->size],
+                                'price' => $size->price,
+                                'quantity' => $size->quantity,
+                            ];
+                        }
+                    }
+                }
+
+                // Insert the product into the 'products' table
+                $insertData = [
+                    'user_id' => $userId,
+                    'shop_id' => $shopId,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'category_id' => $product->category_id,
+                    'current_price' => $product->current_price,
+                    'old_price' => $product->old_price,
+                    'buy_price' => $product->buy_price,
+                    'product_code' => $product->product_code,
+                    'quantity' => $product->quantity,
+                    'warranty' => $product->warranty,
+                    'sold_count' => $product->sold_count,
+                    'has_details' => $product->has_details,
+                    'product_details' => $product->product_details,
+                    'product_colors' => json_encode($productColors), // Updated colors with new IDs and additional data
+                    'product_sizes' => json_encode($productSizes),   // Updated sizes with new IDs and additional data
+                    'has_variant' => $product->has_variant,
+                    'variant_name' => $product->variant_name,
+                    'product_variant' => $product->product_variant,
+                    'has_delivery_charge' => $product->has_delivery_charge,
+                    'delivery_charge' => $product->delivery_charge,
+                    'video' => $product->video,
+                    'description' => $product->description,
+                    'meta_title' => $product->meta_title,
+                    'meta_description' => $product->meta_description,
+                    'meta_keywords' => $product->meta_keywords,
+                    'product_info_list' => $product->product_info_list,
+                    'status' => true,
+                ];
+
+                // Log the final data before insertion
+                Log::debug('Inserting final Product Data:', ['product_data' => $insertData]);
+
+                // Insert the product
+                DB::table('products')->insert($insertData);
+            }
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if any error occurs
+            DB::rollBack();
+            Log::error('Error cloning demo data:', ['error' => $e->getMessage()]);
         }
     }
+
+
 
 
 
