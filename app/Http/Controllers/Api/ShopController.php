@@ -224,176 +224,16 @@ class ShopController extends Controller
 
         try {
             // Clone Categories
-            $demoCategories = DB::table('demo_categories')
-                ->where('business_type_id', $shopType)
-                ->get();
+            $categoryMap = $this->cloneCategories($shopType, $userId);
 
-            foreach ($demoCategories as $category) {
-                Log::debug('Inserting Category:', ['category' => $category]);  // Debug log
-                $newCategoryId = DB::table('categories')->insertGetId([
-                    'name' => $category->name,
-                    'image' => $category->image, // Assuming image is stored in demo_categories
-                    'description' => $category->description, // Nullable field
-                    'user_id' => $userId,  // Associating with the user who created the shop
-                    'status' => true,  // Default status
-                ]);
+            // Clone Colors
+            $colorMap = $this->cloneColors($shopType, $userId, $shopId);
 
-                // Map original category ID to the new ID
-                $categoryMap[$category->id] = $newCategoryId;
-            }
+            // Clone Sizes
+            $sizeMap = $this->cloneSizes($shopType, $userId, $shopId);
 
-            // Create color map to maintain original IDs
-            $colorMap = [];
-            $demoColors = DB::table('demo_colors')
-                ->where('business_type_id', $shopType)
-                ->get();
-
-            foreach ($demoColors as $color) {
-                Log::debug('Inserting Color:', ['color' => $color]);  // Debug log
-                $newColorId = DB::table('colors')->insertGetId([
-                    'color' => $color->color,
-                    'shop_id' => $shopId,
-                    'user_id' => $userId,
-                    'status' => true,  // Default status
-                ]);
-
-                // Map original color ID to new ID
-                $colorMap[$color->id] = $newColorId;
-            }
-
-            // Create size map to maintain original IDs
-            $sizeMap = [];
-            $demoSizes = DB::table('demo_sizes')
-                ->where('business_type_id', $shopType)
-                ->get();
-
-            foreach ($demoSizes as $size) {
-                Log::debug('Inserting Size:', ['size' => $size]);  // Debug log
-                $newSizeId = DB::table('sizes')->insertGetId([
-                    'size' => $size->size,
-                    'shop_id' => $shopId,
-                    'user_id' => $userId,
-                    'status' => true,  // Default status
-                ]);
-
-                // Map original size ID to new ID
-                $sizeMap[$size->id] = $newSizeId;
-            }
-
-            // Clone Products and update product_colors and product_sizes JSON with new IDs
-            $demoProducts = DB::table('demo_products')
-                ->where('business_type_id', $shopType)
-                ->get();
-
-            foreach ($demoProducts as $product) {
-                Log::debug('Inserting Product:', ['product' => $product]);  // Debug log
-
-                // Map product colors and sizes with new IDs and proper structure
-                $productColors = [];
-                if (isset($product->product_colors)) {
-                    foreach (json_decode($product->product_colors) as $color) {
-                        if (isset($colorMap[$color->color])) {
-                            $productColors[] = [
-                                'color' => $colorMap[$color->color],
-                                'price' => $color->price,
-                                'quantity' => $color->quantity,
-                            ];
-                        }
-                    }
-                }
-
-                $productSizes = [];
-                if (isset($product->product_sizes)) {
-                    foreach (json_decode($product->product_sizes) as $size) {
-                        if (isset($sizeMap[$size->size])) {
-                            $productSizes[] = [
-                                'size' => $sizeMap[$size->size],
-                                'price' => $size->price,
-                                'quantity' => $size->quantity,
-                            ];
-                        }
-                    }
-                }
-
-                // Insert the product into the 'products' table
-                $newCategoryId = isset($categoryMap[$product->category_id]) ? $categoryMap[$product->category_id] : null;
-                $insertData = [
-                    'user_id' => $userId,
-                    'shop_id' => $shopId,
-                    'name' => $product->name,
-                    'slug' => $product->slug,
-                    'category_id' => $newCategoryId,
-                    'current_price' => $product->current_price,
-                    'old_price' => $product->old_price,
-                    'buy_price' => $product->buy_price,
-                    'product_code' => $product->product_code,
-                    'quantity' => $product->quantity,
-                    'warranty' => $product->warranty,
-                    'sold_count' => $product->sold_count,
-                    'has_details' => $product->has_details,
-                    'product_details' => $product->product_details,
-                    'product_colors' => json_encode($productColors),
-                    'product_sizes' => json_encode($productSizes),
-                    'has_variant' => $product->has_variant,
-                    'variant_name' => $product->variant_name,
-                    'product_variant' => $product->product_variant,
-                    'has_delivery_charge' => $product->has_delivery_charge,
-                    'delivery_charge' => $product->delivery_charge,
-                    'video' => $product->video,
-                    'description' => $product->description,
-                    'meta_title' => $product->meta_title,
-                    'meta_description' => $product->meta_description,
-                    'meta_keywords' => $product->meta_keywords,
-                    'product_info_list' => $product->product_info_list,
-                    'status' => true,
-                ];
-
-                Log::debug('Inserting final Product Data:', ['product_data' => $insertData]);
-                $newProductId = DB::table('products')->insertGetId($insertData);  // Get the new product ID
-
-                // Debugging: Log to check if product image cloning is working
-                Log::debug('Cloning product images for product_id:', ['new_product_id' => $newProductId]);
-
-                // Clone product images by linking demo_product_id to new product_id
-                $demoImages = DemoProduct::find($product->id)->demoimages; // Using the relationship to get demo product images
-
-                if ($demoImages) {
-                    foreach ($demoImages as $image) {
-                        Log::debug('Cloning Image:', ['image' => $image]);  // Debug log for images
-
-                        // Get the original image path (Fix double 'product_images/')
-                        $imagePath = $image->image_path;
-
-                        // Generate a new unique name for the image file
-                        $newImageName = time() . '-' . uniqid() . '.' . pathinfo($imagePath, PATHINFO_EXTENSION);
-
-                        // **Fix: Ensure we are using the correct path here**: Check if file exists in correct folder
-                        $oldImagePath = public_path('product_images/' . $imagePath); // Correcting the path
-                        $copyImage = public_path($imagePath); // Correcting the path
-
-                        // Define the new path for the image in the same folder
-                        $newImagePath = 'product_images/' . $newImageName;
-
-                        // Define the new image path (destination)
-                        $newImageFullPath = public_path($newImagePath);
-
-                        if (file_exists($copyImage)) {
-                            // Copy the image to the new directory
-                            if (!copy($copyImage, $newImageFullPath)) {
-                                Log::error('Failed to copy image', ['image_path' => $copyImage, 'new_image_path' => $newImageFullPath]);
-                            }
-                        } else {
-                            Log::error('Image not found for copy', ['image_path' => $copyImage]);
-                        }
-
-                        // Insert the image with the new product_id and updated image path
-                        DB::table('product_images')->insert([
-                            'product_id' => $newProductId,  // Newly inserted product ID
-                            'image_path' => $newImagePath,  // New image path after renaming and copying
-                        ]);
-                    }
-                }
-            }
+            // Clone Products
+            $this->cloneProducts($shopType, $userId, $shopId, $categoryMap, $colorMap, $sizeMap);
 
             // Commit the transaction if everything is successful
             DB::commit();
@@ -401,6 +241,161 @@ class ShopController extends Controller
             // Rollback the transaction if any error occurs
             DB::rollBack();
             Log::error('Error cloning demo data:', ['error' => $e->getMessage()]);
+        }
+    }
+
+    private function cloneCategories($shopType, $userId)
+    {
+        $categoryMap = [];
+        $demoCategories = DB::table('demo_categories')->where('business_type_id', $shopType)->get();
+        foreach ($demoCategories as $category) {
+            $newCategoryId = DB::table('categories')->insertGetId([
+                'name' => $category->name,
+                'image' => $category->image,
+                'description' => $category->description,
+                'user_id' => $userId,
+                'status' => true,
+            ]);
+            $categoryMap[$category->id] = $newCategoryId;
+        }
+        return $categoryMap;
+    }
+
+    private function cloneColors($shopType, $userId, $shopId)
+    {
+        $colorMap = [];
+        $demoColors = DB::table('demo_colors')->where('business_type_id', $shopType)->get();
+        foreach ($demoColors as $color) {
+            $newColorId = DB::table('colors')->insertGetId([
+                'color' => $color->color,
+                'shop_id' => $shopId,
+                'user_id' => $userId,
+                'status' => true,
+            ]);
+            $colorMap[$color->id] = $newColorId;
+        }
+        return $colorMap;
+    }
+
+    private function cloneSizes($shopType, $userId, $shopId)
+    {
+        $sizeMap = [];
+        $demoSizes = DB::table('demo_sizes')->where('business_type_id', $shopType)->get();
+        foreach ($demoSizes as $size) {
+            $newSizeId = DB::table('sizes')->insertGetId([
+                'size' => $size->size,
+                'shop_id' => $shopId,
+                'user_id' => $userId,
+                'status' => true,
+            ]);
+            $sizeMap[$size->id] = $newSizeId;
+        }
+        return $sizeMap;
+    }
+
+    private function cloneProducts($shopType, $userId, $shopId, $categoryMap, $colorMap, $sizeMap)
+    {
+        $demoProducts = DB::table('demo_products')->where('business_type_id', $shopType)->get();
+        foreach ($demoProducts as $product) {
+            // Map product colors and sizes with new IDs
+            $productColors = $this->mapProductColors($product->product_colors, $colorMap);
+            $productSizes = $this->mapProductSizes($product->product_sizes, $sizeMap);
+
+            // Insert the product into the 'products' table
+            $newCategoryId = isset($categoryMap[$product->category_id]) ? $categoryMap[$product->category_id] : null;
+            $insertData = [
+                'user_id' => $userId,
+                'shop_id' => $shopId,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'category_id' => $newCategoryId,
+                'current_price' => $product->current_price,
+                'old_price' => $product->old_price,
+                'buy_price' => $product->buy_price,
+                'product_code' => $product->product_code,
+                'quantity' => $product->quantity,
+                'warranty' => $product->warranty,
+                'sold_count' => $product->sold_count,
+                'has_details' => $product->has_details,
+                'product_details' => $product->product_details,
+                'product_colors' => json_encode($productColors),
+                'product_sizes' => json_encode($productSizes),
+                'has_variant' => $product->has_variant,
+                'variant_name' => $product->variant_name,
+                'product_variant' => $product->product_variant,
+                'has_delivery_charge' => $product->has_delivery_charge,
+                'delivery_charge' => $product->delivery_charge,
+                'video' => $product->video,
+                'description' => $product->description,
+                'meta_title' => $product->meta_title,
+                'meta_description' => $product->meta_description,
+                'meta_keywords' => $product->meta_keywords,
+                'product_info_list' => $product->product_info_list,
+                'status' => true,
+            ];
+
+            $newProductId = DB::table('products')->insertGetId($insertData);  // Get the new product ID
+
+            // Clone product images by linking demo_product_id to new product_id
+            $this->cloneProductImages($product, $newProductId);
+        }
+    }
+
+    private function mapProductColors($productColors, $colorMap)
+    {
+        $mappedColors = [];
+        if (isset($productColors)) {
+            foreach (json_decode($productColors) as $color) {
+                if (isset($colorMap[$color->color])) {
+                    $mappedColors[] = [
+                        'color' => $colorMap[$color->color],
+                        'price' => $color->price,
+                        'quantity' => $color->quantity,
+                    ];
+                }
+            }
+        }
+        return $mappedColors;
+    }
+
+    private function mapProductSizes($productSizes, $sizeMap)
+    {
+        $mappedSizes = [];
+        if (isset($productSizes)) {
+            foreach (json_decode($productSizes) as $size) {
+                if (isset($sizeMap[$size->size])) {
+                    $mappedSizes[] = [
+                        'size' => $sizeMap[$size->size],
+                        'price' => $size->price,
+                        'quantity' => $size->quantity,
+                    ];
+                }
+            }
+        }
+        return $mappedSizes;
+    }
+
+    private function cloneProductImages($product, $newProductId)
+    {
+        $demoImages = DemoProduct::find($product->id)->demoimages; // Using the relationship to get demo product images
+        if ($demoImages) {
+            foreach ($demoImages as $image) {
+                $imagePath = $image->image_path;
+                $newImageName = time() . '-' . uniqid() . '.' . pathinfo($imagePath, PATHINFO_EXTENSION);
+                $newImagePath = 'product_images/' . $newImageName;
+
+                $oldImagePath = public_path($imagePath);
+                $newImageFullPath = public_path($newImagePath);
+
+                if (file_exists($oldImagePath)) {
+                    copy($oldImagePath, $newImageFullPath);
+                }
+
+                DB::table('product_images')->insert([
+                    'product_id' => $newProductId,
+                    'image_path' => $newImagePath,
+                ]);
+            }
         }
     }
 
