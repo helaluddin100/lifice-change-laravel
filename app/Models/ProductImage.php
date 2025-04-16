@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProductImage extends Model
 {
     use HasFactory;
+    protected $table = 'product_images';
 
 
     protected $fillable = ['product_id', 'image_path', 'demo_product_id'];
@@ -20,6 +21,6 @@ class ProductImage extends Model
 
     public function demoProduct()
     {
-        return $this->belongsTo(DemoProduct::class, 'demo_product_id');  // Assuming 'demo_product_id' is the foreign key
+        return $this->belongsTo(DemoProduct::class, 'demo_product_id');
     }
 }

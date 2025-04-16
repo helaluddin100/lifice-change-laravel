@@ -53,11 +53,12 @@ class DemoProduct extends Model
         'has_variant' => 'boolean',
         'has_delivery_charge' => 'boolean',
     ];
+    protected $table = 'demo_products';
 
     // Relationship with ProductImage
     public function demoimages()
     {
-        return $this->hasMany(ProductImage::class, 'demo_product_id'); // Assuming 'demo_product_id' is the foreign key in the ProductImage model
+        return $this->hasMany(ProductImage::class, 'demo_product_id');
     }
 
     // Relationship with Category

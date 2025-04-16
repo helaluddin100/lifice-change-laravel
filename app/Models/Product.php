@@ -55,6 +55,7 @@ class Product extends Model
         'has_delivery_charge' => 'boolean',
     ];
 
+    protected $table = 'products';
 
 
     public function images(): HasMany
@@ -62,7 +63,10 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
-
+    public function productImages()
+    {
+        return $this->hasMany(ProductImage::class, 'product_id');
+    }
     public function todaySellProducts()
     {
         return $this->hasMany(TodaySellProduct::class);

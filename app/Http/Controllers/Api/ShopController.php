@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Image;
 use App\Models\Shop;
 use App\Models\Country;
+use App\Models\DemoProduct;
 use App\Models\VisitorData;
 use Illuminate\Support\Str;
 use App\Models\BusinessType;
@@ -222,16 +223,13 @@ class ShopController extends Controller
         DB::beginTransaction();  // Start a transaction
 
         try {
-            // Clone Categories and create a map for the category ids
-            $categoryMap = []; // Initialize category map
+            // Clone Categories
             $demoCategories = DB::table('demo_categories')
                 ->where('business_type_id', $shopType)
                 ->get();
 
             foreach ($demoCategories as $category) {
                 Log::debug('Inserting Category:', ['category' => $category]);  // Debug log
-
-                // Insert the category into the 'categories' table
                 $newCategoryId = DB::table('categories')->insertGetId([
                     'name' => $category->name,
                     'image' => $category->image, // Assuming image is stored in demo_categories
@@ -240,7 +238,7 @@ class ShopController extends Controller
                     'status' => true,  // Default status
                 ]);
 
-                // Map original category ID to the new category ID
+                // Map original category ID to the new ID
                 $categoryMap[$category->id] = $newCategoryId;
             }
 
@@ -252,7 +250,6 @@ class ShopController extends Controller
 
             foreach ($demoColors as $color) {
                 Log::debug('Inserting Color:', ['color' => $color]);  // Debug log
-                // Insert the color into the 'colors' table and map the original ID to the new ID
                 $newColorId = DB::table('colors')->insertGetId([
                     'color' => $color->color,
                     'shop_id' => $shopId,
@@ -272,7 +269,6 @@ class ShopController extends Controller
 
             foreach ($demoSizes as $size) {
                 Log::debug('Inserting Size:', ['size' => $size]);  // Debug log
-                // Insert the size into the 'sizes' table and map the original ID to the new ID
                 $newSizeId = DB::table('sizes')->insertGetId([
                     'size' => $size->size,
                     'shop_id' => $shopId,
@@ -296,9 +292,7 @@ class ShopController extends Controller
                 $productColors = [];
                 if (isset($product->product_colors)) {
                     foreach (json_decode($product->product_colors) as $color) {
-                        // Handle color if it's a stdClass object and replace with new ID
                         if (isset($colorMap[$color->color])) {
-                            // Construct color objects with price and quantity
                             $productColors[] = [
                                 'color' => $colorMap[$color->color],
                                 'price' => $color->price,
@@ -311,9 +305,7 @@ class ShopController extends Controller
                 $productSizes = [];
                 if (isset($product->product_sizes)) {
                     foreach (json_decode($product->product_sizes) as $size) {
-                        // Handle size if it's a stdClass object and replace with new ID
                         if (isset($sizeMap[$size->size])) {
-                            // Construct size objects with price and quantity
                             $productSizes[] = [
                                 'size' => $sizeMap[$size->size],
                                 'price' => $size->price,
@@ -323,16 +315,14 @@ class ShopController extends Controller
                     }
                 }
 
-                // Get the new category ID from the map and insert the product
-                $newCategoryId = isset($categoryMap[$product->category_id]) ? $categoryMap[$product->category_id] : null;
-
                 // Insert the product into the 'products' table
+                $newCategoryId = isset($categoryMap[$product->category_id]) ? $categoryMap[$product->category_id] : null;
                 $insertData = [
                     'user_id' => $userId,
                     'shop_id' => $shopId,
                     'name' => $product->name,
                     'slug' => $product->slug,
-                    'category_id' => $newCategoryId,  // Use the new category ID
+                    'category_id' => $newCategoryId,
                     'current_price' => $product->current_price,
                     'old_price' => $product->old_price,
                     'buy_price' => $product->buy_price,
@@ -342,8 +332,8 @@ class ShopController extends Controller
                     'sold_count' => $product->sold_count,
                     'has_details' => $product->has_details,
                     'product_details' => $product->product_details,
-                    'product_colors' => json_encode($productColors), // Updated colors with new IDs and additional data
-                    'product_sizes' => json_encode($productSizes),   // Updated sizes with new IDs and additional data
+                    'product_colors' => json_encode($productColors),
+                    'product_sizes' => json_encode($productSizes),
                     'has_variant' => $product->has_variant,
                     'variant_name' => $product->variant_name,
                     'product_variant' => $product->product_variant,
@@ -358,11 +348,27 @@ class ShopController extends Controller
                     'status' => true,
                 ];
 
-                // Log the final data before insertion
                 Log::debug('Inserting final Product Data:', ['product_data' => $insertData]);
+                $newProductId = DB::table('products')->insertGetId($insertData);  // Get the new product ID
 
-                // Insert the product
-                DB::table('products')->insert($insertData);
+                // Debugging: Log to check if product image cloning is working
+                Log::debug('Cloning product images for product_id:', ['new_product_id' => $newProductId]);
+
+                // Clone product images by linking demo_product_id to new product_id
+                // Fetch demo images for the product using the relationship
+                $demoImages = DemoProduct::find($product->id)->demoimages;
+
+                if ($demoImages) {
+                    foreach ($demoImages as $image) {
+                        Log::debug('Cloning Image:', ['image' => $image]);  // Debug log for images
+
+                        // Insert the image and replace demo_product_id with the new product_id
+                        DB::table('product_images')->insert([
+                            'product_id' => $newProductId,  // Newly inserted product ID
+                            'image_path' => $image->image_path,  // Assuming image_path is part of the image object
+                        ]);
+                    }
+                }
             }
 
             // Commit the transaction if everything is successful
@@ -373,6 +379,7 @@ class ShopController extends Controller
             Log::error('Error cloning demo data:', ['error' => $e->getMessage()]);
         }
     }
+
 
 
 

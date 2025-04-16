@@ -136,7 +136,7 @@ class DemoProductController extends Controller
         } while ($existingProduct);
         // Create the product
         $product = DemoProduct::create([
-            'business_types' => $validated['business_type'],
+            'business_type_id' => $validated['business_type'],
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
             'slug' => $slug,
@@ -284,7 +284,7 @@ class DemoProductController extends Controller
 
         // Update product details
         $product->update([
-            'business_types' => $validated['business_type'],
+            'business_type_id' => $validated['business_type'],
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
             'current_price' => $validated['current_price'],
