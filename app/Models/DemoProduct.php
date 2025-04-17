@@ -12,7 +12,7 @@ class DemoProduct extends Model
     use HasFactory;
 
     protected $fillable = [
-        'business_types',
+        'business_type_id',
         'category_id',
         'name',
         'category',

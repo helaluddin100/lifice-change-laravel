@@ -9,19 +9,15 @@ class UpdateProductImagesTable extends Migration
     public function up()
     {
         Schema::table('product_images', function (Blueprint $table) {
-
-            $table->foreignId('demo_product_id')->nullable()->constrained('demo_products')->onDelete('cascade');
+            $table->unsignedBigInteger('demo_product_id')->nullable()->after('product_id');
         });
     }
 
     public function down()
     {
         Schema::table('product_images', function (Blueprint $table) {
-            // Drop 'demo_product_id' column
-            $table->dropColumn('demo_product_id');
 
-            // Revert 'product_id' back to non-nullable
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade')->change();
+            $table->dropColumn('demo_product_id');
         });
     }
 }
