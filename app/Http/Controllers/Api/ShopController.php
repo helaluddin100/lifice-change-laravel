@@ -224,7 +224,7 @@ class ShopController extends Controller
 
         try {
             // Clone Categories
-            $categoryMap = $this->cloneCategories($shopType, $userId, $shopId); // Pass shopId for top category insertion
+            $categoryMap = $this->cloneCategories($shopType, $userId, $shopId);
 
             // Clone Colors
             $colorMap = $this->cloneColors($shopType, $userId, $shopId);
@@ -235,6 +235,10 @@ class ShopController extends Controller
             // Clone Products
             $this->cloneProducts($shopType, $userId, $shopId, $categoryMap, $colorMap, $sizeMap);
 
+            // Add Top Selling Products (Shuffling and limiting to 8)
+            $this->addTopSellingProducts($userId, $shopId);
+            $this->addTodaySellingProducts($userId, $shopId);
+
             // Commit the transaction if everything is successful
             DB::commit();
         } catch (\Exception $e) {
@@ -243,6 +247,57 @@ class ShopController extends Controller
             Log::error('Error cloning demo data:', ['error' => $e->getMessage()]);
         }
     }
+
+    private function addTodaySellingProducts($userId, $shopId)
+    {
+        // Get all products for the shop
+        $products = DB::table('products')
+            ->where('shop_id', $shopId)
+            ->get();
+
+        // Shuffle the products
+        $shuffledProducts = $products->shuffle();
+
+        // Get the top 8 products (limit to 8)
+        $todaySellingProducts = $shuffledProducts->take(8);
+
+        // Insert the top selling products into the 'today_sell_products' table
+        foreach ($todaySellingProducts as $product) {
+            DB::table('today_sell_products')->insert([
+                'user_id' => $userId,
+                'shop_id' => $shopId,
+                'product_id' => $product->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    private function addTopSellingProducts($userId, $shopId)
+    {
+        // Get all products for the shop
+        $products = DB::table('products')
+            ->where('shop_id', $shopId)
+            ->get();
+
+        // Shuffle the products
+        $shuffledProducts = $products->shuffle();
+
+        // Get the top 8 products (limit to 8)
+        $topSellingProducts = $shuffledProducts->take(8);
+
+        // Insert the top selling products into the 'top_selling_products' table
+        foreach ($topSellingProducts as $product) {
+            DB::table('top_selling_products')->insert([
+                'user_id' => $userId,
+                'shop_id' => $shopId,
+                'product_id' => $product->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
 
     private function cloneCategories($shopType, $userId, $shopId)
     {
