@@ -29,6 +29,7 @@
                                         <th>#ID</th>
                                         <th>Name</th>
                                         <th>Image</th>
+                                        <th>Business Type</th>
                                         <th>status</th>
                                         <th>Action</th>
                                     </tr>
@@ -40,9 +41,10 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $category->name }}</td>
                                             <td>
-                                                <img src="{{ asset($category->image) }}" alt=""
+                                                <img src="{{ asset('category_images/' . $category->image) }}" alt=""
                                                     style="width: 50px; height: 50px;">
                                             </td>
+                                            <td>{{ $category->businessType->name }}</td>
 
                                             <td>
                                                 @if ($category->status === 1)

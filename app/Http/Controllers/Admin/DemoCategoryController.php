@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\DemoCategory;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+
 class DemoCategoryController extends Controller
 {
     public function index()
@@ -17,35 +19,54 @@ class DemoCategoryController extends Controller
     {
         return view('admin.category.create');
     }
+
+
     public function store(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'business_type_id' => 'required|exists:business_types,id',
-                'name' => 'required|string|max:255',
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'description' => 'nullable|string',
-                'status' => 'nullable|boolean',
-            ]);
-            $imagePath = null;
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time() . '_' . $image->getClientOriginalName();
-                $imagePath = $image->storeAs('demo_category', $imageName, 'public');
-            }
-            DemoCategory::create([
-                'business_type_id' => $validated['business_type_id'],
-                'name' => $validated['name'],
-                'image' => $imagePath,
-                'description' => $validated['description'] ?? null,
-                'status' => $validated['status'] ?? true,
-            ]);
 
-            return redirect()->route('admin.category.index')->with('success', 'Category created successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        // Validate incoming request
+        $validatedData = $request->validate([
+            'business_type_id' => 'required|exists:business_types,id',
+            'name' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string',
+            'status' => 'nullable|boolean',
+        ]);
+
+        // Create a new category instance
+        $category = new DemoCategory();
+        $category->name = $validatedData['name'];
+        $category->business_type_id = $validatedData['business_type_id'];
+        $category->status = $request->status;
+
+        // Handle image upload and convert to WebP format
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = md5(uniqid()) . '.webp'; // WEBP format
+
+            // Open the uploaded image and convert it to WEBP format
+            $img = Image::make($image);
+
+            // Convert the image to WebP format and reduce file size
+            $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+
+            // Save the image in the public directory (category_images folder)
+            $img->save(public_path('category_images/' . $imageName));
+
+            // Assign the image name to the category
+            $category->image = $imageName;
         }
+
+        // Save the category
+        $category->save();
+
+        return redirect()->route('admin.category.index')->with('success', 'Category created successfully.');
     }
+
+
+
+
+
     public function edit(DemoCategory $category)
     {
         return view('admin.category.edit', compact('category'));
@@ -59,59 +80,75 @@ class DemoCategoryController extends Controller
      * @param  \App\Models\DemoCategory  $demoCategory
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DemoCategory $demoCategory)
+    public function update(Request $request, $id)
     {
-        try {
-            $validated = $request->validate([
-                'business_type_id' => 'required|exists:business_types,id',
-                'name' => 'required|string|max:255',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'description' => 'nullable|string',
-                'status' => 'nullable|boolean',
-            ]);
+        // Validate incoming request
+        $validatedData = $request->validate([
+            'business_type_id' => 'required|exists:business_types,id',
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string',
+            'status' => 'nullable|boolean', // Make sure this is a boolean
+        ]);
 
-            $data = [
-                'business_type_id' => $validated['business_type_id'],
-                'name' => $validated['name'],
-                'description' => $validated['description'] ?? null,
-                'status' => $validated['status'] ?? false,
-            ];
+        // Find the existing category
+        $category = DemoCategory::findOrFail($id);
 
-            // Handle image
-            if ($request->hasFile('image')) {
-                if ($demoCategory->image && Storage::disk('public')->exists($demoCategory->image)) {
-                    Storage::disk('public')->delete($demoCategory->image);
-                }
+        // Update the category properties
+        $category->name = $validatedData['name'];
+        $category->business_type_id = $validatedData['business_type_id'];
+        $category->description = $validatedData['description'] ?? $category->description;
 
-                $image = $request->file('image');
-                $imageName = time() . '_' . $image->getClientOriginalName();
-                $imagePath = $image->storeAs('demo_category', $imageName, 'public');
+        // Ensure status is set to 0 if unchecked, or 1 if checked
+        $category->status = $request->has('status') ? 1 : 0;
 
-                $data['image'] = $imagePath;
+        // Handle image upload if a new image is provided
+        if ($request->hasFile('image')) {
+            // Delete the old image from the server
+            if ($category->image && file_exists(public_path('category_images/' . $category->image))) {
+                unlink(public_path('category_images/' . $category->image));
             }
 
-            $demoCategory->update($data);
+            // Upload the new image
+            $image = $request->file('image');
+            $imageName = md5(uniqid()) . '.webp'; // WEBP format
 
-            return redirect()->route('admin.category.index')->with('success', 'Category updated successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+            // Open the uploaded image and convert it to WEBP format
+            $img = Image::make($image);
+
+            // Convert the image to WebP format and reduce file size
+            $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+
+            // Save the image in the public directory (category_images folder)
+            $img->save(public_path('category_images/' . $imageName));
+
+            // Assign the image name to the category
+            $category->image = $imageName;
         }
+
+        // Save the updated category
+        $category->save();
+
+        return redirect()->route('admin.category.index')->with('success', 'Category updated successfully.');
     }
 
 
-    public function destroy(DemoCategory $demoCategory)
+
+
+    public function destroy($id)
     {
-        try {
-            if ($demoCategory->image && Storage::disk('public')->exists($demoCategory->image)) {
-                Storage::disk('public')->delete($demoCategory->image);
-            }
+        // Find the category to be deleted
+        $category = DemoCategory::findOrFail($id);
 
-            $demoCategory->delete();
-
-            return redirect()->route('admin.category.index')->with('success', 'Category deleted successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        // Delete the associated image from the server if it exists
+        if ($category->image && file_exists(public_path('category_images/' . $category->image))) {
+            unlink(public_path('category_images/' . $category->image));
         }
-    }
 
+        // Delete the category from the database
+        $category->delete();
+
+        // Redirect with success message
+        return redirect()->route('admin.category.index')->with('success', 'Category deleted successfully.');
+    }
 }

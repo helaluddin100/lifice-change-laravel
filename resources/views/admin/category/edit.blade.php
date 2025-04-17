@@ -51,7 +51,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Current Image</label>
                                     <br>
-                                    <img src="{{ Storage::url($category->image) }}" alt="Current Image"
+                                    <img src="{{ asset('category_images/' . $category->image) }}" alt="Current Image"
                                         style="max-width: 200px; height: auto;">
                                 </div>
                             @endif
