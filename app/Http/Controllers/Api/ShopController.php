@@ -224,7 +224,7 @@ class ShopController extends Controller
 
         try {
             // Clone Categories
-            $categoryMap = $this->cloneCategories($shopType, $userId);
+            $categoryMap = $this->cloneCategories($shopType, $userId, $shopId); // Pass shopId for top category insertion
 
             // Clone Colors
             $colorMap = $this->cloneColors($shopType, $userId, $shopId);
@@ -244,11 +244,16 @@ class ShopController extends Controller
         }
     }
 
-    private function cloneCategories($shopType, $userId)
+    private function cloneCategories($shopType, $userId, $shopId)
     {
         $categoryMap = [];
         $demoCategories = DB::table('demo_categories')->where('business_type_id', $shopType)->get();
+
+        // Counter for top categories
+        $topCategoryCount = 0;
+
         foreach ($demoCategories as $category) {
+            // Clone category
             $newCategoryId = DB::table('categories')->insertGetId([
                 'name' => $category->name,
                 'image' => $category->image,
@@ -257,9 +262,23 @@ class ShopController extends Controller
                 'status' => true,
             ]);
             $categoryMap[$category->id] = $newCategoryId;
+
+            // Add to top_categories if we haven't reached 7 categories
+            if ($topCategoryCount < 7) {
+                DB::table('top_categories')->insert([
+                    'user_id' => $userId,
+                    'shop_id' => $shopId,
+                    'category_id' => $newCategoryId,
+                    'position' => $topCategoryCount + 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $topCategoryCount++;
+            }
         }
         return $categoryMap;
     }
+
 
     private function cloneColors($shopType, $userId, $shopId)
     {
