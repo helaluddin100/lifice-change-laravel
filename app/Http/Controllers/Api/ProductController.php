@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-
 use App\Models\Size;
+
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
@@ -310,31 +311,34 @@ class ProductController extends Controller
         // Paginate results, 16 products per page (use the page query parameter for lazy loading)
         $page = $request->get('page', 1);
 
-        // Get the total count of products and maximum price
+        // Get the total count of products and maximum price (considering both current_price and old_price)
         $products = $query->paginate(16, ['*'], 'page', $page);
 
-        // Get the highest price for top_price
+        // Get the highest price for top_price from both current_price and old_price
         $topPrice = Product::where('shop_id', $shop_id)
             ->where('status', 1)
-            ->max('old_price'); // Get the highest price
+            ->max(DB::raw('GREATEST(CAST(current_price AS DECIMAL(10, 2)), CAST(old_price AS DECIMAL(10, 2)))')); // Get the maximum value of current_price and old_price
+
+        // Format the topPrice to remove .00 if present
+        $topPriceFormatted = number_format($topPrice, 0, '.', ''); // This removes .00
 
         $totalProducts = Product::where('shop_id', $shop_id)
             ->where('status', 1)
             ->count(); // Get the total number of products
 
-
         // Add the top_price to the response data
-        $products->getCollection()->transform(function ($product) use ($topPrice) {
+        $products->getCollection()->transform(function ($product) use ($topPriceFormatted) {
             return $product;
         });
 
         return response()->json([
             'products' => $products,
-            'top_price' => $topPrice,
+            'top_price' => $topPriceFormatted, // Send the formatted top price
             'total_products' => $totalProducts,
             'status' => 200,
         ]);
     }
+
 
 
 
