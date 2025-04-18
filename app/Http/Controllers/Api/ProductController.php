@@ -186,6 +186,72 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    // public function index(Request $request)
+    // {
+    //     $shop_id = $request->get('shop_id');
+    //     if (!$shop_id) {
+    //         return response()->json(['error' => 'Shop ID is required'], 400);
+    //     }
+
+    //     // Start querying the Product model with eager loading for images
+    //     $query = Product::where('shop_id', $shop_id)
+    //         ->where('status', 1)
+    //         ->with(['images', 'category']);
+
+    //     // Apply category filter if provided
+    //     if ($request->has('categories') && !empty($request->categories)) {
+    //         $query->whereIn('category_id', $request->categories);
+    //     }
+
+    //     // Apply size filter if provided
+    //     if ($request->has('sizes') && !empty($request->sizes)) {
+    //         $query->where(function ($query) use ($request) {
+    //             foreach ($request->sizes as $size) {
+    //                 $query->orWhereJsonContains('product_sizes', ['size' => $size]);
+    //             }
+    //         });
+    //     }
+
+    //     // Apply color filter if provided
+    //     if ($request->has('color') && !empty($request->color)) {
+    //         $query->where(function ($query) use ($request) {
+    //             foreach ($request->color as $color) {
+    //                 $query->orWhereJsonContains('product_colors', ['color' => $color]);
+    //             }
+    //         });
+    //     }
+
+    //     // Apply price range filter if provided
+    //     if ($request->has('min_price') && $request->has('max_price')) {
+    //         $minPrice = (float) $request->get('min_price');
+    //         $maxPrice = (float) $request->get('max_price');
+    //         $query->where(function ($query) use ($minPrice, $maxPrice) {
+    //             $query->whereRaw('CAST(current_price AS DECIMAL(10, 2)) >= ?', [$minPrice])
+    //                 ->whereRaw('CAST(current_price AS DECIMAL(10, 2)) <= ?', [$maxPrice]);
+    //         });
+    //     }
+
+    //     // Apply sorting if provided
+    //     if ($request->has('sort_by')) {
+    //         $sortBy = $request->get('sort_by');
+    //         if ($sortBy === 'price-low-to-high') {
+    //             $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) ASC');
+    //         } elseif ($sortBy === 'price-high-to-low') {
+    //             $query->orderByRaw('CAST(current_price AS DECIMAL(10, 2)) DESC');
+    //         }
+    //     }
+
+    //     // Paginate results, 16 products per page (use the page query parameter for lazy loading)
+    //     $page = $request->get('page', 1);
+
+    //     // Get the total count of products
+    //     $products = $query->paginate(16, ['*'], 'page', $page);
+
+    //     return response()->json($products);
+    // }
+
+
+
     public function index(Request $request)
     {
         $shop_id = $request->get('shop_id');
@@ -244,12 +310,31 @@ class ProductController extends Controller
         // Paginate results, 16 products per page (use the page query parameter for lazy loading)
         $page = $request->get('page', 1);
 
-        // Get the total count of products
+        // Get the total count of products and maximum price
         $products = $query->paginate(16, ['*'], 'page', $page);
 
-        return response()->json($products);
-    }
+        // Get the highest price for top_price
+        $topPrice = Product::where('shop_id', $shop_id)
+            ->where('status', 1)
+            ->max('old_price'); // Get the highest price
 
+        $totalProducts = Product::where('shop_id', $shop_id)
+            ->where('status', 1)
+            ->count(); // Get the total number of products
+
+
+        // Add the top_price to the response data
+        $products->getCollection()->transform(function ($product) use ($topPrice) {
+            return $product;
+        });
+
+        return response()->json([
+            'products' => $products,
+            'top_price' => $topPrice,
+            'total_products' => $totalProducts,
+            'status' => 200,
+        ]);
+    }
 
 
 
