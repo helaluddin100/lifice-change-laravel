@@ -28,7 +28,7 @@ class NewArrivalBannerController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'shop_id' => 'required|exists:shops,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif ',
             'link' => 'nullable|url',
         ]);
 
@@ -77,7 +77,7 @@ class NewArrivalBannerController extends Controller
 
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif ',
             'link' => 'nullable|url',
             'status' => 'boolean',
         ]);

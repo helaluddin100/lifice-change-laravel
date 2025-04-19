@@ -28,7 +28,7 @@ class DemoCategoryController extends Controller
         $validatedData = $request->validate([
             'business_type_id' => 'required|exists:business_types,id',
             'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif ',
             'description' => 'nullable|string',
             'status' => 'nullable|boolean',
         ]);
@@ -86,7 +86,7 @@ class DemoCategoryController extends Controller
         $validatedData = $request->validate([
             'business_type_id' => 'required|exists:business_types,id',
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif ',
             'description' => 'nullable|string',
             'status' => 'nullable|boolean', // Make sure this is a boolean
         ]);

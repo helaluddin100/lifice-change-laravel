@@ -26,7 +26,7 @@ class LandingPageController extends Controller
             'product_id' => 'sometimes|nullable|exists:products,id',
             'delivery_charge' => 'nullable|numeric|min:0',
             'seo_settings' => 'nullable|json',
-            'brand_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'brand_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg ',
             'domain' => 'nullable|string|unique:landing_pages,domain',
             'facebook_pixel' => 'nullable|string',
             'color' => 'required|string',

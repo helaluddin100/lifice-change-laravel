@@ -8,6 +8,7 @@ use App\Models\ClientReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
+
 class ClientReviewController extends Controller
 {
 
@@ -26,7 +27,7 @@ class ClientReviewController extends Controller
             "name" => "required",
             "shop_name" => "required",
             "description" => "required",
-            "image" => "required|image|mimes:jpeg,png,jpg,gif,svg|max:2048",
+            "image" => "required|image|mimes:jpeg,png,jpg,gif,svg ",
         ]);
 
         if ($validation->fails()) {
@@ -79,7 +80,7 @@ class ClientReviewController extends Controller
             "name" => "required",
             "shop_name" => "required",
             "description" => "required",
-            "image" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048", // Make image optional
+            "image" => "nullable|image|mimes:jpeg,png,jpg,gif,svg ", // Make image optional
         ]);
 
         if ($validation->fails()) {
@@ -125,5 +126,4 @@ class ClientReviewController extends Controller
             return redirect()->route('admin.client-review.index')->with('error', 'Client Review not found');
         }
     }
-
 }
