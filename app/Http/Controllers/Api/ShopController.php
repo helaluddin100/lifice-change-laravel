@@ -177,7 +177,7 @@ class ShopController extends Controller
                 'country' => 'required|string',
                 'number' => 'required|numeric',
                 'details' => 'required|string',
-                'user_id' => 'required', // Assuming user_id is provided in the request
+                'user_id' => 'required',
             ]);
 
             $shop_url = Str::slug($validatedData['name']);
@@ -195,6 +195,14 @@ class ShopController extends Controller
             $shop->shop_url = $shop_url;
             $shop->template_type = 1;
             $shop->vat_tax = 0;
+            $shop->stock_management = 1; // Default value
+            $shop->show_product_sold_count = 1; // Default value
+            $shop->default_delivery_charge = 120; // Default value
+            $shop->slider = 1; // Default value
+            $shop->today_sell = 1; // Default value
+            $shop->top_selling = 1; // Default value
+            $shop->top_category = 1; // Default value
+
             $shop->save();
 
             // Clone demo data based on the selected business type
