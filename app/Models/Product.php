@@ -15,6 +15,7 @@ class Product extends Model
         'user_id',
         'shop_id',
         'category_id',
+        'brand_id',
         'name',
         'category',
         'current_price',
@@ -56,6 +57,11 @@ class Product extends Model
     ];
 
     protected $table = 'products';
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
 
 
     public function images(): HasMany

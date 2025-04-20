@@ -46,6 +46,7 @@ use App\Http\Controllers\Api\CourierSettingController;
 
 use App\Http\Controllers\Api\CustomerReportController;
 use App\Http\Controllers\Api\AffiliateController;
+use App\Http\Controllers\Api\BrandController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -437,3 +438,7 @@ Route::post('/report-order', [CustomerReportController::class, 'reportOrder']);
 
 // Affiliate Dashboard
 Route::get('/referral/stats/{user_id}', [AffiliateController::class, 'stats']);
+
+
+// Brand route
+Route::post('/brand/store', [BrandController::class, 'store']);
