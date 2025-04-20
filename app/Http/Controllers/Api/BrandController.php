@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Brand;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Intervention\Image\Facades\Image;
@@ -18,8 +17,10 @@ class BrandController extends Controller
      */
     public function index($user_id)
     {
-        // Fetch all brands for a particular user_id
-        $brands = Brand::where('user_id', $user_id)->get();
+        // Fetch all brands for a particular user_id with product count
+        $brands = Brand::where('user_id', $user_id)
+            ->withCount('products') // Get the count of products related to each brand
+            ->get();
 
         if ($brands->isEmpty()) {
             return response()->json([
@@ -33,6 +34,7 @@ class BrandController extends Controller
             'data' => $brands,
         ]);
     }
+
 
 
     /**
