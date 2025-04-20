@@ -442,3 +442,7 @@ Route::get('/referral/stats/{user_id}', [AffiliateController::class, 'stats']);
 
 // Brand route
 Route::post('/brand/store', [BrandController::class, 'store']);
+Route::post('/brand/update/{id}', [BrandController::class, 'update']);
+Route::get('/brands/{user_id}', [BrandController::class, 'index']);
+Route::get('/brands/edit/{id}', [BrandController::class, 'edit']);
+Route::delete('/brands/delete/{id}', [BrandController::class, 'destroy']);

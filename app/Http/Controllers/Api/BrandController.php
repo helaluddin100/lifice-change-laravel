@@ -16,11 +16,23 @@ class BrandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($user_id)
     {
-        //
-    }
+        // Fetch all brands for a particular user_id
+        $brands = Brand::where('user_id', $user_id)->get();
 
+        if ($brands->isEmpty()) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No brands found for this user.',
+            ]);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $brands,
+        ]);
+    }
 
 
     /**
@@ -40,17 +52,11 @@ class BrandController extends Controller
             'shop_id' => 'required|integer|exists:shops,id',
         ]);
 
-        // Slug creation
-        $slug = Str::slug($request->name);
-        $count = Brand::where('slug', $slug)->count();
-        if ($count > 0) {
-            $slug = $slug . '-' . ($count + 1);
-        }
+
 
         $brand = new Brand();
         $brand->name = $request->name;
         $brand->status = $request->status;
-        $brand->slug = $slug;
         $brand->user_id = $request->user_id;
         $brand->shop_id = $request->shop_id;
 
@@ -75,7 +81,7 @@ class BrandController extends Controller
             $img->save($imageDirectory . '/' . $imageName);
 
             // Assign the image name to the brand
-            $brand->image = $imageName;
+            $brand->image = 'brand_image/' . $imageName;
         }
 
         // Save the brand data to the database
@@ -96,20 +102,22 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        // Find the brand by ID
+        $brand = Brand::find($id);
+
+        if (!$brand) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Brand not found.',
+            ]);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $brand,
+        ]);
     }
 
     /**
@@ -119,19 +127,88 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // Update the specified brand
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'status' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg,webp|max:5120',
+        ]);
+
+        // Find the brand by ID
+        $brand = Brand::find($id);
+
+        if (!$brand) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Brand not found.',
+            ]);
+        }
+
+        // Update the brand name and status
+        $brand->name = $request->name;
+        $brand->status = $request->status;
+
+        // Handle image upload and convert to WebP format if a new image is uploaded
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($brand->image) {
+                $oldImagePath = public_path($brand->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            $image = $request->file('image');
+            $imageName = md5(uniqid()) . '.webp'; // WEBP format
+
+            // Open the uploaded image and convert it to WEBP format
+            $img = Image::make($image);
+            $img->encode('webp', 80);
+            $img->save(public_path('brand_image/' . $imageName));
+
+            // Update the image name in the database
+            $brand->image = 'brand_image/' . $imageName;
+        }
+
+        // Save the updated brand details
+        $brand->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Brand updated successfully!',
+            'data' => $brand,
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // Delete the specified brand
     public function destroy($id)
     {
-        //
+        // Find the brand by ID
+        $brand = Brand::find($id);
+
+        if (!$brand) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Brand not found.',
+            ]);
+        }
+
+        // Delete the brand's image file from the storage
+        if ($brand->image) {
+            $imagePath = public_path($brand->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        // Delete the brand record from the database
+        $brand->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Brand deleted successfully!',
+        ]);
     }
 }
