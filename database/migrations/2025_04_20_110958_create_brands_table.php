@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('shop_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->string('slug')->unique();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
