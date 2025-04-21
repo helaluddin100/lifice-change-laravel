@@ -375,6 +375,19 @@ class ShopController extends Controller
         return $sizeMap;
     }
 
+    private function generateUniqueSlug($slug)
+    {
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (DB::table('products')->where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+
     private function cloneProducts($shopType, $userId, $shopId, $categoryMap, $colorMap, $sizeMap)
     {
         $demoProducts = DB::table('demo_products')->where('business_type_id', $shopType)->get();
@@ -389,7 +402,7 @@ class ShopController extends Controller
                 'user_id' => $userId,
                 'shop_id' => $shopId,
                 'name' => $product->name,
-                'slug' => $product->slug,
+                'slug' => $this->generateUniqueSlug($product->slug),
                 'category_id' => $newCategoryId,
                 'current_price' => $product->current_price,
                 'old_price' => $product->old_price,
