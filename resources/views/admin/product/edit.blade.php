@@ -124,8 +124,16 @@
                                                             <select class="js-example-basic-single form-select color-select"
                                                                 name="product_colors[{{ $index }}][color]"
                                                                 data-width="100%">
+
+                                                                <!-- Check if the color exists before accessing the 'color' property -->
+                                                                @php
+                                                                    $demoColor = \App\Models\DemoColor::find(
+                                                                        $color['color'],
+                                                                    );
+                                                                @endphp
+
                                                                 <option value="{{ $color['color'] }}">
-                                                                    {{ \App\Models\DemoColor::find($color['color'])->color }}
+                                                                    {{ $demoColor ? $demoColor->color : 'No Color Found' }}
                                                                 </option>
                                                             </select>
                                                         </div>
@@ -171,12 +179,21 @@
                                                             <select class="js-example-basic-single form-select size-select"
                                                                 name="product_sizes[{{ $index }}][size]"
                                                                 data-width="100%">
+
+                                                                <!-- Check if the size exists before accessing the 'size' property -->
+                                                                @php
+                                                                    $demoSize = \App\Models\DemoSize::find(
+                                                                        $size['size'],
+                                                                    );
+                                                                @endphp
+
                                                                 <option value="{{ $size['size'] }}">
-                                                                    {{ \App\Models\DemoSize::find($size['size'])->size }}
+                                                                    {{ $demoSize ? $demoSize->size : 'No Size Found' }}
                                                                 </option>
                                                             </select>
                                                         </div>
                                                     </div>
+
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label">Price</label>
