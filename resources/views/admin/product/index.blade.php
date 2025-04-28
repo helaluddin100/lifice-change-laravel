@@ -53,46 +53,52 @@
                                                     <img src="{{ asset($product->demoimages->first()->image_path) }}"
                                                         alt="Product Image" style="max-width: 80px; height: auto;">
                                                 @else
-                                                    No Image
+                                                    <span>No Image</span>
                                                 @endif
                                             </td>
 
-
-
                                             <!-- Product name -->
-                                            <td>{{ $product->name }}</td>
+                                            <td>{{ $product->name ?? 'No Name' }}</td>
 
                                             <!-- Business Type -->
                                             <td>
-                                                {{ \App\Models\BusinessType::find($product->business_type_id)->name }}
+                                                {{ \App\Models\BusinessType::find($product->business_type_id)->name ?? 'No Business Type' }}
                                             </td>
 
                                             <!-- Category -->
                                             <td>
-                                                {{ \App\Models\DemoCategory::find($product->category_id)->name }}
+                                                {{ \App\Models\DemoCategory::find($product->category_id)->name ?? 'No Category' }}
                                             </td>
 
                                             <!-- Buy Price -->
-                                            <td>{{ $product->buy_price }}</td>
+                                            <td>{{ $product->buy_price ?? 'Not Available' }}</td>
 
                                             <!-- Sell Price -->
-                                            <td>{{ $product->current_price }}</td>
+                                            <td>{{ $product->current_price ?? 'Not Available' }}</td>
 
                                             <!-- Stock Quantity -->
-                                            <td>{{ $product->quantity }}</td>
+                                            <td>{{ $product->quantity ?? 'Not Available' }}</td>
 
                                             <!-- Color -->
                                             <td>
-                                                @foreach ($product->product_colors as $color)
-                                                    {{ \App\Models\DemoColor::find($color['color'])->color }}
-                                                @endforeach
+                                                @if (collect($product->product_colors)->isNotEmpty())
+                                                    @foreach ($product->product_colors as $color)
+                                                        {{ \App\Models\DemoColor::find($color['color'])->color ?? 'No Color' }}
+                                                    @endforeach
+                                                @else
+                                                    <span>No Color</span>
+                                                @endif
                                             </td>
 
                                             <!-- Size -->
                                             <td>
-                                                @foreach ($product->product_sizes as $size)
-                                                    {{ \App\Models\DemoSize::find($size['size'])->size }}
-                                                @endforeach
+                                                @if (collect($product->product_sizes)->isNotEmpty())
+                                                    @foreach ($product->product_sizes as $size)
+                                                        {{ \App\Models\DemoSize::find($size['size'])->size ?? 'No Size' }}
+                                                    @endforeach
+                                                @else
+                                                    <span>No Size</span>
+                                                @endif
                                             </td>
 
                                             <!-- Status -->
