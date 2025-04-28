@@ -37,4 +37,8 @@ class BusinessType extends Model
     {
         return $this->hasMany(DemoSize::class);
     }
+    public function brands()
+    {
+        return $this->hasMany(DemoBrand::class);
+    }
 }

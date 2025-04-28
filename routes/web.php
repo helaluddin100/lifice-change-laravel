@@ -73,6 +73,7 @@ Route::namespace('App\Http\Controllers')->group(
             Route::resource('/category', 'DemoCategoryController');
             Route::resource('/color', 'DemoColorController');
             Route::resource('/size', 'DemoSizeController');
+            Route::resource('/brand', 'DemoBrandController');
             Route::resource('/product', 'DemoProductController');
 
             Route::post('/product/remove-image', [DemoProductController::class, 'removeImage'])->name('product.removeImage');

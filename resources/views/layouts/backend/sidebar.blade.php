@@ -65,6 +65,9 @@
                             <a href="{{ route('admin.size.index') }}" class="nav-link">Size</a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('admin.brand.index') }}" class="nav-link">Brand</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('admin.product.index') }}" class="nav-link">Product</a>
                         </li>
                     </ul>
