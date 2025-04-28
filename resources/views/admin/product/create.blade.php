@@ -24,19 +24,30 @@
                                         <label class="form-label">Business Type</label>
                                         <select class="js-example-basic-single form-select" id="business_type"
                                             name="business_type" data-width="100%">
+                                            <option value="">Select Business Type</option>
                                             @foreach ($businessTypes as $businessType)
-                                                <option value="{{ $businessType->id }}">{{ $businessType->name }}</option>
+                                                <option value="{{ $businessType->id }}"
+                                                    {{ old('business_type') == $businessType->id ? 'selected' : '' }}>
+                                                    {{ $businessType->name }}</option>
                                             @endforeach
                                         </select>
+                                        @error('business_type')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Name</label>
                                         <input id="name" class="form-control" placeholder="Name" name="name"
-                                            type="text">
+                                            type="text" value="{{ old('name') }}">
+                                        @error('name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Category</label>
@@ -44,50 +55,69 @@
                                             name="category_id" data-width="100%">
                                             <option value="">Select Category</option>
                                         </select>
+                                        @error('category_id')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Initial Sold Count</label>
                                         <input type="number" class="form-control" name="sold_count"
-                                            placeholder="Initial Sold Count">
+                                            placeholder="Initial Sold Count" value="{{ old('sold_count') }}">
+                                        @error('sold_count')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Sell/Current Price *</label>
                                         <input type="number" class="form-control" name="current_price"
-                                            placeholder="Sell/Current Price">
+                                            placeholder="Sell/Current Price" value="{{ old('current_price') }}">
+                                        @error('current_price')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Regular/Old Price</label>
                                         <input type="number" class="form-control" name="old_price"
-                                            placeholder="Regular/Old Price">
+                                            placeholder="Regular/Old Price" value="{{ old('old_price') }}">
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Buying Price (Optional)</label>
                                         <input type="number" class="form-control" name="buy_price"
-                                            placeholder="Buying Price (Optional)">
+                                            placeholder="Buying Price (Optional)" value="{{ old('buy_price') }}">
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Quantity (Stock) *</label>
                                         <input type="number" class="form-control" name="quantity"
-                                            placeholder="Quantity (Stock)">
+                                            placeholder="Quantity (Stock)" value="{{ old('quantity') }}">
+                                        @error('quantity')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label class="form-label">Warranty</label>
-                                        <input type="text" class="form-control" name="warranty" placeholder="Warranty">
+                                        <input type="text" class="form-control" name="warranty" placeholder="Warranty"
+                                            value="{{ old('warranty') }}">
                                     </div>
                                 </div>
+
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label class="form-label">Select Color and Price</label>
@@ -106,14 +136,16 @@
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
                                                         <input type="number" class="form-control"
-                                                            name="product_colors[0][price]" placeholder="Price">
+                                                            name="product_colors[0][price]" placeholder="Price"
+                                                            value="{{ old('product_colors.0.price') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
                                                         <label class="form-label">Quantity</label>
                                                         <input type="number" class="form-control"
-                                                            name="product_colors[0][quantity]" placeholder="Quantity">
+                                                            name="product_colors[0][quantity]" placeholder="Quantity"
+                                                            value="{{ old('product_colors.0.quantity') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-1">
@@ -123,9 +155,12 @@
                                         </div>
                                         <button type="button" id="add-color-btn" class="btn btn-primary">Add
                                             Color</button>
-
+                                        @error('product_colors')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label class="form-label">Select Size and Price</label>
@@ -144,14 +179,16 @@
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
                                                         <input type="number" class="form-control"
-                                                            name="product_sizes[0][price]" placeholder="Price">
+                                                            name="product_sizes[0][price]" placeholder="Price"
+                                                            value="{{ old('product_sizes.0.price') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
                                                         <label class="form-label">Quantity</label>
                                                         <input type="number" class="form-control"
-                                                            name="product_sizes[0][quantity]" placeholder="Quantity">
+                                                            name="product_sizes[0][quantity]" placeholder="Quantity"
+                                                            value="{{ old('product_sizes.0.quantity') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-1 d-flex align-items-end">
@@ -166,10 +203,14 @@
                                             Size</button>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
-                                        <textarea class="form-control" name="description" id="easyMdeExample" rows="5"></textarea>
+                                        <textarea class="form-control" name="description" id="easyMdeExample" rows="5">{{ old('description') }}</textarea>
+                                        @error('description')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-lg-12">

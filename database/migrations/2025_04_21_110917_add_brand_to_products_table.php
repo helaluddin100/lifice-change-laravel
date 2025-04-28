@@ -14,11 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->unsignedBigInteger('brand_id')->nullable()->after('category_id'); // brand_id column
+            // First, ensure the brand_id field is set correctly
+            $table->unsignedBigInteger('brand_id')->nullable()->after('product_code'); // Change column order if needed
+
+            // Now add the foreign key constraint
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');
         });
     }
-
     /**
      * Reverse the migrations.
      *
@@ -27,6 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
+            // Drop the foreign key constraint
             $table->dropForeign(['brand_id']);
             $table->dropColumn('brand_id');
         });

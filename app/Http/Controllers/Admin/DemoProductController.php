@@ -75,7 +75,7 @@ class DemoProductController extends Controller
         // Validate incoming request data
         $validated = $request->validate([
             'business_type' => 'required|exists:business_types,id',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:demo_categories,id',
             'name' => 'required|string|max:255',
             // 'item_name' => 'nullable|string|max:255',
             'current_price' => 'required|numeric',
@@ -197,19 +197,21 @@ class DemoProductController extends Controller
     public function edit($id)
     {
         // Get the product and related data
-        $product = DemoProduct::with('demoimages')->find($id); // Find instead of findOrFail to debug
+        $product = DemoProduct::with('demoimages')->find($id);
+
+        $business_type_id = $product->business_type_id;
 
 
         // Get related data based on the product's business type
         $businessTypes = BusinessType::all();
-        $categories = DemoCategory::where('business_type_id', $product->business_types)->get();
-        $colors = DemoColor::where('business_type_id', $product->business_types)->get();
-        $sizes = DemoSize::where('business_type_id', $product->business_types)->get();
+        $categories = DemoCategory::where('business_type_id', $product->business_type_id)->get();
+        $colors = DemoColor::where('business_type_id', $product->business_type_id)->get();
+        $sizes = DemoSize::where('business_type_id', $product->business_type_id)->get();
         $productImages = ProductImage::where('demo_product_id', $product->id)->get();
 
 
         // Pass all the data to the view
-        return view('admin.product.edit', compact('product', 'productImages', 'businessTypes', 'categories', 'colors', 'sizes'));
+        return view('admin.product.edit', compact('product', 'business_type_id', 'productImages', 'businessTypes', 'categories', 'colors', 'sizes'));
     }
 
 

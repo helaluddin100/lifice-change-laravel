@@ -33,6 +33,9 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('business_type')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -41,6 +44,9 @@
                                         <input id="name" class="form-control" value="{{ old('name', $product->name) }}"
                                             placeholder="Name" name="name" type="text">
                                     </div>
+                                    @error('name')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-3">
@@ -54,6 +60,10 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('category_id')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+
                                     </div>
                                 </div>
 
@@ -76,6 +86,9 @@
                                             value="{{ old('current_price', $product->current_price) }}"
                                             placeholder="Sell/Current Price">
                                     </div>
+                                    @error('current_price')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-3">
@@ -100,6 +113,9 @@
                                             value="{{ old('quantity', $product->quantity) }}"
                                             placeholder="Quantity (Stock)">
                                     </div>
+                                    @error('quantity')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-lg-4">
@@ -121,7 +137,8 @@
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label">Color</label>
-                                                            <select class="js-example-basic-single form-select color-select"
+                                                            <select
+                                                                class="js-example-basic-single form-select color-select"
                                                                 name="product_colors[{{ $index }}][color]"
                                                                 data-width="100%">
 
@@ -229,6 +246,9 @@
                                         <label class="form-label">Description</label>
                                         <textarea class="form-control" name="description" id="easyMdeExample" rows="5">{{ old('description', $product->description) }}</textarea>
                                     </div>
+                                    @error('description')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-lg-12">
@@ -327,6 +347,9 @@
                                         <input id="images" class="form-control" name="images[]" type="file"
                                             multiple>
                                     </div>
+                                    @error('images')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                     <div id="image-preview" class="row mt-3">
                                         @foreach ($productImages as $image)
                                             <div class="col-md-3 mt-2 image-container"
