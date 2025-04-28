@@ -10,7 +10,7 @@ class DemoSizeController extends Controller
 {
     public function index()
     {
-        $sizes = DemoSize::all();
+        $sizes = DemoSize::orderBy('id', 'desc')->get();
         return view('admin.size.index', compact('sizes'));
     }
     public function create()
@@ -48,38 +48,36 @@ class DemoSizeController extends Controller
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\DemoSize  $demoSize
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DemoSize $demoSize)
+    public function edit(DemoSize $size)
     {
-        //
+        return view('admin.size.edit', compact('size'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\DemoSize  $demoSize
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, DemoSize $demoSize)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $validatedData = $request->validate([
+                'business_type_id' => 'required|exists:business_types,id',
+                'size' => 'required|string|max:255',
+                'status' => 'nullable|boolean',
+            ]);
+            $size = DemoSize::findOrFail($id);
+            $size->size = $validatedData['size'];
+            $size->business_type_id = $validatedData['business_type_id'];
+            $size->status = $request->has('status') ? 1 : 0;
+            $size->save();
+            return redirect()->route('admin.size.index')->with('success', 'Size updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DemoSize  $demoSize
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DemoSize $demoSize)
+    public function destroy($id)
     {
-        //
+        $size = Demosize::findOrFail($id);
+        $size->delete();
+
+        // Redirect with success message
+        return redirect()->route('admin.size.index')->with('success', 'Size deleted successfully.');
     }
 }

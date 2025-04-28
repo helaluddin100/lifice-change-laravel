@@ -11,7 +11,7 @@ class DemoColorController extends Controller
 {
     public function index()
     {
-        $colors = DemoColor::all();
+        $colors = DemoColor::orderBy('id', 'desc')->get();
         return view('admin.color.index', compact('colors'));
     }
     public function create()
@@ -39,48 +39,44 @@ class DemoColorController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\DemoColor  $demoColor
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(DemoColor $demoColor)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\DemoColor  $demoColor
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DemoColor $demoColor)
+
+    public function edit(DemoColor $color)
     {
-        //
+        return view('admin.color.edit', compact('color'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\DemoColor  $demoColor
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, DemoColor $demoColor)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $validatedData = $request->validate([
+                'business_type_id' => 'required|exists:business_types,id',
+                'color' => 'required|string|max:255',
+                'status' => 'nullable|boolean',
+            ]);
+            $color = DemoColor::findOrFail($id);
+            $color->color = $validatedData['color'];
+            $color->business_type_id = $validatedData['business_type_id'];
+            $color->status = $request->has('status') ? 1 : 0;
+
+            $color->save();
+            return redirect()->route('admin.color.index')->with('success', 'Color updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DemoColor  $demoColor
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DemoColor $demoColor)
+    public function destroy($id)
     {
-        //
+        $color = DemoColor::findOrFail($id);
+        $color->delete();
+
+        // Redirect with success message
+        return redirect()->route('admin.color.index')->with('success', 'Color deleted successfully.');
     }
 }

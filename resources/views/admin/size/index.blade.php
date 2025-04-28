@@ -28,6 +28,7 @@
                                     <tr>
                                         <th>#ID</th>
                                         <th>Size</th>
+                                        <th>Business Type</th>
                                         <th>status</th>
                                         <th>Action</th>
                                     </tr>
@@ -37,6 +38,7 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $size->size }}</td>
+                                            <td>{{ $size->businessType->name }}</td>
                                             <td>
                                                 @if ($size->status === 1)
                                                     <span class="badge bg-success">Active</span>
