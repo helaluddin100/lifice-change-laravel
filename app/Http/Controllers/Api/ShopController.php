@@ -183,13 +183,23 @@ class ShopController extends Controller
                 'user_id' => 'required',
             ]);
 
+            $userId = $request->input('user_id');
+
+            // Check if the user already has a shop
+            $existingShop = Shop::where('user_id', $userId)->first();
+            if ($existingShop) {
+                return response()->json([
+                    'status' => 409,  // Conflict status
+                    'message' => 'You already have a shop'
+                ]);
+            }
+
             $shop_url = Str::slug($validatedData['name']);
             $count = Shop::where('shop_url', $shop_url)->count();
             if ($count > 0) {
                 $shop_url = $shop_url . '-' . ($count + 1);
             }
 
-            $userId = $request->input('user_id');
             $shopType = $validatedData['shop_type']; // Get the business_type from the request
 
             // Create the shop
@@ -228,6 +238,7 @@ class ShopController extends Controller
             return response()->json(['status' => 500, 'error' => $e->getMessage()]);
         }
     }
+
 
     private function cloneDemoData($shopType, $userId, $shopId)
     {
