@@ -58,7 +58,9 @@
                                             </td>
 
                                             <!-- Product name -->
-                                            <td>{{ $product->name ?? 'No Name' }}</td>
+                                            <td title="{{ $product->name }}">
+                                                {{ \Illuminate\Support\Str::limit($product->name, 10, '...') ?? 'No Name' }}
+                                            </td>
 
                                             <!-- Business Type -->
                                             <td>

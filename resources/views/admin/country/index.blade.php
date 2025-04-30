@@ -18,7 +18,7 @@
                             <h6 class="card-title">Country</h6>
                             <div class="create-button">
                                 <a href="{{ route('admin.country.create') }}" class="btn btn-primary btn-icon">
-                                    <i data-feather="plus-circle"></i>
+                                    <i class="feather icon-plus-circle"></i>
                                 </a>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                                             <td>
                                                 <a href="{{ route('admin.country.edit', $country->id) }}"
                                                     class="btn btn-primary btn-icon">
-                                                    <i data-feather="edit"></i>
+                                                    <i class="feather icon-edit"></i>
                                                 </a>
 
 
@@ -62,7 +62,7 @@
                                                         @method('DELETE')
                                                         <button type="button" class="btn btn-danger btn-icon delete-button"
                                                             onclick="deleteId({{ $country->id }})">
-                                                            <i data-feather="trash"></i>
+                                                            <i class="feather icon-trash"></i>
                                                         </button>
                                                     </form>
                                                 @endif

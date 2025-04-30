@@ -18,7 +18,7 @@
                             <h6 class="card-title">users Type</h6>
                             <div class="create-button">
                                 <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-icon">
-                                    <i data-feather="plus-circle"></i>
+                                    <i class="feather icon-plus-circle"></i>
                                 </a>
                             </div>
                         </div>
@@ -32,9 +32,10 @@
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Country</th>
-                                        <th>Address</th>
                                         <th>IP</th>
-                                        <th>status</th>
+                                        <th>Verified</th>
+                                        <th>Created</th>
+                                        {{-- <th>status</th> --}}
                                         <th>Action</th>
 
                                     </tr>
@@ -52,21 +53,24 @@
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->phone }}</td>
                                             <td>{{ $user->country }}</td>
-                                            <td>{{ $user->address }}</td>
                                             <td>{{ $user->ip }}</td>
+
 
 
                                             <td>
                                                 @if ($user->email_verified_at)
                                                     <span class="badge bg-success">Verified</span>
                                                 @else
-                                                    <span class="badge bg-primary">Un Verified</span>
+                                                    <span class="badge bg-primary">{{ $user->verification_code }}</span>
                                                 @endif
+                                            </td>
+                                            <td>
+                                                {{ $user->created_at ? $user->created_at->format('d-m-Y') : 'N/A' }}
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.users.edit', $user->id) }}"
                                                     class="btn btn-primary btn-icon">
-                                                    <i data-feather="edit"></i>
+                                                    <i class="feather icon-edit"></i>
                                                 </a>
 
                                                 @if (Auth::user()->role_id == 1)
@@ -77,7 +81,7 @@
                                                         @method('DELETE')
                                                         <button type="button" class="btn btn-danger btn-icon delete-button"
                                                             onclick="deleteId({{ $user->id }})">
-                                                            <i data-feather="trash"></i>
+                                                            <i class="feather icon-trash"></i>
                                                         </button>
                                                     </form>
                                                 @endif

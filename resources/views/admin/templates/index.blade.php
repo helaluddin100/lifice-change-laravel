@@ -18,7 +18,7 @@
                             <h6 class="card-title">Templates Type</h6>
                             <div class="create-button">
                                 <a href="{{ route('admin.templates.create') }}" class="btn btn-primary btn-icon">
-                                    <i data-feather="plus-circle"></i>
+                                    <i class="feather icon-plus-circle"></i>
                                 </a>
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                                             <td>
                                                 <a href="{{ route('admin.templates.edit', $template->id) }}"
                                                     class="btn btn-primary btn-icon">
-                                                    <i data-feather="edit"></i>
+                                                    <i class="feather icon-edit"></i>
                                                 </a>
 
                                                 @if (Auth::user()->role_id == 1)
@@ -66,7 +66,7 @@
                                                         @method('DELETE')
                                                         <button type="button" class="btn btn-danger btn-icon delete-button"
                                                             onclick="deleteId({{ $template->id }})">
-                                                            <i data-feather="trash"></i>
+                                                            <i class="feather icon-trash"></i>
                                                         </button>
                                                     </form>
                                                 @endif

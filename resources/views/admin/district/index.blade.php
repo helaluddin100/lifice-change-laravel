@@ -18,7 +18,7 @@
                             <h6 class="card-title">district</h6>
                             <div class="create-button">
                                 <a href="{{ route('admin.district.create') }}" class="btn btn-primary btn-icon">
-                                    <i data-feather="plus-circle"></i>
+                                    <i class="feather icon-plus-circle"></i>
                                 </a>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                                             <td>
                                                 <a href="{{ route('admin.district.edit', $district->id) }}"
                                                     class="btn btn-primary btn-icon">
-                                                    <i data-feather="edit"></i>
+                                                    <i class="feather icon-edit"></i>
                                                 </a>
                                                 @if (Auth::user()->role_id == 1)
                                                     <form id="delete_form_{{ $district->id }}"
@@ -66,7 +66,7 @@
                                                         @method('DELETE')
                                                         <button type="button" class="btn btn-danger btn-icon delete-button"
                                                             onclick="deleteId({{ $district->id }})">
-                                                            <i data-feather="trash"></i>
+                                                            <i class="feather icon-trash"></i>
                                                         </button>
                                                     </form>
                                                 @endif
