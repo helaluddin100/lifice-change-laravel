@@ -352,6 +352,7 @@ class ProductController extends Controller
             'user_id' => 'required|exists:users,id',
             'shop_id' => 'required|exists:shops,id',
             'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'nullable|exists:brands,id',
             'name' => 'required|string|max:255',
             // 'item_name' => 'nullable|string|max:255',
             'current_price' => 'required|numeric',
@@ -365,12 +366,12 @@ class ProductController extends Controller
             'product_colors' => 'sometimes|required|array',
             'product_colors.*.color' => 'nullable|string|max:255',
             'product_colors.*.price' => 'nullable|numeric',
-            'product_colors.*.quantity' => 'nullable|numeric',
+            // 'product_colors.*.quantity' => 'nullable|numeric',
 
             'product_sizes' => 'sometimes|required|array',
             'product_sizes.*.size' => 'nullable|string|max:255',
             'product_sizes.*.price' => 'nullable|numeric',
-            'product_sizes.*.quantity' => 'nullable|numeric',
+            // 'product_sizes.*.quantity' => 'nullable|numeric',
 
 
 
@@ -415,6 +416,7 @@ class ProductController extends Controller
             'user_id' => $validated['user_id'],
             'shop_id' => $validated['shop_id'],
             'category_id' => $validated['category_id'],
+            'brand_id' => $validated['brand_id'] ?? null,
             'name' => $validated['name'],
             'slug' => $slug,
             'current_price' => $validated['current_price'],
@@ -546,6 +548,7 @@ class ProductController extends Controller
             'user_id' => 'required|exists:users,id',
             'shop_id' => 'required|exists:shops,id',
             'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'nullable|exists:brands,id',
             'name' => 'required|string|max:255',
             'item_name' => 'nullable|string|max:255',
             'current_price' => 'required|numeric',
@@ -558,12 +561,12 @@ class ProductController extends Controller
             'product_colors' => 'nullable|array',
             'product_colors.*.color' => 'required|string|max:255',
             'product_colors.*.price' => 'required|numeric',
-            'product_colors.*.quantity' => 'required|numeric',
+            // 'product_colors.*.quantity' => 'required|numeric',
 
             'product_sizes' => 'nullable|array',
             'product_sizes.*.size' => 'required|string|max:255',
             'product_sizes.*.price' => 'required|numeric',
-            'product_sizes.*.quantity' => 'required|numeric',
+            // 'product_sizes.*.quantity' => 'required|numeric',
 
 
             'product_details' => 'nullable|array',
@@ -598,6 +601,7 @@ class ProductController extends Controller
             'user_id' => $validated['user_id'],
             'shop_id' => $validated['shop_id'],
             'category_id' => $validated['category_id'],
+            'brand_id' => $validated['brand_id'] ?? null,
             'name' => $validated['name'],
             'item_name' => $validated['item_name'] ?? null,
             'current_price' => $validated['current_price'],

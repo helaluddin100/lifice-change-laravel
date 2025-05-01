@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-use Illuminate\Support\Facades\File;
-use App\Http\Controllers\Controller;
-use Illuminate\Validation\ValidationException;
+
+use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
@@ -46,56 +48,62 @@ class CategoryController extends Controller
         $categories = Category::where('user_id', $id)
             ->where('status', 1)
             ->orderBy('id', 'desc')->get();
+
+        $brands = Brand::where('user_id', $id)
+            ->where('status', 1)
+            ->orderBy('id', 'desc')->get();
+
+
         return response()->json([
             'status' => 200,
             'categories' => $categories,
+            'brands' => $brands,
         ]);
     }
 
     public function store(Request $request)
     {
 
-            // Validate incoming request
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'user_id' => 'required',
-                'status' => 'required|boolean',
-            ]);
-            $userId = $request->input('user_id');
+        // Validate incoming request
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'user_id' => 'required',
+            'status' => 'required|boolean',
+        ]);
+        $userId = $request->input('user_id');
 
-            // Create a new category instance
-            $category = new Category();
-            $category->name = $validatedData['name'];
-            $category->user_id = $userId;
-            $category->status = $request->status;
+        // Create a new category instance
+        $category = new Category();
+        $category->name = $validatedData['name'];
+        $category->user_id = $userId;
+        $category->status = $request->status;
 
-            // Handle image upload and convert to WebP format
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = md5(uniqid()) . '.webp'; // WEBP format
+        // Handle image upload and convert to WebP format
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = md5(uniqid()) . '.webp'; // WEBP format
 
-                // Open the uploaded image and convert it to WEBP format
-                $img = Image::make($image);
+            // Open the uploaded image and convert it to WEBP format
+            $img = Image::make($image);
 
-                // Convert the image to WebP format and reduce file size
-                $img->encode('webp', 80); // 80 is the quality level, adjust as needed
+            // Convert the image to WebP format and reduce file size
+            $img->encode('webp', 80); // 80 is the quality level, adjust as needed
 
-                // Save the image in the public directory (category_images folder)
-                $img->save(public_path('category_images/' . $imageName));
+            // Save the image in the public directory (category_images folder)
+            $img->save(public_path('category_images/' . $imageName));
 
-                // Assign the image name to the category
-                $category->image =$imageName;
-            }
+            // Assign the image name to the category
+            $category->image = $imageName;
+        }
 
-            // Save the category
-            $category->save();
+        // Save the category
+        $category->save();
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'Category created successfully',
-                'category' => $category, // Optionally return the created category data
-            ]);
-
+        return response()->json([
+            'status' => 200,
+            'message' => 'Category created successfully',
+            'category' => $category, // Optionally return the created category data
+        ]);
     }
 
 
