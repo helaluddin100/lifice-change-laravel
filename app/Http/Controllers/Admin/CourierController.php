@@ -94,9 +94,10 @@ class CourierController extends Controller
      * @param  \App\Models\Courier  $courier
      * @return \Illuminate\Http\Response
      */
-    public function edit(Courier $courier)
+    public function edit($id)
     {
-        //
+        $courier = Courier::findOrFail($id);
+        return view("admin.courier.edit", compact("courier"));
     }
 
     /**
@@ -106,9 +107,42 @@ class CourierController extends Controller
      * @param  \App\Models\Courier  $courier
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Courier $courier)
+    public function update(Request $request, $id)
     {
-        //
+        $courier = Courier::findOrFail($id);
+        $validation = Validator::make($request->all(), [
+            "name" => "required",
+            "image" => "nullable|image|mimes:jpeg,png,jpg,gif,svg",
+        ]);
+
+        if ($validation->fails()) {
+            return redirect()->back()->withErrors($validation)->withInput();
+        }
+
+        $imageSubmitPath = $courier->image; // keep old image by default
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = public_path('images/couriers');
+
+            if (!file_exists($imagePath)) {
+                mkdir($imagePath, 0777, true);
+            }
+
+            $imagePath = $imagePath . '/' . $imageName;
+            $imageSubmitPath = 'images/couriers/' . $imageName . '.webp';
+
+            // Save image in webp format
+            Image::make($image)->encode('webp', 90)->save($imagePath . '.webp');
+        }
+
+        $courier->name = $request->name;
+        $courier->status = $request->has('status') ? 1 : 0;
+        $courier->image = $imageSubmitPath;
+        $courier->save();
+
+        return redirect()->route("admin.courier.index")->with("success", "Courier updated successfully");
     }
 
     /**
@@ -117,8 +151,17 @@ class CourierController extends Controller
      * @param  \App\Models\Courier  $courier
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Courier $courier)
+    public function destroy($id)
     {
-        //
+        $courier = Courier::findOrFail($id);
+
+        // Delete courier image file if it exists
+        if ($courier->image && file_exists(public_path($courier->image))) {
+            unlink(public_path($courier->image));
+        }
+
+        $courier->delete();
+
+        return redirect()->route('admin.courier.index')->with('success', 'Courier deleted successfully');
     }
 }
