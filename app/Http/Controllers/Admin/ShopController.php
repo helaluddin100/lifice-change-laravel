@@ -83,6 +83,8 @@ class ShopController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $shop = Shop::findOrFail($id);
+        $shop->delete();
+        return redirect()->back()->with("success", "Shop deleted successfully");
     }
 }

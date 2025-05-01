@@ -39,6 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'referred_by',
         'affiliate_code',
         'commission',
+        'email_verified_at'
     ];
     /**
      * The attributes that should be hidden for serialization.
