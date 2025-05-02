@@ -496,11 +496,13 @@ class ProductController extends Controller
 
         $query = Product::where('shop_id', $shop_id)->with('images');
 
+        // যদি category দেওয়া থাকে, তাহলে ফিল্টার করা হবে
         if ($request->has('category') && !empty($request->category)) {
             $category = $request->get('category');
             $query->where('category_id', $category);
         }
 
+        // যদি search term দেওয়া থাকে, তাহলে নাম বা প্রোডাক্ট কোড দিয়ে ফিল্টার করা হবে
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->get('search');
             $query->where(function ($q) use ($searchTerm) {
@@ -509,11 +511,16 @@ class ProductController extends Controller
             });
         }
 
-        $perPage = $request->get('per_page', 10);
+        // লাস্ট এডিট অথবা ক্রিয়েট হওয়া প্রোডাক্ট প্রথমে দেখানোর জন্য
+        $query->orderByDesc('updated_at')->orderByDesc('created_at');
+
+        // পেজিনেশন, প্রতি পেজে কতটি প্রোডাক্ট দেখানো হবে
+        $perPage = $request->get('per_page', 20);
         $products = $query->paginate($perPage);
 
         return response()->json($products);
     }
+
 
 
     /**
