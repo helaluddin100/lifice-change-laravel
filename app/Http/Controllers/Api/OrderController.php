@@ -17,9 +17,52 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Api\FacebookTrackingController;
 
 class OrderController extends Controller
 {
+
+    public function sendEventToFacebook($shop_id, $event_name, $custom_data = [])
+    {
+        $shop = Shop::find($shop_id);
+
+        // Ensure Facebook Pixel ID and Access Token are set
+        $pixel_id = $shop->facebook_pixel_id;
+        $access_token = $shop->facebook_pixel_access_token;
+
+        // Prepare user data (email, phone, location)
+        $user_email = isset($custom_data['email']) ? hash('sha256', $custom_data['email']) : null;
+        $user_phone = isset($custom_data['phone']) ? hash('sha256', $custom_data['phone']) : null;
+        $location = isset($custom_data['location']) ? $custom_data['location'] : null;
+
+        // Prepare Facebook Event Data
+        $data = [
+            'data' => [
+                [
+                    'event_name' => $event_name,
+                    'event_time' => time(),
+                    'user_data' => [
+                        'em' => $user_email, // Hashed email
+                        'ph' => $user_phone, // Hashed phone number
+                    ],
+                    'custom_data' => array_merge([
+                        'currency' => 'USD',
+                        'value' => $custom_data['value'] ?? 0.00, // Transaction value
+                        'location' => $location, // Location (example: Division, District)
+                    ], $custom_data),
+                ]
+            ],
+            'access_token' => $access_token,
+        ];
+
+        // API URL for sending event
+        $api_url = 'https://graph.facebook.com/v12.0/' . $pixel_id . '/events';
+
+        // Send the data to Facebook via API
+        $response = Http::post($api_url, $data);
+
+        return $response->json();
+    }
 
     public function generateInvoice($orderId)
     {
@@ -351,7 +394,6 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id'       => 'required',
             'shop_id'       => 'required',
-
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|max:255',
             'phone'         => 'required|string|max:20',
@@ -376,6 +418,7 @@ class OrderController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
 
+        // Generate unique order ID
         do {
             $randomNumber = rand(100000, 999999);
             $existingOrder = Order::where('order_id', 'BT-' . $randomNumber)->first();
@@ -413,11 +456,21 @@ class OrderController extends Controller
             ]);
         }
 
+        // Send Facebook Conversions API event for the buyer (purchase event)
+        $this->sendEventToFacebook($order->shop_id, 'Purchase', [
+            'value' => $order->total_price, // You can pass the order total price here
+            'email' => $order->email, // Add email
+            'phone' => $order->phone, // Add phone number
+            'location' => $order->division . ', ' . $order->district, // Location (example: Division, District)
+        ]);
+
+        // Return response
         return response()->json([
             'message' => 'Order placed successfully!',
             'order_id' => $order->id
         ], 201);
     }
+
 
 
 
