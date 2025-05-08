@@ -215,6 +215,9 @@ class ShopController extends Controller
             $shop->today_sell = 1; // Default value
             $shop->top_selling = 1; // Default value
             $shop->top_category = 1; // Default value
+            $shop->customer_benefit = 1; // Default value
+            $shop->new_arrival_banner = 1; // Default value
+
 
             $shop->save();
 
@@ -341,7 +344,7 @@ class ShopController extends Controller
             $categoryMap[$category->id] = $newCategoryId;
 
             // Add to top_categories if we haven't reached 7 categories
-            if ($topCategoryCount < 7) {
+            if ($topCategoryCount < 8) {
                 DB::table('top_categories')->insert([
                     'user_id' => $userId,
                     'shop_id' => $shopId,
