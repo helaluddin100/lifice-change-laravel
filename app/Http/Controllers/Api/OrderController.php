@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\FacebookTrackingController;
+use App\Mail\OrderConfirmationMail;
 
 class OrderController extends Controller
 {
@@ -463,6 +464,14 @@ class OrderController extends Controller
             'phone' => $order->phone, // Add phone number
             'location' => $order->division . ', ' . $order->district, // Location (example: Division, District)
         ]);
+
+
+        $shop = Shop::find($request->shop_id); // Get the shop to retrieve the email
+        $email = $shop->email; // Assuming you have the email in the shop's table
+
+        Mail::to($email)->send(new OrderConfirmationMail($order, $shop));
+
+
 
         // Return response
         return response()->json([
