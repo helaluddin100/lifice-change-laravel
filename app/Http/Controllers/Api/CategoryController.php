@@ -154,24 +154,24 @@ class CategoryController extends Controller
     {
         try {
             // Validate incoming request
-            // $validatedData = $request->validate([
-            //     'name' => 'required|string',
-            //     'image' => 'nullable|image', // Image validation for different types
-            //     'status' => 'required|boolean',
-            // ]);
-            $validatedData = $request->validate(
-                [
-                    'name' => 'required|string',
-                    'status' => 'required|boolean',
-                    'image' => 'required',
-                ],
-                [
-                    'image.required' => 'Please upload a category image.',
-                    'image.image' => 'The uploaded file must be an image.',
-                    'image.mimes' => 'Only JPEG, PNG, JPG, and WEBP formats are allowed.',
-                    'image.max' => 'The image size must not exceed 2MB.',
-                ]
-            );
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+                'image' => 'nullable|image', // Image validation for different types
+                'status' => 'required|boolean',
+            ]);
+            // $validatedData = $request->validate(
+            //     [
+            //         'name' => 'required|string',
+            //         'status' => 'required|boolean',
+            //         'image' => 'required',
+            //     ],
+            //     [
+            //         'image.required' => 'Please upload a category image.',
+            //         'image.image' => 'The uploaded file must be an image.',
+            //         'image.mimes' => 'Only JPEG, PNG, JPG, and WEBP formats are allowed.',
+            //         'image.max' => 'The image size must not exceed 2MB.',
+            //     ]
+            // );
 
             // Find the category by ID
             $category = Category::findOrFail($id);
