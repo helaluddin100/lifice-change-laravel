@@ -155,6 +155,13 @@
                 </a>
 
             </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.tutorial.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Tutorial</span>
+                </a>
+
+            </li>
 
 
 

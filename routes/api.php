@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\TutorialController;
 use App\Http\Controllers\Api\AboutUsController;
 use App\Http\Controllers\Api\AdminContactUsController;
 use Illuminate\Http\Request;
@@ -386,6 +387,7 @@ Route::get('/contactus/email/{id}', [ContactusController::class, 'show']);
 Route::delete('/contactus/{id}', [ContactusController::class, 'destroy']);
 
 Route::get('/get-template', [TemplateController::class, 'index']);
+Route::get('/get-tutorial', [TutorialController::class, 'index']);
 
 // Landing Page
 Route::post('/landing-pages', [LandingPageController::class, 'store']);
