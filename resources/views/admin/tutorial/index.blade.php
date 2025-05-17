@@ -40,12 +40,13 @@
                                     @foreach ($tutorials as $key => $tutorial)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $tutorial->name }}</td>
-                                            <td>{{ $tutorial->link }}</td>
                                             <td>
                                                 <img src="{{ asset($tutorial->image) }}" alt=""
                                                     style="width: 50px; height: 50px;">
                                             </td>
+                                            <td>{{ Str::limit($tutorial->name, 30) }}</td>
+                                            <td>{{ Str::limit($tutorial->link, 30) }}</td>
+
 
                                             <td>
                                                 @if ($tutorial->status === 1)

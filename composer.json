@@ -19,7 +19,8 @@
         "laravel/tinker": "*",
         "laravel/ui": "^4.4",
         "realrashid/sweet-alert": "^7.1",
-        "tymon/jwt-auth": "^2.0"
+        "tymon/jwt-auth": "^2.0",
+        "doctrine/dbal": "~2.13"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

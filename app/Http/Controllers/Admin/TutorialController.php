@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Tutorial;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\File;
 
 class TutorialController extends Controller
 {
@@ -34,8 +36,18 @@ class TutorialController extends Controller
             $imagePath = null;
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
-                $imageName = time() . '_' . $image->getClientOriginalName();
-                $image->move(public_path('tutorial'), $imageName);
+                $imageName = time() . '_' . pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
+                $destinationPath = public_path('tutorial');
+
+                // Check if the directory exists, if not, create it
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
+                }
+
+                // Convert and save the image as WebP
+                $img = Image::make($image)->encode('webp', 90); // 90 is the quality (0-100)
+                $img->save($destinationPath . '/' . $imageName);
+
                 $imagePath = 'tutorial/' . $imageName;
             }
 

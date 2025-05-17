@@ -63,7 +63,7 @@
                                                 text-align: center;
                                                 padding: 0;
                                             ">
-                                        Congratulations! {{ $shop->name }}
+                                        Congratulations!
                                     </h2>
                                 </div>
                             </td>
