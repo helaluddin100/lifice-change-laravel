@@ -672,19 +672,19 @@ Reset default styling for dialogs.
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($order_items as $item)
+                    @foreach ($order_items as $key => $item)
                         <tr>
-                            <td class="border-b py-3 pl-3">{{ $item->id }}</td>
+                            <td class="border-b py-3 pl-3">{{ $key + 1 }}</td>
                             <td class="border-b py-3 pl-2"> {{ $item->product_details->name }}</td>
                             <td class="border-b py-3 pl-2 text-right">{{ $item->color }}</td>
                             <td class="border-b py-3 pl-2 text-center">{{ $item->size }}</td>
                             <td class="border-b py-3 pl-2 text-center"> {{ $item->quantity }}</td>
                             <td style="font-family: 'Arial', sans-serif; font-size: 14px;"
                                 class="border-b py-3 pl-2 text-right">
-                                BDT- {{ number_format($item->price, 2) }}
+                                {{ number_format($item->price, 2) }}
                             </td>
                             <td class="border-b py-3 pl-2 pr-3 text-right">
-                                BDT- {{ number_format($item->quantity * $item->price, 2) }}</td>
+                                {{ number_format($item->quantity * $item->price, 2) }}</td>
                         </tr>
                     @endforeach
 
@@ -706,7 +706,7 @@ Reset default styling for dialogs.
                                                         <td class="border-b p-3 text-right">
                                                             <div class="whitespace-nowrap font-bold text-main"
                                                                 style="color: {{ $shop->color }}">
-                                                                BDT- {{ number_format($order->total_price, 2) }}
+                                                                {{ number_format($order->total_price, 2) }}
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -720,7 +720,7 @@ Reset default styling for dialogs.
                                                         <td class="p-3 text-right">
                                                             <div class="whitespace-nowrap font-bold text-main"
                                                                 style="color: {{ $shop->color }}">
-                                                                BDT-
+
                                                                 {{ number_format($order->delivery_charge, 2) }}
                                                             </div>
                                                         </td>
@@ -734,7 +734,7 @@ Reset default styling for dialogs.
                                                         <td class="p-3 text-right">
                                                             <div class="whitespace-nowrap font-bold text-main"
                                                                 style="color: {{ $shop->color }}">
-                                                                BDT-
+
                                                                 {{ number_format(($order->total_price / 100) * $shop->vat_tax) }}
                                                             </div>
                                                         </td>
@@ -749,7 +749,6 @@ Reset default styling for dialogs.
                                                             class="bg-main p-3 text-right">
                                                             <div class="whitespace-nowrap font-bold text-white">
                                                                 @if ($shop->country == 1)
-                                                                    BDT-
                                                                 @else
                                                                     $
                                                                 @endif
