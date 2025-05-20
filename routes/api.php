@@ -133,6 +133,7 @@ Route::get('/user-shop', function (Request $request) {
 
 // Business types route
 Route::get('country', [ShopController::class, 'countries']);
+Route::get('/countries/{id}/divisions', [ShopController::class, 'divisions']);
 Route::get('/countries/{id}/districts', [ShopController::class, 'districts']);
 
 Route::get('business-type', [ShopController::class, 'businessTypes']);

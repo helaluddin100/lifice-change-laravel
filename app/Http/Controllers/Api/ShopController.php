@@ -76,6 +76,12 @@ class ShopController extends Controller
         return response()->json($countries);
     }
 
+    public function divisions($id)
+    {
+        $country = Country::with('divisions')->findOrFail($id);
+        return response()->json($country->divisions);
+    }
+
     public function districts($id)
     {
         $country = Country::with('districts')->findOrFail($id);
