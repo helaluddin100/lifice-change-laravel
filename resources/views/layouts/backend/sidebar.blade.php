@@ -98,14 +98,23 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('admin.division.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="flag"></i>
+                    <span class="link-title">Division</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('admin.district.index') }}" class="nav-link">
                     <i class="link-icon" data-feather="hexagon"></i>
                     <span class="link-title">Districts</span>
                 </a>
-
             </li>
-
-
+            <li class="nav-item">
+                <a href="{{ route('admin.upazila.index') }}" class="nav-link">
+                    <i class="link-icon" data-feather="hexagon"></i>
+                    <span class="link-title">Upazila</span>
+                </a>
+            </li>
             <li class="nav-item">
                 <a href="{{ route('admin.packages.index') }}" class="nav-link">
                     <i class="link-icon" data-feather="hexagon"></i>

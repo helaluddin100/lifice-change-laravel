@@ -18,6 +18,11 @@ class Country extends Model
         return $this->hasMany(Division::class);
     }
 
+    public function upazilas()
+    {
+        return $this->hasMany(Upazila::class);
+    }
+
     public function landingPages()
     {
         return $this->hasMany(LandingPage::class, 'country_id');

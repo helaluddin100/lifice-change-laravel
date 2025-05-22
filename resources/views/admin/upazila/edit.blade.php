@@ -6,7 +6,7 @@
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Forms</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit District</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Upazila</li>
             </ol>
         </nav>
 
@@ -14,9 +14,9 @@
             <div class="col-lg-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Edit District</h4>
+                        <h4 class="card-title">Edit Upazila</h4>
 
-                        <form action="{{ route('admin.district.update', $district->id) }}" method="Post"
+                        <form action="{{ route('admin.upazila.update', $upazila->id) }}" method="Post"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
@@ -27,7 +27,7 @@
                                     data-width="100%">
                                     @foreach ($countryes as $country)
                                         <option value="{{ $country->id }}"
-                                            {{ $district->country_id == $country->id ? 'selected' : '' }}>
+                                            {{ $upazila->country_id == $country->id ? 'selected' : '' }}>
                                             {{ $country->name }}
                                         </option>
                                     @endforeach
@@ -39,15 +39,27 @@
                                     data-width="100%">
                                     @foreach ($divisions as $division)
                                         <option value="{{ $division->id }}"
-                                            {{ $district->division_id == $division->id ? 'selected' : '' }}>
+                                            {{ $upazila->division_id == $division->id ? 'selected' : '' }}>
                                             {{ $division->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">District</label>
+                                <select class="js-example-basic-single form-select" id="district" name="district"
+                                    data-width="100%">
+                                    @foreach ($districts as $district)
+                                        <option value="{{ $district->id }}"
+                                            {{ $upazila->district_id == $district->id ? 'selected' : '' }}>
+                                            {{ $district->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
-                                <input id="name" class="form-control"value="{{ $district->name }}" name="name"
+                                <input id="name" class="form-control"value="{{ $upazila->name }}" name="name"
                                     type="text">
                             </div>
 
@@ -57,7 +69,7 @@
                                         Active
                                     </label>
                                     <input type="checkbox" class="form-check-input"
-                                        {{ $district->status == 1 ? 'checked' : '' }} name="status" id="termsCheck">
+                                        {{ $upazila->status == 1 ? 'checked' : '' }} name="status" id="termsCheck">
                                 </div>
                             </div>
                             <input class="btn btn-primary" type="submit" value="Submit">

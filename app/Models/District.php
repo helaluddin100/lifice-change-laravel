@@ -14,4 +14,8 @@ class District extends Model
     {
         return $this->belongsTo(Country::class, 'country_id');
     }
+    public function division()
+    {
+        return $this->belongsTo(Division::class, 'division_id');
+    }
 }

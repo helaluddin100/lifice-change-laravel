@@ -56,7 +56,9 @@ Route::
 
                 Route::resource('/business', 'BusinessTypeController');
                 Route::resource('/country', 'CountryController');
+                Route::resource('/division', 'DivisionController');
                 Route::resource('/district', 'DistrictController');
+                Route::resource('/upazila', 'UpazilaController');
 
                 Route::resource('templates', TemplateController::class);
 

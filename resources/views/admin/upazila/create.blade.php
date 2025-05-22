@@ -6,7 +6,7 @@
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Forms</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit District</li>
+                <li class="breadcrumb-item active" aria-current="page">Create Upazila</li>
             </ol>
         </nav>
 
@@ -14,41 +14,42 @@
             <div class="col-lg-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Edit District</h4>
+                        <h4 class="card-title">Create Upazila</h4>
 
-                        <form action="{{ route('admin.district.update', $district->id) }}" method="Post"
-                            enctype="multipart/form-data">
+                        <form action="{{ route('admin.upazila.store') }}" method="Post" enctype="multipart/form-data">
                             @csrf
-                            @method('PUT')
 
                             <div class="mb-3">
-                                <label class="form-label">divisons</label>
+                                <label class="form-label">Countrys</label>
                                 <select class="js-example-basic-single form-select" id="country" name="country"
                                     data-width="100%">
                                     @foreach ($countryes as $country)
-                                        <option value="{{ $country->id }}"
-                                            {{ $district->country_id == $country->id ? 'selected' : '' }}>
-                                            {{ $country->name }}
-                                        </option>
+                                        <option value="{{ $country->id }}">{{ $country->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Division</label>
+                                <label class="form-label">Divisions</label>
                                 <select class="js-example-basic-single form-select" id="division" name="division"
                                     data-width="100%">
                                     @foreach ($divisions as $division)
-                                        <option value="{{ $division->id }}"
-                                            {{ $district->division_id == $division->id ? 'selected' : '' }}>
-                                            {{ $division->name }}
-                                        </option>
+                                        <option value="{{ $division->id }}">{{ $division->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Districts</label>
+                                <select class="js-example-basic-single form-select" id="district" name="district"
+                                    data-width="100%">
+                                    @foreach ($districts as $district)
+                                        <option value="{{ $district->id }}">{{ $district->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
-                                <input id="name" class="form-control"value="{{ $district->name }}" name="name"
-                                    type="text">
+                                <input id="name" class="form-control" name="name" type="text">
                             </div>
 
                             <div class="mb-3">
@@ -56,8 +57,7 @@
                                     <label class="form-check-label" for="termsCheck">
                                         Active
                                     </label>
-                                    <input type="checkbox" class="form-check-input"
-                                        {{ $district->status == 1 ? 'checked' : '' }} name="status" id="termsCheck">
+                                    <input type="checkbox" class="form-check-input" checked name="status" id="termsCheck">
                                 </div>
                             </div>
                             <input class="btn btn-primary" type="submit" value="Submit">

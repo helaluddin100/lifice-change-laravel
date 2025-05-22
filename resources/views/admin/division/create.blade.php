@@ -6,7 +6,7 @@
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Forms</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Create District</li>
+                <li class="breadcrumb-item active" aria-current="page">Create Division</li>
             </ol>
         </nav>
 
@@ -14,9 +14,9 @@
             <div class="col-lg-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Create District</h4>
+                        <h4 class="card-title">Create Division</h4>
 
-                        <form action="{{ route('admin.district.store') }}" method="Post" enctype="multipart/form-data">
+                        <form action="{{ route('admin.division.store') }}" method="Post" enctype="multipart/form-data">
                             @csrf
 
                             <div class="mb-3">
@@ -25,15 +25,6 @@
                                     data-width="100%">
                                     @foreach ($countryes as $country)
                                         <option value="{{ $country->id }}">{{ $country->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Divisions</label>
-                                <select class="js-example-basic-single form-select" id="division" name="division"
-                                    data-width="100%">
-                                    @foreach ($divisions as $division)
-                                        <option value="{{ $division->id }}">{{ $division->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

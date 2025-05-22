@@ -15,9 +15,9 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h6 class="card-title">district</h6>
+                            <h6 class="card-title">division</h6>
                             <div class="create-button">
-                                <a href="{{ route('admin.district.create') }}" class="btn btn-primary btn-icon">
+                                <a href="{{ route('admin.division.create') }}" class="btn btn-primary btn-icon">
                                     <i class="feather icon-plus-circle"></i>
                                 </a>
                             </div>
@@ -29,51 +29,43 @@
                                         <th>#ID</th>
                                         <th>Name</th>
                                         <th>Country</th>
-                                        <th>Division</th>
                                         <th>status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                    @foreach ($districts as $key => $district)
+                                    @foreach ($divisions as $key => $division)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $district->name }}</td>
+                                            <td>{{ $division->name }}</td>
                                             <td>
-                                                @if ($district->country)
-                                                    {{ $district->country->name }}
+                                                @if ($division->country)
+                                                    {{ $division->country->name }}
                                                 @else
                                                     No Country Assigned
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($district->division)
-                                                    {{ $district->division->name }}
-                                                @else
-                                                    No Country Assigned
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($district->status === 1)
+                                                @if ($division->status === 1)
                                                     <span class="badge bg-success">Active</span>
                                                 @else
                                                     <span class="badge bg-primary">Deactive</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('admin.district.edit', $district->id) }}"
+                                                <a href="{{ route('admin.division.edit', $division->id) }}"
                                                     class="btn btn-primary btn-icon">
                                                     <i class="feather icon-edit"></i>
                                                 </a>
                                                 @if (Auth::user()->role_id == 1)
-                                                    <form id="delete_form_{{ $district->id }}"
-                                                        action="{{ route('admin.district.destroy', $district->id) }}"
+                                                    <form id="delete_form_{{ $division->id }}"
+                                                        action="{{ route('admin.division.destroy', $division->id) }}"
                                                         method="post" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button" class="btn btn-danger btn-icon delete-button"
-                                                            onclick="deleteId({{ $district->id }})">
+                                                            onclick="deleteId({{ $division->id }})">
                                                             <i class="feather icon-trash"></i>
                                                         </button>
                                                     </form>

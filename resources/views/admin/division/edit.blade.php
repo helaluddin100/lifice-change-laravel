@@ -16,38 +16,26 @@
                     <div class="card-body">
                         <h4 class="card-title">Edit District</h4>
 
-                        <form action="{{ route('admin.district.update', $district->id) }}" method="Post"
+                        <form action="{{ route('admin.division.update', $division->id) }}" method="Post"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
                             <div class="mb-3">
-                                <label class="form-label">divisons</label>
+                                <label class="form-label">Countrys</label>
                                 <select class="js-example-basic-single form-select" id="country" name="country"
                                     data-width="100%">
                                     @foreach ($countryes as $country)
                                         <option value="{{ $country->id }}"
-                                            {{ $district->country_id == $country->id ? 'selected' : '' }}>
+                                            {{ $division->country_id == $country->id ? 'selected' : '' }}>
                                             {{ $country->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Division</label>
-                                <select class="js-example-basic-single form-select" id="division" name="division"
-                                    data-width="100%">
-                                    @foreach ($divisions as $division)
-                                        <option value="{{ $division->id }}"
-                                            {{ $district->division_id == $division->id ? 'selected' : '' }}>
-                                            {{ $division->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
-                                <input id="name" class="form-control"value="{{ $district->name }}" name="name"
+                                <input id="name" class="form-control"value="{{ $division->name }}" name="name"
                                     type="text">
                             </div>
 
@@ -57,7 +45,7 @@
                                         Active
                                     </label>
                                     <input type="checkbox" class="form-check-input"
-                                        {{ $district->status == 1 ? 'checked' : '' }} name="status" id="termsCheck">
+                                        {{ $division->status == 1 ? 'checked' : '' }} name="status" id="termsCheck">
                                 </div>
                             </div>
                             <input class="btn btn-primary" type="submit" value="Submit">

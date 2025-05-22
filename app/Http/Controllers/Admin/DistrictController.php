@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\District;
 use Illuminate\Http\Request;
 use App\Models\Country;
-
+use App\Models\Division;
 use Illuminate\Support\Facades\Log;
 use League\Config\Exception\ValidationException;
 
@@ -32,7 +32,8 @@ class DistrictController extends Controller
     public function create()
     {
         $countryes = Country::all();
-        return view('admin.district.create', compact('countryes'));
+        $divisions = Division::all();
+        return view('admin.district.create', compact('countryes', 'divisions'));
     }
 
     /**
@@ -46,6 +47,7 @@ class DistrictController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'country' => 'required|string',
+            'division' => 'required|string',
         ]);
 
 
@@ -56,6 +58,7 @@ class DistrictController extends Controller
         $district = new District();
         $district->name = $validatedData['name'];
         $district->country_id = $validatedData['country'];
+        $district->division_id = $validatedData['division'];
         $district->status = $status;
         $district->save();
 
@@ -84,7 +87,8 @@ class DistrictController extends Controller
     {
         $district = District::find($id);
         $countryes = Country::all();
-        return view('admin.district.edit', compact('district', 'countryes'));
+        $divisions = Division::all();
+        return view('admin.district.edit', compact('district', 'divisions', 'countryes'));
     }
 
     /**
@@ -98,19 +102,19 @@ class DistrictController extends Controller
 
     public function update(Request $request, District $district)
     {
+        // dd($request->all());
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'country' => 'required|string',
-
-
+            'division' => 'required|string',
         ]);
 
         $status = $request->has('status') ? 1 : 0;
 
         $district->name = $validatedData['name'];
-        $district->status = $status;
         $district->country_id = $validatedData['country'];
-
+        $district->division_id = $validatedData['division'];
+        $district->status = $status;
         $district->save();
 
         return redirect()->route('admin.district.index')->with('success', 'District updated successfully!');
