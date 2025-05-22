@@ -6,6 +6,7 @@ use App\Models\DemoCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class DemoCategoryController extends Controller
@@ -32,32 +33,28 @@ class DemoCategoryController extends Controller
             'description' => 'nullable|string',
             'status' => 'nullable|boolean',
         ]);
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
+            $destinationPath = public_path('category_images');
+
+            if (!File::exists($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true);
+            }
+            $img = Image::make($image)->encode('webp', 90); // 90 is the quality (0-100)
+            $img->save($destinationPath . '/' . $imageName);
+
+            $imagePath = 'category_images/' . $imageName;
+        }
 
         // Create a new category instance
         $category = new DemoCategory();
         $category->name = $validatedData['name'];
         $category->business_type_id = $validatedData['business_type_id'];
+        $category->description = $validatedData['description'];
+        $category->image = $imagePath;
         $category->status = $request->status;
-
-        // Handle image upload and convert to WebP format
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = md5(uniqid()) . '.webp'; // WEBP format
-
-            // Open the uploaded image and convert it to WEBP format
-            $img = Image::make($image);
-
-            // Convert the image to WebP format and reduce file size
-            $img->encode('webp', 80); // 80 is the quality level, adjust as needed
-
-            // Save the image in the public directory (category_images folder)
-            $img->save(public_path('category_images/' . $imageName));
-
-            // Assign the image name to the category
-            $category->image = $imageName;
-        }
-
-        // Save the category
         $category->save();
 
         return redirect()->route('admin.category.index')->with('success', 'Category created successfully.');
@@ -94,39 +91,34 @@ class DemoCategoryController extends Controller
         // Find the existing category
         $category = DemoCategory::findOrFail($id);
 
+        $imagePath = $category->image;
+
+        // Handle image upload if new file is provided
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
+            $destinationPath = public_path('category_images');
+
+            if (!File::exists($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true);
+            }
+
+            $img = Image::make($image)->encode('webp', 90);
+            $img->save($destinationPath . '/' . $imageName);
+
+            $imagePath = 'category_images/' . $imageName;
+
+            // Optional: delete old image if needed
+            if (File::exists(public_path($category->image))) {
+                File::delete(public_path($category->image));
+            }
+        }
         // Update the category properties
         $category->name = $validatedData['name'];
         $category->business_type_id = $validatedData['business_type_id'];
-        $category->description = $validatedData['description'] ?? $category->description;
-
-        // Ensure status is set to 0 if unchecked, or 1 if checked
+        $category->description = $validatedData['description'];
+        $category->image = $imagePath;
         $category->status = $request->has('status') ? 1 : 0;
-
-        // Handle image upload if a new image is provided
-        if ($request->hasFile('image')) {
-            // Delete the old image from the server
-            if ($category->image && file_exists(public_path('category_images/' . $category->image))) {
-                unlink(public_path('category_images/' . $category->image));
-            }
-
-            // Upload the new image
-            $image = $request->file('image');
-            $imageName = md5(uniqid()) . '.webp'; // WEBP format
-
-            // Open the uploaded image and convert it to WEBP format
-            $img = Image::make($image);
-
-            // Convert the image to WebP format and reduce file size
-            $img->encode('webp', 80); // 80 is the quality level, adjust as needed
-
-            // Save the image in the public directory (category_images folder)
-            $img->save(public_path('category_images/' . $imageName));
-
-            // Assign the image name to the category
-            $category->image = $imageName;
-        }
-
-        // Save the updated category
         $category->save();
 
         return redirect()->route('admin.category.index')->with('success', 'Category updated successfully.');

@@ -41,7 +41,7 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $category->name }}</td>
                                             <td>
-                                                <img src="{{ asset('category_images/' . $category->image) }}" alt=""
+                                                <img src="{{ asset(path: $category->image) }}" alt=""
                                                     style="width: 50px; height: 50px;">
                                             </td>
                                             <td>{{ $category->businessType->name }}</td>
