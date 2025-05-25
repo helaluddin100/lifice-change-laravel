@@ -18,8 +18,8 @@ sudo supervisorctl status
 
 
 <!-- service crone status check -->
-<!-- sudo service cron status
-
-For manual run schedule
+<!-- 
+sudo service cron status
+==============For manual run schedule=============
 php artisan schedule:run
  -->
