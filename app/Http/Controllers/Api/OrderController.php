@@ -168,7 +168,8 @@ class OrderController extends Controller
 
         if ($order->order_status == 'shipped') {
             // Send the updated order status via email
-            Mail::to($order->email)->send(new OrderStatusUpdated($order));
+            // Mail::to($order->email)->send(new OrderStatusUpdated($order));
+            Mail::to($order->email)->queue(new OrderStatusUpdated($order));
         }
         return response()->json([
             'message' => 'Order status updated successfully',
@@ -469,7 +470,8 @@ class OrderController extends Controller
         $shop = Shop::find($request->shop_id); // Get the shop to retrieve the email
         $email = $shop->email; // Assuming you have the email in the shop's table
 
-        Mail::to($email)->send(new OrderConfirmationMail($order, $shop));
+        // Mail::to($email)->send(new OrderConfirmationMail($order, $shop));
+        Mail::to($email)->queue(new OrderConfirmationMail($order, $shop));
 
 
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\upazila;
+use App\Models\Upazila;
 use Illuminate\Http\Request;
 use App\Models\Country;
 use App\Models\District;
