@@ -534,10 +534,18 @@ class ShopController extends Controller
     }
 
 
+
+    private function removeNullFields(array $data): array
+    {
+        return collect($data)->filter(function ($value) {
+            return !is_null($value) && $value !== 'null';
+        })->toArray();
+    }
+
     public function update(Request $request, $id)
     {
         try {
-            // Validate incoming request
+            // ✅ Validate only the fields that might be updated
             $validatedData = $request->validate([
                 'name' => 'nullable|string',
                 'shop_type' => 'nullable|string',
@@ -557,6 +565,10 @@ class ShopController extends Controller
                 'default_delivery_charge' => 'nullable|numeric',
                 'specific_delivery_charges' => 'nullable',
                 'delivery_charge_note' => 'nullable',
+                'inside_dhaka' => 'nullable|numeric',
+                'outside_dhaka' => 'nullable|numeric',
+                'free_delivery_amount' => 'nullable|numeric',
+                'delivery_option' => 'nullable',
 
                 'shop_domain' => 'nullable',
                 'subdomain_id' => 'nullable',
@@ -581,7 +593,7 @@ class ShopController extends Controller
                 'whatsapp' => 'nullable',
                 'discord' => 'nullable',
 
-                // ✅ Add boolean fields for settings
+                // Boolean fields
                 'slider' => 'nullable|boolean',
                 'today_sell' => 'nullable|boolean',
                 'new_arrival' => 'nullable|boolean',
@@ -597,25 +609,25 @@ class ShopController extends Controller
                 'template_type' => 'nullable|numeric',
             ]);
 
-            // Filter out null or empty fields
+            // ✅ Only include fields with values (excluding nulls and empty strings)
             $filteredData = array_filter($validatedData, function ($value) {
-                return $value !== null && $value !== '';
+                return !is_null($value) && $value !== '';
             });
 
-            // Log the filtered data to debug
-            Log::info('Filtered data', $filteredData);
-
             $shop = Shop::findOrFail($id);
+            $filteredData = $this->removeNullFields($request->all());
 
-            // ✅ Merge the filtered data with boolean settings
-            $shop->update($validatedData);
+            // ✅ Apply filtered values dynamically
+            foreach ($filteredData as $key => $value) {
+                $shop->{$key} = $value;
+            }
 
-            // Handle logo upload
+            // ✅ Handle image separately
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 if ($image->isValid()) {
-                    if (File::exists($shop->logo)) {
-                        File::delete($shop->logo);
+                    if (File::exists(public_path($shop->logo))) {
+                        File::delete(public_path($shop->logo));
                     }
                     $imageName = uniqid() . '-' . $image->getClientOriginalName();
                     $image->move(public_path('image/shop/'), $imageName);
@@ -627,7 +639,6 @@ class ShopController extends Controller
 
             $shop->save();
 
-            Log::info('Shop updated successfully', ['id' => $shop->id]);
             return response()->json([
                 'status' => 200,
                 'message' => 'Shop updated successfully',
