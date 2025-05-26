@@ -607,6 +607,10 @@ class ShopController extends Controller
                 'top_category' => 'nullable|boolean',
                 'customer_benefit' => 'nullable|boolean',
                 'template_type' => 'nullable|numeric',
+
+                'advance_type' => 'nullable',
+                'advance_parcent' => 'nullable|numeric',
+
             ]);
 
             // ✅ Only include fields with values (excluding nulls and empty strings)

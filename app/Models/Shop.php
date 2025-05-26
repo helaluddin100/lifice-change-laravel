@@ -62,6 +62,8 @@ class Shop extends Model
         'related_product',
         'customer_benefit',
         'template_type',
+        'advance_type',
+        'advance_parcent'
     ];
 
 
