@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('payment_getwayas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // যার গেটওয়ে সেটিং এটি তার জন্য
+            $table->unsignedBigInteger('user_id'); // যার গেটওয়ে সেটিং এটি তার জন্য
             $table->string('name'); // bkash, nagad, rocket, sslcommerz
             $table->string('getwaya_id');
             $table->string('type')->comment('payment gateway type')->nullable(); // payment gateway type
@@ -24,13 +24,12 @@ return new class extends Migration
             $table->string('qr_code_image')->nullable(); // QR কোড ইমেজ (পাথ)
 
             $table->string('api_mood')->nullable();
-            $table->string('store_id')->nullable();
-            $table->string('store_id')->nullable();
+            $table->string('store_id')->nullable(); // Keep this one
             $table->string('store_password')->nullable();
 
             $table->string('api_key')->nullable(); // API integration এর জন্য
             $table->string('api_secret')->nullable(); // API integration এর জন্য
-            $table->boolean('status')->default(true); // এই গেটওয়ে কি সক্রিয়?
+            $table->boolean('status')->default(true); // এই গেটওয়ে কি সক্রিয়?
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

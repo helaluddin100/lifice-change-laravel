@@ -48,6 +48,7 @@ use App\Http\Controllers\Api\CourierSettingController;
 use App\Http\Controllers\Api\CustomerReportController;
 use App\Http\Controllers\Api\AffiliateController;
 use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\PaymentGetwayaController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -449,3 +450,12 @@ Route::post('/brand/update/{id}', [BrandController::class, 'update']);
 Route::get('/brands/{user_id}', [BrandController::class, 'index']);
 Route::get('/brands/edit/{id}', [BrandController::class, 'edit']);
 Route::delete('/brands/delete/{id}', [BrandController::class, 'destroy']);
+
+
+
+Route::get('/payment-gateways/{user_id}', [PaymentGetwayaController::class, 'index']);
+// Route::post('/payment-gateways/store/{user_id}', [PaymentGetwayaController::class, 'store']);
+Route::put('/payment-gateways/{id}/{user_id}', [PaymentGetwayaController::class, 'update']);
+Route::delete('/payment-gateways/{id}/{user_id}', [PaymentGetwayaController::class, 'destroy']);
+// routes/api.php
+Route::post('/payment-gateways/store/{id}', [PaymentGetwayaController::class, 'store']);
