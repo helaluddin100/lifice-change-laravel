@@ -609,7 +609,7 @@ class ShopController extends Controller
                 'template_type' => 'nullable|numeric',
 
                 'advance_type' => 'nullable',
-                'advance_parcent' => 'nullable|numeric',
+                'advance_parcent' => 'nullable',
 
             ]);
 
