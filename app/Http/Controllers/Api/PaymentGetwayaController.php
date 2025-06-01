@@ -6,18 +6,22 @@ use App\Http\Controllers\Controller;
 
 use App\Models\PaymentGetwaya;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
 class PaymentGetwayaController extends Controller
 {
-    public function index()
+    public function getUserGateways($id)
     {
-        $gateways = PaymentGetwaya::where('user_id', Auth::id())->get();
-        return response()->json($gateways);
-    }
+        $gateways = PaymentGetwaya::where('user_id', $id)
+            ->where('status', 1)
+            ->get();
 
+
+        return response()->json([
+            'data' => $gateways,
+        ], 200);
+    }
 
 
 
@@ -40,40 +44,28 @@ class PaymentGetwayaController extends Controller
 
         $validated['user_id'] = $id;
 
-        // Find existing gateway if updating
-        $existing = PaymentGetwaya::where('getwaya_id', $validated['getwaya_id'])
-            ->where('type', $validated['type'])
-            ->first();
+        // ✅ যদি স্ট্যাটাস true হয় তাহলে আগের সবগুলোর status 0 করে দাও
+        if (!empty($validated['status']) && $validated['status'] == 1) {
+            PaymentGetwaya::where('user_id', $id)
+                ->where('getwaya_id', $validated['getwaya_id'])
+                ->update(['status' => 0]);
+        }
 
-        // Handle and optimize QR image
+        // QR কোড ইমেজ প্রসেসিং
         if ($request->hasFile('qr_code_image')) {
             $image = $request->file('qr_code_image');
-
-            // Directory path
             $directory = public_path('storage/qr_codes');
 
-            // Create directory if not exists
             if (!File::exists($directory)) {
                 File::makeDirectory($directory, 0755, true, true);
             }
 
-            // Delete old image if exists
-            if ($existing && $existing->qr_code_image) {
-                $oldImagePath = public_path($existing->qr_code_image);
-                if (File::exists($oldImagePath)) {
-                    File::delete($oldImagePath);
-                }
-            }
-
-            // Create unique filename
             $filename = time() . '_' . uniqid() . '.webp';
 
-            // Convert and optimize
             $img = Image::make($image)->resize(500, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->encode('webp', 80);
 
-            // Save image
             $img->save($directory . '/' . $filename);
 
             $validated['qr_code_image'] = '/storage/qr_codes/' . $filename;
@@ -82,6 +74,7 @@ class PaymentGetwayaController extends Controller
         // Update or Create
         $gateway = PaymentGetwaya::updateOrCreate(
             [
+                'user_id' => $id,
                 'getwaya_id' => $validated['getwaya_id'],
                 'type' => $validated['type'],
             ],
@@ -93,6 +86,7 @@ class PaymentGetwayaController extends Controller
             'data' => $gateway,
         ], 200);
     }
+
 
 
 

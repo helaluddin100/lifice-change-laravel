@@ -453,8 +453,9 @@ Route::delete('/brands/delete/{id}', [BrandController::class, 'destroy']);
 
 
 
-Route::get('/payment-gateways/{user_id}', [PaymentGetwayaController::class, 'index']);
-Route::delete('/payment-gateways/{id}/{user_id}', [PaymentGetwayaController::class, 'destroy']);
 // routes/api.php
 Route::post('/payment-gateways/store/{id}', [PaymentGetwayaController::class, 'store']);
 Route::get('/payment-gateways/get/{user_id}/{getwaya_id}/{type}', [PaymentGetwayaController::class, 'getGateway']);
+
+// payment gateways for user
+Route::get('/users/{id}/payment-gateways', [PaymentGetwayaController::class, 'getUserGateways']);
