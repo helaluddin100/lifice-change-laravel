@@ -406,7 +406,7 @@ class OrderController extends Controller
             'promo_code'    => 'nullable|string',
             'total_price'   => 'required|numeric',
             'delivery_charge' => 'required|numeric',
-            'payment_method' => 'required|in:cash_on_delivery,online_payment',
+            'payment_method' => 'required',
             'cart_items'    => 'required|array',
             'cart_items.*.product_id' => 'required|exists:products,id',
             'cart_items.*.product_name' => 'required|string',
