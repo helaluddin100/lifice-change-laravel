@@ -1,6 +1,6 @@
 <nav class="navbar">
     <a href="#" class="sidebar-toggler">
-        <i data-feather="menu"></i>
+        <i class="feather icon-menu"></i>
     </a>
     <div class="navbar-content">
         <form class="search-form">
@@ -34,7 +34,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="appsDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i data-feather="grid"></i>
+                    <i class="feather icon-grid"></i>
                 </a>
                 <div class="dropdown-menu p-0" aria-labelledby="appsDropdown">
                     <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
@@ -79,7 +79,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i data-feather="mail"></i>
+                    <i class="feather icon-mail"></i>
                 </a>
                 <div class="dropdown-menu p-0" aria-labelledby="messageDropdown">
                     <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
@@ -161,7 +161,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i data-feather="bell"></i>
+                    <i class=" feather icon-bell"></i>
                     <div class="indicator">
                         <div class="circle"></div>
                     </div>
@@ -175,7 +175,7 @@
                         <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                             <div
                                 class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                <i class="icon-sm text-white" data-feather="gift"></i>
+                                <i class="icon-sm text-white" class=" feather icon-gift"></i>
                             </div>
                             <div class="flex-grow-1 me-2">
                                 <p>New Order Recieved</p>
@@ -185,7 +185,7 @@
                         <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                             <div
                                 class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                <i class="icon-sm text-white" data-feather="alert-circle"></i>
+                                <i class="icon-sm text-white" class="feather icon-alert-circle"></i>
                             </div>
                             <div class="flex-grow-1 me-2">
                                 <p>Server Limit Reached!</p>
@@ -206,7 +206,7 @@
                         <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                             <div
                                 class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                <i class="icon-sm text-white" data-feather="layers"></i>
+                                <i class="icon-sm text-white" class="feather icon-layers"></i>
                             </div>
                             <div class="flex-grow-1 me-2">
                                 <p>Apps are ready for update</p>
@@ -216,7 +216,7 @@
                         <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                             <div
                                 class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                <i class="icon-sm text-white" data-feather="download"></i>
+                                <i class="icon-sm text-white" class="feather icon-download"></i>
                             </div>
                             <div class="flex-grow-1 me-2">
                                 <p>Download completed</p>
@@ -232,12 +232,13 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30" alt="profile">
+                    <img class="wd-30 ht-30 rounded-circle" src="{{ asset('assets/images/user-img.png') }}"
+                        alt="profile">
                 </a>
                 <div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
                     <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
                         <div class="mb-3">
-                            <img class="wd-80 ht-80 rounded-circle" src="https://via.placeholder.com/80x80"
+                            <img class="wd-80 ht-80 rounded-circle" src="{{ asset('assets/images/user-img.png') }}"
                                 alt="">
                         </div>
                         <div class="text-center">

@@ -488,6 +488,7 @@
 
 .icon-menu:before {
     content: "\e88f";
+    font-size: 20px;
 }
 
 .icon-message-circle:before {
