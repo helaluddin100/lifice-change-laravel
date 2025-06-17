@@ -11,7 +11,7 @@
     <meta name="keywords"
         content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
-    <title>NobleUI - HTML Bootstrap 5 Admin Dashboard Template</title>
+    <title>Admin BuyTiq | Build & Scale Your Online Store with the Best E-Commerce SaaS</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,42 @@
     @include('layouts.backend.js')
     <!-- End custom js for this page -->
     @yield('js')
+    <script>
+        $(document).ready(function() {
+            const body = $("body");
 
+            // Sidebar toggle
+            $(".sidebar-toggler").on("click", function(e) {
+                e.preventDefault();
+
+                $(".sidebar-toggler").toggleClass("active not-active");
+
+                if (window.matchMedia("(min-width: 992px)").matches) {
+                    body.toggleClass("sidebar-folded");
+                } else {
+                    body.toggleClass("sidebar-open");
+                }
+            });
+
+            // Settings sidebar toggle
+            $(".settings-sidebar-toggler").on("click", function(e) {
+                body.toggleClass("settings-open");
+            });
+
+            // Close sidebar on outside click (mobile/tablet)
+            $(document).on("click touchstart", function(e) {
+                if (
+                    !$(e.target).closest(
+                        ".sidebar-toggler, .sidebar, .sidebar-body"
+                    ).length
+                ) {
+                    if (body.hasClass("sidebar-open")) {
+                        body.removeClass("sidebar-open");
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
