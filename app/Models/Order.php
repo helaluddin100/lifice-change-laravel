@@ -27,6 +27,12 @@ class Order extends Model
         'order_id',
         'consignment_id',
         'delivery_by',
+        'payment_number',
+        'payment_transation_id',
+        'pay_amount',
+        'payment_status',
+        'payment_gateway',
+
     ];
 
     public function items()

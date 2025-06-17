@@ -418,6 +418,12 @@ class OrderController extends Controller
             'cart_items.*.price' => 'required|numeric',
             'cart_items.*.size' => 'nullable|string',
             'cart_items.*.color' => 'nullable|string',
+
+            'pay_amount' => 'nullable|numeric',
+            'payment_status' => 'nullable|in:pending,completed,canceled',
+            'payment_method' => 'required',
+            'payment_number' => 'nullable|string|max:20',
+            'payment_transation_id' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -446,6 +452,11 @@ class OrderController extends Controller
             'delivery_charge' => $request->delivery_charge,
             'payment_method' => $request->payment_method,
             'order_id'       => 'BT-' . $randomNumber,
+            'pay_amount' => $request->pay_amount,
+            'payment_status' => $request->payment_status ?? 'pending',
+            'payment_number' => $request->payment_number,
+            'payment_transation_id' => $request->payment_transation_id,
+            'payment_method' => $request->payment_method,
             'order_status'   => 'pending',
         ]);
 
