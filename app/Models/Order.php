@@ -32,6 +32,7 @@ class Order extends Model
         'pay_amount',
         'payment_status',
         'payment_gateway',
+        'order_type',
 
     ];
 

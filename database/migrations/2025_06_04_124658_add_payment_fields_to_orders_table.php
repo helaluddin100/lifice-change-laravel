@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('payment_transation_id')->nullable()->after('payment_number');
             $table->decimal('pay_amount', 10, 2)->nullable()->after('payment_transation_id');
             $table->string('payment_status')->default('pending')->after('pay_amount');
+            $table->string('order_type')->nullable()->after('payment_status');
             $table->string('payment_gateway')->nullable()->after('payment_status');
         });
     }

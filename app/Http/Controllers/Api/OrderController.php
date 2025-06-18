@@ -424,6 +424,7 @@ class OrderController extends Controller
             'payment_method' => 'required',
             'payment_number' => 'nullable|string|max:20',
             'payment_transation_id' => 'nullable|string|max:255',
+            'order_type' => 'required', // Default to 'normal' if not provided
         ]);
 
         if ($validator->fails()) {
@@ -458,6 +459,7 @@ class OrderController extends Controller
             'payment_transation_id' => $request->payment_transation_id,
             'payment_method' => $request->payment_method,
             'order_status'   => 'pending',
+            'order_type'     => $request->order_type, // Default to 'normal' if not provided
         ]);
 
         // Insert each cart item into order_items table
