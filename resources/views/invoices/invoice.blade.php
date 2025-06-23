@@ -785,9 +785,9 @@ Reset default styling for dialogs.
         {{-- <div class="px-14 text-sm text-neutral-700">
             <p class="text-main font-bold" style="color: {{ $shop->color }};">PAYMENT DETAILS</p>
             <p> Payment Method: {{ str_replace('_', ' ', $order->payment_method) }}</p>
-            {{-- <p>Bank/Sort Code: 1234567</p>
+            <p>Bank/Sort Code: 1234567</p>
             <p>Account Number: 123456678</p>
-            <p>Payment Reference: BRA-00335</p> --}}
+            <p>Payment Reference: BRA-00335</p>
         </div> --}}
 
         <div class="px-14 py-10 text-sm text-neutral-700">
