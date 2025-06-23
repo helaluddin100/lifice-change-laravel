@@ -711,13 +711,13 @@ Reset default styling for dialogs.
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="p-3">
+                                                        <td class="border-b p-3">
                                                             <div class="whitespace-nowrap font-bold text-slate-400">
                                                                 Delivery
                                                                 Charge:
                                                             </div>
                                                         </td>
-                                                        <td class="p-3 text-right">
+                                                        <td class="border-b p-3 text-right">
                                                             <div class="whitespace-nowrap font-bold text-main"
                                                                 style="color: {{ $shop->color }}">
 
@@ -726,16 +726,30 @@ Reset default styling for dialogs.
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="p-3">
+                                                        <td class=" border-b p-3">
                                                             <div class="whitespace-nowrap font-bold text-slate-400">
                                                                 VAT/TAX:
+                                                            </div>
+                                                        </td>
+                                                        <td class="border-b p-3 text-right">
+                                                            <div class="whitespace-nowrap font-bold text-main"
+                                                                style="color: {{ $shop->color }}">
+
+                                                                {{ number_format(($order->total_price / 100) * $shop->vat_tax) }}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class=" p-3">
+                                                            <div class="whitespace-nowrap font-bold text-slate-400">
+                                                                Advance Pay:
                                                             </div>
                                                         </td>
                                                         <td class="p-3 text-right">
                                                             <div class="whitespace-nowrap font-bold text-main"
                                                                 style="color: {{ $shop->color }}">
 
-                                                                {{ number_format(($order->total_price / 100) * $shop->vat_tax) }}
+                                                                {{ $order->pay_amount }}
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -752,7 +766,7 @@ Reset default styling for dialogs.
                                                                 @else
                                                                     $
                                                                 @endif
-                                                                {{ number_format($order->total_price + ($order->total_price / 100) * $shop->vat_tax + $order->delivery_charge) }}
+                                                                {{ number_format($order->total_price + ($order->total_price / 100) * $shop->vat_tax + $order->delivery_charge - $order->pay_amount) }}
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -768,13 +782,13 @@ Reset default styling for dialogs.
             </table>
         </div>
 
-        <div class="px-14 text-sm text-neutral-700">
+        {{-- <div class="px-14 text-sm text-neutral-700">
             <p class="text-main font-bold" style="color: {{ $shop->color }};">PAYMENT DETAILS</p>
             <p> Payment Method: {{ str_replace('_', ' ', $order->payment_method) }}</p>
             {{-- <p>Bank/Sort Code: 1234567</p>
             <p>Account Number: 123456678</p>
             <p>Payment Reference: BRA-00335</p> --}}
-        </div>
+        </div> --}}
 
         <div class="px-14 py-10 text-sm text-neutral-700">
             <p class="text-main font-bold" style="color: {{ $shop->color }};">Terms and Conditions</p>
