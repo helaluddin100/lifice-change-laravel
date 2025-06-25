@@ -121,6 +121,8 @@ class OrderController extends Controller
             'item_type' => 'nullable', // This field is always nullable
         ]);
 
+
+
         $order = Order::with('orderItems')->find($id);
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
@@ -137,6 +139,11 @@ class OrderController extends Controller
             }
         }
 
+        $store = Shop::find($order->shop_id);
+        if (!$store) {
+            return response()->json(['message' => 'Store not found'], 404);
+        }
+
         // Handle product stock when order is delivered
         if ($order->order_status !== 'delivered' && $validated['order_status'] === 'delivered') {
             foreach ($order->orderItems as $item) {
@@ -149,15 +156,22 @@ class OrderController extends Controller
             }
         }
 
+        $totalPrice = $order->total_price;
+        $deliveryCharge = $order->delivery_charge;
+        $alreadyPaid = $order->pay_amount ?? 0;
+        $vatTax = $totalPrice / 100 * $store->vat_tax;
+
+        $collectedAmount = $totalPrice + $deliveryCharge + $vatTax - $alreadyPaid;
+
         // If the courier type is 2 (Steadfast), send the request to Steadfast API
         if ($validated['courier_type'] == 2 && $validated['order_status'] == 'shipped') {
-            $response = $this->sendOrderToSteadfast($order, $request, $courierSetting);
+            $response = $this->sendOrderToSteadfast($order, $request, $courierSetting, $collectedAmount);
             if ($response['status'] !== 200) {
                 return response()->json(['message' => $response['message']], 500);
             }
         } elseif ($validated['courier_type'] == 1 && $validated['order_status'] == 'shipped') {
             // Handle Pathao API logic for courier_type == 1
-            $response = $this->sendOrderToPathao($order, $request, $courierSetting);
+            $response = $this->sendOrderToPathao($order, $request, $courierSetting, $collectedAmount);
             if ($response['status'] !== 200) {
                 return response()->json(['message' => $response['message']], 500);
             }
@@ -177,7 +191,7 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function sendOrderToSteadfast($order, $request, $courierSetting)
+    public function sendOrderToSteadfast($order, $request, $courierSetting, $collectedAmount)
     {
         // Steadfast API URL and Authentication
         $apiUrl = 'https://portal.packzy.com/api/v1/create_order';
@@ -190,7 +204,7 @@ class OrderController extends Controller
             'recipient_name' => $order->name,
             'recipient_phone' => $order->phone,
             'recipient_address' => $order->address,
-            'cod_amount' => $order->total_price,
+            'cod_amount' => $collectedAmount,
             'note' => $request->special_instruction ?? "Please deliver this product on time",
             'item_weight' => $request->item_weight,
             'item_description' => $request->item_description ?? "Please deliver this product on time",
@@ -223,7 +237,7 @@ class OrderController extends Controller
         }
     }
 
-    public function sendOrderToPathao($order, $request, $courierSetting)
+    public function sendOrderToPathao($order, $request, $courierSetting, $collectedAmount)
     {
         // Pathao API URL for token and orders
         $baseUrl = 'https://api-hermes.pathao.com/aladdin/api/v1/';
@@ -257,6 +271,8 @@ class OrderController extends Controller
                 return ['status' => 500, 'message' => 'Failed to get access token from Pathao'];
             }
 
+
+
             // Access token
             $accessToken = $tokenResponseData['access_token'];
 
@@ -276,7 +292,7 @@ class OrderController extends Controller
                 'item_quantity' => $order->orderItems->sum('quantity'),
                 'item_weight' => $request->item_weight,  // From request
                 'item_description' => $request->item_description ?? "Please deliver this product on time",
-                'amount_to_collect' => (int) $order->total_price,
+                'amount_to_collect' => $collectedAmount,
             ];
 
             // Make the POST request to Pathao API
