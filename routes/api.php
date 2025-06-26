@@ -202,6 +202,8 @@ Route::delete('/product/{id}', [ProductController::class, 'destroy']);
 //view shop
 Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
 Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
+Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDomain']);
+
 
 
 
@@ -432,8 +434,6 @@ Route::get('/get-clients', [ClientReviewController::class, 'index']);
 // ============= Contact Us to Admin =====
 Route::post('/admin-contact', [AdminContactUsController::class, 'store']);
 
-
-Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDomain']);
 
 
 // =========== customer report =========

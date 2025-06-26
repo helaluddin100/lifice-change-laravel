@@ -34,6 +34,11 @@ class ShopController extends Controller
             return response()->json(['error' => 'Shop not found'], 404);
         }
 
+        $topPrice = $shop->products()
+            ->max(DB::raw('GREATEST(CAST(old_price AS UNSIGNED), CAST(current_price AS UNSIGNED))'));
+
+        $shop->top_price = $topPrice;
+
         return response()->json([
             'shop' => $shop,
             'template' => $shop->template ? $shop->template : null,
@@ -57,7 +62,6 @@ class ShopController extends Controller
         $topPrice = $shop->products()
             ->max(DB::raw('GREATEST(CAST(old_price AS UNSIGNED), CAST(current_price AS UNSIGNED))'));
 
-        // $shop অবজেক্টে top_price প্রপার্টি যুক্ত করা হচ্ছে
         $shop->top_price = $topPrice;
 
         return response()->json([
