@@ -26,12 +26,16 @@
                         <tr>
                             <td align="center" style="margin-bottom: 30px; width: 100%">
                                 <div style="margin-top: 40px">
-                                    <a href="https://buytiq.com" style="text-decoration: none" target="_blank">
-                                        <img style="
-                                                    text-align: center;
-                                                    width: 150px;
-                                                "
-                                            src="https://iili.io/3rBLPV4.png" alt="BuyTiq" />
+                                    <a href="https://buytiq.com"
+                                        style="
+                                                text-decoration: none;
+                                                font-family: sans-serif;
+                                                color: #7922e6;
+                                                font-size: 30px;
+                                                font-weight: 900;
+                                            "
+                                        target="_blank">
+                                        BUYTIQ
                                     </a>
                                 </div>
                             </td>
@@ -153,38 +157,34 @@
                                     ">
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://www.facebook.com/buytiq/" target="_blank">
-                                    <img src="https://iili.io/3rBy2j9.png" alt="" />
+                                    Facebook
                                 </a>
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://www.linkedin.com/in/buytiq" target="_blank">
-                                    <img src="https://iili.io/3rCHp3J.png" alt="" />
-                                </a>
-                                <a style="
-                                            padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
-                                        "
-                                    href="https://www.instagram.com/buytiq_official" target="_blank">
-                                    <img src="https://iili.io/3rCdk0u.png" alt="" />
+                                    LinkedIn
                                 </a>
 
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://x.com/buytiq1" target="_blank">
-                                    <img src="https://iili.io/3rC2GB1.png" alt="" />
+                                    Twitter
                                 </a>
                             </td>
                         </tr>
