@@ -1,24 +1,24 @@
 {{-- <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order Confirmation</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-</head>
-
-<body>
-    <h1>Congratulations! {{ $shop->name }}</h1>
-    <p>You have received a new order in your shop. Below are the details:</p>
-    <p><strong>Order ID:</strong> {{ $order->order_id }}</p>
-    <p><strong>Customer Name:</strong> {{ $order->name }}</p>
-    <p><strong>Total Price:</strong> {{ $order->total_price }}</p>
-    <p><strong>Payment Method:</strong> {{ $order->payment_method }}</p>
-    <p>Thank you for shopping with us!</p>
-</body>
-
-</html> --}}
-
+    <body>
+        <h1>Congratulations! {{ $shop->name }}</h1>
+        <p>
+            You have received a new order in your shop. Below are the details:
+        </p>
+        <p><strong>Order ID:</strong> {{ $order->order_id }}</p>
+        <p><strong>Customer Name:</strong> {{ $order->name }}</p>
+        <p><strong>Total Price:</strong> {{ $order->total_price }}</p>
+        <p><strong>Payment Method:</strong> {{ $order->payment_method }}</p>
+        <p>Thank you for shopping with us!</p>
+    </body>
+</html>
+--}}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -48,15 +48,10 @@
                         <tr>
                             <td align="center" style="margin-bottom: 30px; width: 100%">
                                 <div style="margin-top: 40px">
-                                    <img style="
-                                                text-align: center;
-                                                width: 60px;
-                                            "
-                                        src="https://iili.io/3rCS2OQ.png" alt="BuyTiq" />
                                     <h2
                                         style="
                                                 font-family: sans-serif;
-                                                font-size: 20px;
+                                                font-size: 30px;
                                                 color: #7922e6;
                                                 font-weight: bold;
                                                 margin-top: 10px;
@@ -226,38 +221,34 @@
                                     ">
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://www.facebook.com/buytiq/" target="_blank">
-                                    <img src="https://iili.io/3rBy2j9.png" alt="" />
+                                    Facebook
                                 </a>
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://www.linkedin.com/in/buytiq" target="_blank">
-                                    <img src="https://iili.io/3rCHp3J.png" alt="" />
-                                </a>
-                                <a style="
-                                            padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
-                                        "
-                                    href="https://www.instagram.com/buytiq_official" target="_blank">
-                                    <img src="https://iili.io/3rCdk0u.png" alt="" />
+                                    LinkedIn
                                 </a>
 
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://x.com/buytiq1" target="_blank">
-                                    <img src="https://iili.io/3rC2GB1.png" alt="" />
+                                    Twitter
                                 </a>
                             </td>
                         </tr>
