@@ -662,8 +662,12 @@ Reset default styling for dialogs.
                             style="color: {{ $shop->color }}; border-color:  {{ $shop->color }}">Color</td>
                         <td class="border-b-2 border-main pb-3 pl-2 text-right font-bold text-main"
                             style="color: {{ $shop->color }}; border-color:  {{ $shop->color }}">Size</td>
+
                         <td class="border-b-2 border-main pb-3 pl-2 text-center font-bold text-main"
-                            style="color: {{ $shop->color }}; border-color:  {{ $shop->color }}">Qty</td>
+                            style="color: {{ $shop->color }}; border-color:  {{ $shop->color }}">Quantity</td>
+                        <td class="border-b-2 border-main pb-3 pl-2 text-center font-bold text-main"
+                            style="color: {{ $shop->color }}; border-color:  {{ $shop->color }}">Warranty</td>
+
                         <td class="border-b-2 border-main pb-3 pl-2 text-center font-bold text-main"
                             style="color: {{ $shop->color }}; border-color:  {{ $shop->color }}">Price</td>
                         <td class="border-b-2 border-main pb-3 pl-2 text-right font-bold text-main"
@@ -679,6 +683,7 @@ Reset default styling for dialogs.
                             <td class="border-b py-3 pl-2 text-right">{{ $item->color }}</td>
                             <td class="border-b py-3 pl-2 text-center">{{ $item->size }}</td>
                             <td class="border-b py-3 pl-2 text-center"> {{ $item->quantity }}</td>
+                            <td class="border-b py-3 pl-2 text-center"> {{ $item->warranty }}</td>
                             <td style="font-family: 'Arial', sans-serif; font-size: 14px;"
                                 class="border-b py-3 pl-2 text-right">
                                 {{ number_format($item->price, 2) }}
