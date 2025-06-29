@@ -49,6 +49,7 @@ use App\Http\Controllers\Api\CustomerReportController;
 use App\Http\Controllers\Api\AffiliateController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\PaymentGetwayaController;
+use App\Http\Controllers\Api\ReportController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -459,3 +460,7 @@ Route::get('/payment-gateways/get/{user_id}/{getwaya_id}/{type}', [PaymentGetway
 
 // payment gateways for user
 Route::get('/users/{id}/payment-gateways', [PaymentGetwayaController::class, 'getUserGateways']);
+
+
+//Report API
+Route::get('/orders/chart', [ReportController::class, 'getOrderChartData']);
