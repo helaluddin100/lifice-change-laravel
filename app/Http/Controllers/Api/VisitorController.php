@@ -78,4 +78,22 @@ class VisitorController extends Controller
             'data' => $visitors
         ]);
     }
+
+
+    public function getAllVisitorForChart(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|integer',
+            'shop_id' => 'required|integer'
+        ]);
+
+        $visitors = VisitorData::where('user_id', $request->query('user_id'))
+            ->where('shop_id', $request->query('shop_id'))
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $visitors
+        ]);
+    }
 }
