@@ -34,6 +34,11 @@ class ShopController extends Controller
             return response()->json(['error' => 'Shop not found'], 404);
         }
 
+        $topPrice = $shop->products()
+            ->max(DB::raw('GREATEST(CAST(old_price AS UNSIGNED), CAST(current_price AS UNSIGNED))'));
+
+        $shop->top_price = $topPrice;
+
         return response()->json([
             'shop' => $shop,
             'template' => $shop->template ? $shop->template : null,
@@ -57,7 +62,6 @@ class ShopController extends Controller
         $topPrice = $shop->products()
             ->max(DB::raw('GREATEST(CAST(old_price AS UNSIGNED), CAST(current_price AS UNSIGNED))'));
 
-        // $shop অবজেক্টে top_price প্রপার্টি যুক্ত করা হচ্ছে
         $shop->top_price = $topPrice;
 
         return response()->json([
@@ -609,7 +613,7 @@ class ShopController extends Controller
                 'template_type' => 'nullable|numeric',
 
                 'advance_type' => 'nullable',
-                'advance_parcent' => 'nullable',
+                'advance_percent' => 'nullable',
 
             ]);
 
@@ -621,12 +625,7 @@ class ShopController extends Controller
             $shop = Shop::findOrFail($id);
             $filteredData = $this->removeNullFields($request->all());
 
-            // ✅ Apply filtered values dynamically
-            foreach ($filteredData as $key => $value) {
-                $shop->{$key} = $value;
-            }
-
-            // ✅ Handle image separately
+            // ✅ Handle image separately and map to 'logo'
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 if ($image->isValid()) {
@@ -639,6 +638,17 @@ class ShopController extends Controller
                 } else {
                     return response()->json(['status' => 400, 'error' => 'Invalid image file']);
                 }
+                // Remove 'image' from filteredData to prevent SQL error
+                unset($filteredData['image']);
+            }
+
+            // ✅ Apply filtered values dynamically, except 'image'
+            foreach ($filteredData as $key => $value) {
+                // Skip 'image' key, already handled above
+                if ($key === 'image') {
+                    continue;
+                }
+                $shop->{$key} = $value;
             }
 
             $shop->save();

@@ -49,6 +49,7 @@ use App\Http\Controllers\Api\CustomerReportController;
 use App\Http\Controllers\Api\AffiliateController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\PaymentGetwayaController;
+use App\Http\Controllers\Api\ReportController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -202,6 +203,8 @@ Route::delete('/product/{id}', [ProductController::class, 'destroy']);
 //view shop
 Route::get('/view-shop/{shop_url}', [ShopController::class, 'showShopWithTemplate']);
 Route::get('/shop-category/{id}', [ShopManageController::class, 'categoryShow']);
+Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDomain']);
+
 
 
 
@@ -434,8 +437,6 @@ Route::get('/get-clients', [ClientReviewController::class, 'index']);
 Route::post('/admin-contact', [AdminContactUsController::class, 'store']);
 
 
-Route::get('/view-shop/domain/{shop_url}', [ShopController::class, 'viewshopByDomain']);
-
 
 // =========== customer report =========
 Route::post('/report-order', [CustomerReportController::class, 'reportOrder']);
@@ -460,3 +461,7 @@ Route::get('/payment-gateways/get/{user_id}/{getwaya_id}/{type}', [PaymentGetway
 
 // payment gateways for user
 Route::get('/users/{id}/payment-gateways', [PaymentGetwayaController::class, 'getUserGateways']);
+
+
+//Report API
+Route::get('/orders/chart', [ReportController::class, 'getOrderChartData']);

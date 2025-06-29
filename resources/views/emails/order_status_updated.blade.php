@@ -1,29 +1,36 @@
 {{-- <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order Status Update</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Status Update</title>
-</head>
+    <body>
+        <h2>Your Order Status has been Updated</h2>
+        <p>Dear {{ $order->name }},</p>
+        <p>
+            Your order status has been updated to:
+            <strong>{{ $order->order_status }}</strong>.
+        </p>
 
-<body>
-    <h2>Your Order Status has been Updated</h2>
-    <p>Dear {{ $order->name }},</p>
-    <p>Your order status has been updated to: <strong>{{ $order->order_status }}</strong>.</p>
+        <p>
+            Your order is from the shop:
+            <strong>{{ $shop->name }}</strong> (Shop ID: {{ $shop->logo }}).
+        </p>
 
-    <p>Your order is from the shop: <strong>{{ $shop->name }}</strong> (Shop ID: {{ $shop->logo }}).</p>
-
-    <p>Thank you for shopping with us!</p>
-    <img src="{{ asset($shop->logo) }}" alt="Logo Not Found" style="width: 100px; height: 100px;">
-    <p>Address: {{ $shop->address }}</p>
-    <p>Phone: {{ $shop->number }}</p>
-    <p>Email: {{ $shop->email }}</p>
-</body>
-
-</html> --}}
-
-
+        <p>Thank you for shopping with us!</p>
+        <img
+            src="{{ asset($shop->logo) }}"
+            alt="Logo Not Found"
+            style="width: 100px; height: 100px"
+        />
+        <p>Address: {{ $shop->address }}</p>
+        <p>Phone: {{ $shop->number }}</p>
+        <p>Email: {{ $shop->email }}</p>
+    </body>
+</html>
+--}}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -53,12 +60,16 @@
                         <tr>
                             <td align="center" style="margin-bottom: 30px; width: 100%">
                                 <div style="margin-top: 40px">
-                                    <a href="https://buytiq.com" style="text-decoration: none" target="_blank">
-                                        <img style="
-                                                    text-align: center;
-                                                    width: 150px;
-                                                "
-                                            src="https://i.postimg.cc/xjLdQ9ZT/logo-2.png" alt="BuyTiq" />
+                                    <a href="https://buytiq.com"
+                                        style="
+                                                text-decoration: none;
+                                                font-family: sans-serif;
+                                                color: #7922e6;
+                                                font-size: 30px;
+                                                font-weight: 900;
+                                            "
+                                        target="_blank">
+                                        BUYTIQ
                                     </a>
                                 </div>
                             </td>
@@ -212,38 +223,33 @@
                                     ">
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://www.facebook.com/buytiq/" target="_blank">
-                                    <img src="https://i.postimg.cc/4Nfk7GW5/1.png" alt="BuyTiq" />
+                                    Facebook
                                 </a>
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
                                     href="https://www.linkedin.com/company/buytiq" target="_blank">
-                                    <img src="https://i.postimg.cc/c6yvhH6r/3.png" alt="BuyTiq" />
+                                    Linkedin
                                 </a>
                                 <a style="
                                             padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
+                                            color: #969696;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            font-family: sans-serif;
                                         "
-                                    href="https://www.tiktok.com/@buytiq" target="_blank">
-                                    <img src="https://i.postimg.cc/jdFgxYmC/2.png" alt="BuyTiq" />
-                                </a>
-
-                                <a style="
-                                            padding: 0 10px;
-                                            text-decoration: none;
-                                            width: 30px;
-                                            height: 30px;
-                                        "
-                                    href="https://www.youtube.com/@BuyTiq" target="_blank">
-                                    <img src="https://i.postimg.cc/Mp1yCk8C/4.png" alt="BuyTiq" />
+                                    href="https://x.com/buytiq1" target="_blank">
+                                    Twitter
                                 </a>
                             </td>
                         </tr>

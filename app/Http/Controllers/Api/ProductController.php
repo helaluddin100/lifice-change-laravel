@@ -398,13 +398,15 @@ class ProductController extends Controller
         $status = filter_var($validated['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
         $has_variant = filter_var($validated['has_variant'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
+
         // Generate the product slug
         $slug = Str::slug($validated['name']);
-
         $slugCount = Product::where('slug', $slug)->count();
         if ($slugCount > 0) {
             $slug = $slug . '-' . ($slugCount + 1);
         }
+
+
 
 
         do {
@@ -418,7 +420,7 @@ class ProductController extends Controller
             'category_id' => $validated['category_id'],
             'brand_id' => $validated['brand_id'] ?? null,
             'name' => $validated['name'],
-            'slug' => $slug,
+            'slug' => $slug . $randomNumber,
             'current_price' => $validated['current_price'],
             'old_price' => $validated['old_price'] ?? null,
             'buy_price' => $validated['buy_price'] ?? null,
